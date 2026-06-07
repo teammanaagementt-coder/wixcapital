@@ -1,0 +1,196 @@
+@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap');
+
+/* Enable dark mode via class */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Define all custom colors + font */
+@theme {
+  /* Primary */
+  --color-primary-50: #E6F1FD;
+  --color-primary-100: #C3DDFB;
+  --color-primary-200: #8AC0F8;
+  --color-primary-300: #519FF4;
+  --color-primary-400: #1F84F0;
+  --color-primary-500: #006AD9;
+  --color-primary-600: #0059B3;
+  --color-primary-700: #00478D;
+  --color-primary-800: #003567;
+  --color-primary-900: #002341;
+  --color-primary: #006AD9;
+
+  /* Secondary */
+  --color-secondary-50: #E8F5F0;
+  --color-secondary-100: #D1EBE1;
+  --color-secondary-200: #A3D7C3;
+  --color-secondary-300: #76C3A5;
+  --color-secondary-400: #4A9D7F;
+  --color-secondary-500: #3C7F65;
+  --color-secondary-600: #2E614D;
+  --color-secondary-700: #214435;
+  --color-secondary-800: #13261E;
+  --color-secondary-900: #040906;
+  --color-secondary: #4A9D7F;
+
+  /* Tertiary */
+  --color-tertiary-50: #EDF0FC;
+  --color-tertiary-100: #DBE1F9;
+  --color-tertiary-200: #B7C3F3;
+  --color-tertiary-300: #93A6ED;
+  --color-tertiary-400: #627EEA;
+  --color-tertiary-500: #3053E4;
+  --color-tertiary-600: #173BCE;
+  --color-tertiary-700: #122FA8;
+  --color-tertiary-800: #0D2382;
+  --color-tertiary-900: #08165C;
+  --color-tertiary: #627EEA;
+
+  /* Accent */
+  --color-accent-50: #FEF9E6;
+  --color-accent-100: #FDF3CC;
+  --color-accent-200: #FAE699;
+  --color-accent-300: #F7DA66;
+  --color-accent-400: #F0B90B;
+  --color-accent-500: #C39508;
+  --color-accent-600: #967106;
+  --color-accent-700: #694D04;
+  --color-accent-800: #3C2A02;
+  --color-accent-900: #0F0A01;
+  --color-accent: #F0B90B;
+
+  /* Danger */
+  --color-danger-50: #FFF0F0;
+  --color-danger-100: #FFE0E0;
+  --color-danger-200: #FFC2C2;
+  --color-danger-300: #FFA3A3;
+  --color-danger-400: #FF6B6B;
+  --color-danger-500: #FF3838;
+  --color-danger-600: #FF0505;
+  --color-danger-700: #D10000;
+  --color-danger-800: #9E0000;
+  --color-danger-900: #6B0000;
+  --color-danger: #FF6B6B;
+
+  /* Purple */
+  --color-purple-50: #F3EDFA;
+  --color-purple-100: #E7DCF5;
+  --color-purple-200: #CFB9EB;
+  --color-purple-300: #B796E0;
+  --color-purple-400: #9164CC;
+  --color-purple-500: #7642BE;
+  --color-purple-600: #5D33A0;
+  --color-purple-700: #44267C;
+  --color-purple-800: #2C1958;
+  --color-purple-900: #140B34;
+  --color-purple: #9164CC;
+
+  /* Dark */
+  --color-dark-50: #0E0E12;
+  --color-dark-100: #16161D;
+  --color-dark-200: #20202A;
+  --color-dark-300: #2B2B38;
+  --color-dark: #09090B;
+
+  /* Light */
+  --color-light-50: #FFFFFF;
+  --color-light-100: #FFFFFF;
+  --color-light-200: #E2E8F0;
+  --color-light-300: #CBD5E1;
+  --color-light: #F1F5F9;
+
+  /* 👇 ADDED: Montserrat Font Family */
+  --font-montserrat: "Montserrat", sans-serif;
+}
+
+/* Apply Montserrat globally */
+@layer base {
+  html {
+    font-family: var(--font-montserrat);
+  }
+  body {
+    @apply bg-light dark:bg-dark text-dark dark:text-white transition-colors duration-200;
+  }
+}
+
+/* Your custom keyframes and animations (keep as you had) */
+.floating-element {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0.7;
+  animation-duration: 15s;
+  animation-iteration-count: infinite;
+  animation-timing-function: ease-in-out;
+}
+.elem-1 { width: 100px; height: 100px; top: 10%; left: 5%; animation-name: float1; }
+.elem-2 { width: 70px; height: 70px; top: 20%; right: 10%; animation-name: float2; }
+.elem-3 { width: 50px; height: 50px; bottom: 20%; left: 15%; animation-name: float3; }
+.elem-4 { width: 80px; height: 80px; bottom: 10%; right: 5%; animation-name: float4; }
+
+@keyframes float1 {
+  0% { transform: translate(0, 0) rotate(0deg); }
+  25% { transform: translate(15px, 15px) rotate(90deg); }
+  50% { transform: translate(0, 30px) rotate(180deg); }
+  75% { transform: translate(-15px, 15px) rotate(270deg); }
+  100% { transform: translate(0, 0) rotate(360deg); }
+}
+@keyframes float2 {
+  0% { transform: translate(0, 0) rotate(0deg); }
+  25% { transform: translate(-20px, 10px) rotate(-90deg); }
+  50% { transform: translate(0, 20px) rotate(-180deg); }
+  75% { transform: translate(20px, 10px) rotate(-270deg); }
+  100% { transform: translate(0, 0) rotate(-360deg); }
+}
+@keyframes float3 {
+  0% { transform: translate(0, 0) rotate(0deg); }
+  33% { transform: translate(15px, -15px) rotate(120deg); }
+  66% { transform: translate(-15px, -15px) rotate(240deg); }
+  100% { transform: translate(0, 0) rotate(360deg); }
+}
+@keyframes float4 {
+  0% { transform: translate(0, 0) rotate(0deg); }
+  33% { transform: translate(-20px, -10px) rotate(-120deg); }
+  66% { transform: translate(20px, -20px) rotate(-240deg); }
+  100% { transform: translate(0, 0) rotate(-360deg); }
+}
+@keyframes slideIn {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+@keyframes fadeOut {
+  from { opacity: 1; transform: translateX(0); }
+  to { opacity: 0; transform: translateX(100%); }
+}
+/* Security badge animation */
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+.security-badge {
+  animation: pulse 2.5s infinite ease-in-out;
+}
+
+/* Password field focus effect */
+.pulse-focus:focus {
+  animation: border-pulse 2s infinite;
+}
+@keyframes border-pulse {
+  0% { box-shadow: 0 0 0 0 rgba(0, 106, 217, 0.4); }
+  70% { box-shadow: 0 0 0 10px rgba(0, 106, 217, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(0, 106, 217, 0); }
+}
+
+/* Animated gradient background for the card */
+.animated-bg {
+  background: linear-gradient(-45deg, #E6F1FD, #D1EBE1, #EDF0FC, #FEF9E6);
+  background-size: 400% 400%;
+  animation: gradient 15s ease infinite;
+}
+@keyframes gradient {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+.dark .animated-bg {
+  background: linear-gradient(-45deg, #0E0E12, #16161D, #20202A, #2B2B38);
+}
