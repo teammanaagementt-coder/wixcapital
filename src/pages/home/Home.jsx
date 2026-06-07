@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { useNavigate } from 'react-router-dom';
 import { motion, useAnimation, useInView } from "framer-motion";
 import {
   Shield,
@@ -27,38 +28,7 @@ import {
   Lock,
   Sparkles,
 } from "lucide-react";
-
-// ─── Theme tokens ──────────────────────────────────────────────────────
-const T = {
-  primary: "#006AD9",
-  primary50: "#E6F1FD",
-  primary100: "#C3DDFB",
-  primary400: "#1F84F0",
-  primary500: "#006AD9",
-  primary600: "#0059B3",
-  secondary: "#4A9D7F",
-  secondary100: "#D1EBE1",
-  secondary400: "#4A9D7F",
-  tertiary: "#627EEA",
-  tertiary400: "#627EEA",
-  tertiary100: "#DBE1F9",
-  accent: "#F0B90B",
-  accent100: "#FDF3CC",
-  accent400: "#F0B90B",
-  danger: "#FF6B6B",
-  danger100: "#FFE0E0",
-  purple: "#9164CC",
-  purple100: "#E7DCF5",
-  dark: "#09090B",
-  dark50: "#0E0E12",
-  dark100: "#16161D",
-  dark200: "#20202A",
-  dark300: "#2B2B38",
-  light: "#F1F5F9",
-  light200: "#E2E8F0",
-  light300: "#CBD5E1",
-  white: "#FFFFFF",
-};
+import videoBg from '../../assets/13460-248644879_medium.mp4';
 
 // ─── Sparkline (unchanged, SVG is fine) ────────────────────────────────
 function Spark({ data, color }) {
@@ -74,7 +44,7 @@ function Spark({ data, color }) {
     )
     .join(" ");
   return (
-    <svg width={w} height={h} style={{ overflow: "visible" }}>
+    <svg width={w} height={h} className="overflow-visible">
       <polyline
         points={pts}
         fill="none"
@@ -105,7 +75,7 @@ const COINS = [
     price: 3842,
     chg: -1.12,
     cap: "$461B",
-    color: T.tertiary,
+    color: "#627EEA",
     bg: "rgba(98,126,234,.12)",
     hist: [3600, 3750, 3680, 3900, 3820, 3870, 3842],
   },
@@ -115,7 +85,7 @@ const COINS = [
     price: 178.4,
     chg: 5.67,
     cap: "$84B",
-    color: T.purple,
+    color: "#9164CC",
     bg: "rgba(145,100,204,.12)",
     hist: [145, 158, 152, 168, 171, 176, 178],
   },
@@ -125,7 +95,7 @@ const COINS = [
     price: 612.3,
     chg: 0.89,
     cap: "$92B",
-    color: T.accent,
+    color: "#F0B90B",
     bg: "rgba(240,185,11,.12)",
     hist: [580, 595, 588, 602, 608, 609, 612],
   },
@@ -135,7 +105,7 @@ const COINS = [
     price: 0.614,
     chg: -2.45,
     cap: "$21B",
-    color: T.primary,
+    color: "#006AD9",
     bg: "rgba(0,106,217,.12)",
     hist: [0.68, 0.65, 0.63, 0.66, 0.64, 0.62, 0.614],
   },
@@ -145,7 +115,7 @@ const COINS = [
     price: 42.18,
     chg: 3.21,
     cap: "$17B",
-    color: T.danger,
+    color: "#FF6B6B",
     bg: "rgba(255,107,107,.12)",
     hist: [36, 38, 37, 40, 41, 42, 42.18],
   },
@@ -155,51 +125,25 @@ const COINS = [
 function TickerBar({ prices }) {
   const items = [...prices, ...prices];
   return (
-    <div
-      style={{
-        background: T.dark100,
-        borderBottom: `1px solid ${T.dark300}`,
-        height: 38,
-        overflow: "hidden",
-        display: "flex",
-        alignItems: "center",
-      }}
-    >
+    <div className="bg-[#16161D] border-b border-[#2B2B38] h-[38px] overflow-hidden flex items-center">
       <motion.div
         animate={{ x: ["0%", "-50%"] }}
         transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
-        style={{ display: "flex", whiteSpace: "nowrap" }}
+        className="flex whitespace-nowrap"
       >
         {items.map((c, i) => (
           <div
             key={i}
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: 8,
-              padding: "0 28px",
-              fontFamily: "'Space Mono',monospace",
-              fontSize: 11,
-              borderRight: `1px solid ${T.dark300}`,
-            }}
+            className="inline-flex items-center gap-2 px-7 font-mono text-[11px] border-r border-[#2B2B38]"
           >
-            <span
-              style={{
-                color: T.primary,
-                fontWeight: 700,
-                letterSpacing: ".05em",
-              }}
-            >
+            <span className="text-[#006AD9] font-bold tracking-[.05em]">
               {c.sym}
             </span>
-            <span style={{ color: T.white }}>
-              ${c.price.toLocaleString()}
-            </span>
+            <span className="text-white">${c.price.toLocaleString()}</span>
             <span
-              style={{
-                color: c.chg >= 0 ? T.secondary : T.danger,
-                fontWeight: 700,
-              }}
+              className={`font-bold ${
+                c.chg >= 0 ? "text-[#4A9D7F]" : "text-[#FF6B6B]"
+              }`}
             >
               {c.chg >= 0 ? "▲" : "▼"} {Math.abs(c.chg)}%
             </span>
@@ -212,108 +156,39 @@ function TickerBar({ prices }) {
 
 // ─── Nav (sticky top, mobile sidebar toggle) ───────────────────────────
 function Nav({ dark, toggleDark, isMobile, onMenuClick }) {
+  const navigate = useNavigate();
   return (
-    <nav
-      style={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        padding: "0 32px",
-        height: 60,
-        borderBottom: `1px solid ${dark ? T.dark300 : T.light200}`,
-        background: dark
-          ? "rgba(9,9,11,.92)"
-          : "rgba(241,245,249,.92)",
-        backdropFilter: "blur(12px)",
-      }}
-    >
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: 10,
-          fontSize: 17,
-          fontWeight: 800,
-          letterSpacing: "-.02em",
-          color: dark ? T.white : T.dark,
-        }}
-      >
-        <div
-          style={{
-            width: 9,
-            height: 9,
-            borderRadius: "50%",
-            background: T.primary,
-            boxShadow: `0 0 12px ${T.primary}`,
-          }}
-        />
+    <nav className="flex items-center justify-between px-8 h-[60px] border-b border-gray-200 dark:border-[#2B2B38] bg-white/90 dark:bg-[#09090B]/90 backdrop-blur-sm">
+      <div className="flex items-center gap-2.5 text-[17px] font-extrabold tracking-tight text-gray-900 dark:text-white">
+        <div className="w-[9px] h-[9px] rounded-full bg-[#006AD9] shadow-[0_0_12px_#006AD9]" />
         Wix Capital
       </div>
 
       {!isMobile ? (
         <>
-          <div
-            style={{
-              display: "flex",
-              gap: 28,
-              fontSize: 12,
-              fontWeight: 500,
-              color: dark ? "#9898b0" : "#64748b",
-            }}
-          >
+          <div className="flex gap-7 text-xs font-medium text-slate-600 dark:text-[#9898b0]">
             {["Markets", "Trade", "Invest", "About"].map((l) => (
-              <a key={l} href="#" style={{ textDecoration: "none", color: "inherit" }}>
+              <a key={l} href="#" className="hover:text-[#006AD9] transition">
                 {l}
               </a>
             ))}
           </div>
-          <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+          <div className="flex gap-2 items-center">
             <button
               onClick={toggleDark}
-              style={{
-                padding: "6px 12px",
-                borderRadius: 8,
-                border: `1px solid ${dark ? T.dark300 : T.light300}`,
-                background: "transparent",
-                color: dark ? "#9898b0" : "#64748b",
-                cursor: "pointer",
-                fontSize: 12,
-                fontWeight: 600,
-                fontFamily: "Montserrat, sans-serif",
-                display: "flex",
-                alignItems: "center",
-                gap: 6,
-              }}
+              className="px-3 py-1.5 rounded-lg border border-gray-300 dark:border-[#2B2B38] bg-transparent text-slate-600 dark:text-[#9898b0] cursor-pointer text-xs font-semibold flex items-center gap-1.5"
             >
               {dark ? <Sun size={14} /> : <Moon size={14} />}
             </button>
             <button
-              style={{
-                padding: "6px 14px",
-                borderRadius: 8,
-                border: `1px solid ${dark ? T.dark300 : T.light300}`,
-                background: "transparent",
-                color: dark ? "#9898b0" : "#64748b",
-                cursor: "pointer",
-                fontSize: 12,
-                fontWeight: 600,
-                fontFamily: "Montserrat, sans-serif",
-              }}
+              onClick={() => navigate('/login')}
+              className="px-3.5 py-1.5 rounded-lg border border-gray-300 dark:border-[#2B2B38] bg-transparent text-slate-600 dark:text-[#9898b0] cursor-pointer text-xs font-semibold"
             >
               Log in
             </button>
             <button
-              style={{
-                padding: "6px 18px",
-                borderRadius: 8,
-                border: "none",
-                background: T.primary,
-                color: T.white,
-                cursor: "pointer",
-                fontSize: 12,
-                fontWeight: 700,
-                fontFamily: "Montserrat, sans-serif",
-              }}
+              onClick={() => navigate('/register')}
+              className="px-4.5 py-1.5 rounded-lg border-none bg-[#006AD9] text-white cursor-pointer text-xs font-bold"
             >
               Get Started
             </button>
@@ -322,14 +197,7 @@ function Nav({ dark, toggleDark, isMobile, onMenuClick }) {
       ) : (
         <button
           onClick={onMenuClick}
-          style={{
-            background: "transparent",
-            border: `1px solid ${dark ? T.dark300 : T.light300}`,
-            borderRadius: 8,
-            padding: "6px 12px",
-            cursor: "pointer",
-            color: dark ? T.white : T.dark,
-          }}
+          className="bg-transparent border border-gray-300 dark:border-[#2B2B38] rounded-lg p-1.5 cursor-pointer text-gray-900 dark:text-white"
         >
           <Menu size={20} />
         </button>
@@ -340,6 +208,7 @@ function Nav({ dark, toggleDark, isMobile, onMenuClick }) {
 
 // ─── Mobile Sidebar ────────────────────────────────────────────────────
 function MobileSidebar({ dark, isOpen, onClose, toggleDark }) {
+    const navigate = useNavigate();
   if (!isOpen) return null;
   return (
     <>
@@ -348,118 +217,50 @@ function MobileSidebar({ dark, isOpen, onClose, toggleDark }) {
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         onClick={onClose}
-        style={{
-          position: "fixed",
-          inset: 0,
-          background: "rgba(0,0,0,0.6)",
-          zIndex: 200,
-          backdropFilter: "blur(4px)",
-        }}
+        className="fixed inset-0 bg-black/60 z-[200] backdrop-blur-sm"
       />
       <motion.aside
         initial={{ x: "-100%" }}
         animate={{ x: 0 }}
         exit={{ x: "-100%" }}
         transition={{ type: "spring", damping: 25 }}
-        style={{
-          position: "fixed",
-          top: 0,
-          left: 0,
-          bottom: 0,
-          width: "70%",
-          maxWidth: 280,
-          background: dark ? T.dark200 : T.white,
-          zIndex: 210,
-          padding: "28px 20px",
-          display: "flex",
-          flexDirection: "column",
-          gap: 24,
-          boxShadow: "4px 0 20px rgba(0,0,0,0.3)",
-          borderRight: `1px solid ${dark ? T.dark300 : T.light200}`,
-        }}
+        className="fixed top-0 left-0 bottom-0 w-[70%] max-w-[280px] bg-white dark:bg-[#20202A] z-[210] p-7 flex flex-col gap-6 shadow-[4px_0_20px_rgba(0,0,0,0.3)] border-r border-gray-200 dark:border-[#2B2B38]"
       >
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <div style={{ fontSize: 18, fontWeight: 800, color: dark ? T.white : T.dark }}>
+        <div className="flex justify-between items-center">
+          <div className="text-lg font-extrabold text-gray-900 dark:text-white">
             Menu
           </div>
           <button
             onClick={onClose}
-            style={{
-              background: "transparent",
-              border: "none",
-              cursor: "pointer",
-              color: dark ? "#9898b0" : "#64748b",
-            }}
+            className="bg-transparent border-none cursor-pointer text-slate-600 dark:text-[#9898b0]"
           >
             <X size={22} />
           </button>
         </div>
-        <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+        <div className="flex flex-col gap-4">
           {["Markets", "Trade", "Invest", "About"].map((l) => (
             <a
               key={l}
               href="#"
-              style={{
-                fontSize: 14,
-                fontWeight: 500,
-                textDecoration: "none",
-                color: dark ? T.white : T.dark,
-                padding: "6px 0",
-                borderBottom: `1px solid ${dark ? T.dark300 : T.light200}`,
-              }}
+              className="text-sm font-medium no-underline text-gray-900 dark:text-white py-1.5 border-b border-gray-200 dark:border-[#2B2B38]"
             >
               {l}
             </a>
           ))}
         </div>
-        <div style={{ display: "flex", flexDirection: "column", gap: 10, marginTop: 16 }}>
-          <button
-            onClick={toggleDark}
-            style={{
-              padding: "8px",
-              borderRadius: 8,
-              border: `1px solid ${dark ? T.dark300 : T.light300}`,
-              background: "transparent",
-              color: dark ? "#9898b0" : "#64748b",
-              cursor: "pointer",
-              fontWeight: 600,
-              fontSize: 12,
-              display: "flex",
-              alignItems: "center",
-              gap: 8,
-            }}
-          >
-            {dark ? <Sun size={14} /> : <Moon size={14} />}
-            {dark ? "Light Mode" : "Dark Mode"}
-          </button>
-          <button
-            style={{
-              padding: "8px",
-              borderRadius: 8,
-              border: `1px solid ${dark ? T.dark300 : T.light300}`,
-              background: "transparent",
-              color: dark ? "#9898b0" : "#64748b",
-              cursor: "pointer",
-              fontWeight: 600,
-              fontSize: 12,
-            }}
-          >
-            Log in
-          </button>
-          <button
-            style={{
-              padding: "10px",
-              borderRadius: 8,
-              border: "none",
-              background: T.primary,
-              color: T.white,
-              cursor: "pointer",
-              fontWeight: 700,
-              fontSize: 12,
-            }}
-          >
-            Get Started
-          </button>
+        <div className="flex flex-col gap-2.5 mt-4">
+           <button
+          onClick={() => navigate('/login')}
+          className="p-2 rounded-lg border border-gray-300 dark:border-[#2B2B38] bg-transparent text-slate-600 dark:text-[#9898b0] cursor-pointer font-semibold text-xs"
+        >
+          Log in
+        </button>
+        <button
+          onClick={() => navigate('/register')}
+          className="p-2.5 rounded-lg border-none bg-[#006AD9] text-white cursor-pointer font-bold text-xs"
+        >
+          Get Started
+        </button>
         </div>
       </motion.aside>
     </>
@@ -483,241 +284,115 @@ function RevealSection({ children, delay = 0, ...props }) {
 
 // ─── Hero Section ──────────────────────────────────────────────────────
 function Hero({ dark }) {
+  const navigate = useNavigate();
+
   return (
-    <section
-      style={{
-        minHeight: "88vh",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: "60px 32px",
-        position: "relative",
-        overflow: "hidden",
-        background: dark ? T.dark : T.light,
-      }}
-    >
-      {/* Animated background blobs */}
-      <div style={{ position: "absolute", inset: 0, pointerEvents: "none" }}>
-        <motion.div
-          animate={{
-            scale: [1, 1.1, 1],
-            opacity: dark ? 0.18 : 0.55,
-          }}
-          transition={{ duration: 8, repeat: Infinity }}
-          style={{
-            position: "absolute",
-            width: 520,
-            height: 520,
-            borderRadius: "50%",
-            background: `radial-gradient(circle, ${T.primary50} 0%, transparent 70%)`,
-            top: -80,
-            left: "50%",
-            transform: "translateX(-50%)",
-          }}
-        />
-        <div
-          style={{
-            position: "absolute",
-            width: 360,
-            height: 360,
-            borderRadius: "50%",
-            background: `radial-gradient(circle, ${T.tertiary100} 0%, transparent 70%)`,
-            bottom: 0,
-            right: "8%",
-            opacity: dark ? 0.12 : 0.45,
-          }}
-        />
-        <div
-          style={{
-            position: "absolute",
-            inset: 0,
-            backgroundImage: `linear-gradient(${
-              dark ? "rgba(255,255,255,.018)" : "rgba(0,0,0,.04)"
-            } 1px,transparent 1px),linear-gradient(90deg,${
-              dark ? "rgba(255,255,255,.018)" : "rgba(0,0,0,.04)"
-            } 1px,transparent 1px)`,
-            backgroundSize: "48px 48px",
-            maskImage: "radial-gradient(ellipse 80% 60% at 50% 50%,#000 40%,transparent 100%)",
-          }}
+    <section className="relative min-h-[90vh] flex flex-col items-center justify-center py-20 px-4 sm:px-6 lg:px-8 overflow-hidden select-none">
+      {/* Video Background Container */}
+      <div className="absolute inset-0 w-full h-full overflow-hidden">
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="absolute top-0 left-0 w-full h-full object-cover select-none pointer-events-none"
+        >
+          <source src="/13460-248644879_medium.mp4" type="video/mp4" />
+        </video>
+        
+        {/* Responsive Overlay: Maintains perfect text contrast regardless of video brightness */}
+        <div 
+          className={`absolute inset-0 transition-colors duration-300 backdrop-blur-[2px] ${
+            dark ? 'bg-slate-950/35' : 'bg-white/80'
+          }`} 
         />
       </div>
 
-      <RevealSection>
-        <div
-          style={{
-            display: "inline-flex",
-            alignItems: "center",
-            gap: 6,
-            padding: "4px 12px",
-            borderRadius: 100,
-            border: `1px solid ${T.primary}40`,
-            background: `${T.primary}10`,
-            fontSize: 10,
-            fontWeight: 700,
-            color: T.primary,
-            letterSpacing: ".08em",
-            textTransform: "uppercase",
-            marginBottom: 28,
-          }}
-        >
-          <motion.div
-            animate={{ scale: [1, 1.2, 1] }}
-            transition={{ duration: 1.8, repeat: Infinity }}
-            style={{
-              width: 6,
-              height: 6,
-              borderRadius: "50%",
-              background: T.primary,
-            }}
-          />
-          Live Markets · 10,000+ Investors
-        </div>
-      </RevealSection>
+      {/* Interactive Content Container */}
+      <div className="relative z-10 w-full max-w-5xl flex flex-col items-center justify-center text-center">
+        
+        {/* Status Badge */}
+        <RevealSection>
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-blue-500/20 bg-blue-500/10 dark:bg-blue-500/15 text-[11px] font-bold text-[#006AD9] dark:text-blue-400 tracking-wider uppercase mb-8 backdrop-blur-md">
+            <motion.div
+              animate={{ scale: [1, 1.25, 1], opacity: [0.7, 1, 0.7] }}
+              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+              className="w-2 h-2 rounded-full bg-[#006AD9] dark:bg-blue-400 shadow-sm"
+            />
+            Live Markets · 10,000+ Investors
+          </div>
+        </RevealSection>
 
-      <RevealSection delay={0.1}>
-        <h1
-          style={{
-            fontSize: "clamp(36px,5vw,68px)",
-            fontWeight: 900,
-            lineHeight: 1.0,
-            textAlign: "center",
-            letterSpacing: "-.035em",
-            maxWidth: 760,
-            marginBottom: 20,
-            color: dark ? T.white : T.dark,
-          }}
-        >
-          Trade Crypto.<br />
-          <span style={{ color: T.primary }}>Earn Daily.</span>
-          <br />
-          <span style={{ color: dark ? "#6b6b85" : "#94a3b8" }}>Build Wealth.</span>
-        </h1>
-      </RevealSection>
+        {/* Hero Heading */}
+        <RevealSection delay={0.1}>
+          <h1 className="text-[clamp(38px,6vw,72px)] font-extrabold leading-[1.1] tracking-tight max-w-[840px] mb-6 text-slate-900 dark:text-white">
+            Trade Crypto.<br />
+            <span className="bg-gradient-to-r from-[#006AD9] to-blue-500 bg-clip-text text-transparent">
+              Earn Daily.
+            </span>
+            <br />
+            <span className="text-slate-500 dark:text-slate-400">
+              Build Wealth.
+            </span>
+          </h1>
+        </RevealSection>
 
-      <RevealSection delay={0.2}>
-        <p
-          style={{
-            fontSize: 14,
-            color: dark ? "#9898b0" : "#64748b",
-            textAlign: "center",
-            maxWidth: 460,
-            lineHeight: 1.6,
-            marginBottom: 40,
-          }}
-        >
-          Wix Capital gives you institutional-grade tools, daily passive returns, and
-          bank-level security in one sleek platform.
-        </p>
-      </RevealSection>
+        {/* Subtitle / Paragraph */}
+        <RevealSection delay={0.2}>
+          <p className="text-base md:text-lg text-slate-600 dark:text-slate-300 max-w-[540px] leading-relaxed mb-10 px-2">
+            Wix Capital gives you institutional-grade tools, daily passive returns, and
+            bank-level security in one sleek, unified platform.
+          </p>
+        </RevealSection>
 
-      <RevealSection delay={0.3}>
-        <div
-          style={{
-            display: "flex",
-            gap: 12,
-            marginBottom: 56,
-            flexWrap: "wrap",
-            justifyContent: "center",
-          }}
-        >
-          <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            style={{
-              padding: "12px 28px",
-              borderRadius: 10,
-              fontSize: 14,
-              fontWeight: 700,
-              background: T.primary,
-              color: T.white,
-              border: "none",
-              cursor: "pointer",
-              fontFamily: "Montserrat, sans-serif",
-              display: "flex",
-              alignItems: "center",
-              gap: 8,
-            }}
-          >
-            Start Investing <ArrowRight size={16} />
-          </motion.button>
-          <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            style={{
-              padding: "12px 28px",
-              borderRadius: 10,
-              fontSize: 14,
-              fontWeight: 700,
-              background: "transparent",
-              border: `1px solid ${dark ? T.dark300 : T.light300}`,
-              color: dark ? "#9898b0" : "#64748b",
-              cursor: "pointer",
-              fontFamily: "Montserrat, sans-serif",
-            }}
-          >
-            Explore Demo
-          </motion.button>
-        </div>
-      </RevealSection>
-
-      <RevealSection delay={0.4}>
-        <div
-          style={{
-            display: "flex",
-            flexWrap: "wrap",
-            border: `1px solid ${dark ? T.dark300 : T.light200}`,
-            borderRadius: 14,
-            overflow: "hidden",
-            background: dark ? T.dark100 : T.white,
-            maxWidth: 700,
-            width: "100%",
-          }}
-        >
-          {[
-            { val: "$2.4B", lbl: "24h Volume" },
-            { val: "10K+", lbl: "Active Traders" },
-            { val: "2.5%", lbl: "Max Daily Return" },
-            { val: "99.9%", lbl: "Uptime SLA" },
-          ].map((s, i, arr) => (
-            <div
-              key={i}
-              style={{
-                flex: 1,
-                padding: "16px 20px",
-                borderRight:
-                  i < arr.length - 1
-                    ? `1px solid ${dark ? T.dark300 : T.light200}`
-                    : "none",
-                textAlign: "center",
-              }}
+        {/* Action Buttons */}
+        <RevealSection delay={0.3}>
+          <div className="flex flex-col sm:flex-row gap-4 mb-16 w-full sm:w-auto justify-center px-4">
+            <motion.button
+              whileHover={{ scale: 1.02, translateY: -1 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={() => navigate('/register')}
+              className="px-8 py-3.5 rounded-xl text-sm font-bold bg-[#006AD9] hover:bg-[#0056b3] text-white shadow-lg shadow-blue-600/20 transition-all duration-200 cursor-pointer flex items-center justify-center gap-2"
             >
+              Start Investing <ArrowRight size={16} className="stroke-[2.5]" />
+            </motion.button>
+            
+            <motion.button
+              whileHover={{ scale: 1.02, translateY: -1 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={() => navigate('/login')}
+              className="px-8 py-3.5 rounded-xl text-sm font-bold bg-white/40 dark:bg-white/5 hover:bg-white/60 dark:hover:bg-white/10 text-slate-800 dark:text-slate-200 border border-slate-300 dark:border-slate-700/60 transition-all duration-200 backdrop-blur-sm cursor-pointer"
+            >
+              Explore Demo
+            </motion.button>
+          </div>
+        </RevealSection>
+
+        {/* Stats Grid Dashboard */}
+        <RevealSection delay={0.4}>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-[1px] bg-slate-200/60 dark:bg-slate-800/40 border border-slate-200/60 dark:border-slate-800/40 rounded-2xl overflow-hidden w-full max-w-3xl shadow-xl shadow-slate-200/10 dark:shadow-none backdrop-blur-xl">
+            {[
+              { val: "$2.4B", lbl: "24h Volume" },
+              { val: "10K+", lbl: "Active Traders" },
+              { val: "2.5%", lbl: "Max Daily Return" },
+              { val: "99.9%", lbl: "Uptime SLA" },
+            ].map((s, i) => (
               <div
-                style={{
-                  fontSize: 20,
-                  fontWeight: 800,
-                  color: T.primary,
-                  fontFamily: "'Space Mono',monospace",
-                }}
+                key={i}
+                className="py-6 px-4 text-center bg-white/70 dark:bg-slate-950/40 transition-colors duration-300"
               >
-                {s.val}
+                <div className="text-2xl font-extrabold text-[#006AD9] dark:text-blue-400 font-mono tracking-tight">
+                  {s.val}
+                </div>
+                <div className="text-[10px] text-slate-500 dark:text-slate-400 mt-1.5 font-bold tracking-wider uppercase">
+                  {s.lbl}
+                </div>
               </div>
-              <div
-                style={{
-                  fontSize: 10,
-                  color: dark ? "#6b6b85" : "#94a3b8",
-                  marginTop: 4,
-                  fontWeight: 500,
-                  letterSpacing: ".04em",
-                  textTransform: "uppercase",
-                }}
-              >
-                {s.lbl}
-              </div>
-            </div>
-          ))}
-        </div>
-      </RevealSection>
+            ))}
+          </div>
+        </RevealSection>
+        
+      </div>
     </section>
   );
 }
@@ -776,11 +451,11 @@ function ChartSection({ dark, prices }) {
           legend: { display: false },
           tooltip: {
             callbacks: { label: (d) => `$${Number(d.raw).toLocaleString()}` },
-            backgroundColor: dark ? T.dark200 : T.white,
-            borderColor: dark ? T.dark300 : T.light200,
+            backgroundColor: dark ? "#20202A" : "#FFFFFF",
+            borderColor: dark ? "#2B2B38" : "#E2E8F0",
             borderWidth: 1,
             titleColor: dark ? "#9898b0" : "#64748b",
-            bodyColor: dark ? T.white : T.dark,
+            bodyColor: dark ? "#FFFFFF" : "#09090B",
             padding: 8,
           },
         },
@@ -790,194 +465,77 @@ function ChartSection({ dark, prices }) {
   }, [activeCoin, range, dark, prices]);
 
   const c = prices[activeCoin];
-  const border = dark ? T.dark300 : T.light200;
+  const border = dark ? "#2B2B38" : "#E2E8F0";
 
   return (
     <RevealSection>
-      <div
-        style={{
-          padding: "60px 32px",
-          background: dark ? T.dark50 : T.primary50,
-          borderTop: `1px solid ${border}`,
-          borderBottom: `1px solid ${border}`,
-        }}
-      >
-        <div style={{ maxWidth: 1200, margin: "0 auto" }}>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "flex-start",
-              marginBottom: 24,
-              flexWrap: "wrap",
-              gap: 16,
-            }}
-          >
+      <div className="py-15 px-8 bg-[#E6F1FD] dark:bg-[#0E0E12] border-t border-t-gray-200 dark:border-t-[#2B2B38] border-b border-b-gray-200 dark:border-b-[#2B2B38]">
+        <div className="max-w-[1200px] mx-auto">
+          <div className="flex justify-between items-start mb-6 flex-wrap gap-4">
             <div>
-              <div
-                style={{
-                  fontSize: 10,
-                  fontWeight: 700,
-                  color: T.primary,
-                  letterSpacing: ".1em",
-                  textTransform: "uppercase",
-                  marginBottom: 4,
-                }}
-              >
+              <div className="text-[10px] font-bold text-[#006AD9] tracking-[.1em] uppercase mb-1">
                 Live Chart
               </div>
-              <div
-                style={{
-                  fontSize: 22,
-                  fontWeight: 800,
-                  letterSpacing: "-.02em",
-                  color: dark ? T.white : T.dark,
-                }}
-              >
+              <div className="text-[22px] font-extrabold tracking-[-.02em] text-gray-900 dark:text-white">
                 Price Action
               </div>
             </div>
-            <div
-              style={{
-                display: "flex",
-                gap: 2,
-                background: dark ? T.dark200 : T.light200,
-                borderRadius: 8,
-                padding: 2,
-                border: `1px solid ${border}`,
-              }}
-            >
+            <div className="flex gap-0.5 bg-gray-200 dark:bg-[#20202A] rounded-lg p-0.5 border border-gray-200 dark:border-[#2B2B38]">
               {["1H", "4H", "1D", "1W"].map((r) => (
                 <button
                   key={r}
                   onClick={() => setRange(r)}
-                  style={{
-                    padding: "5px 14px",
-                    borderRadius: 6,
-                    fontSize: 11,
-                    fontWeight: 700,
-                    cursor: "pointer",
-                    color:
-                      range === r
-                        ? T.primary
-                        : dark
-                        ? "#9898b0"
-                        : "#64748b",
-                    background:
-                      range === r
-                        ? dark
-                          ? T.dark300
-                          : T.white
-                        : "transparent",
-                    border: "none",
-                    fontFamily: "Montserrat, sans-serif",
-                  }}
+                  className={`px-3.5 py-1.5 rounded-md text-[11px] font-bold cursor-pointer border-none ${
+                    range === r
+                      ? "text-[#006AD9] bg-white dark:bg-[#2B2B38]"
+                      : "text-slate-600 dark:text-[#9898b0] bg-transparent"
+                  }`}
                 >
                   {r}
                 </button>
               ))}
             </div>
           </div>
-          <div
-            style={{
-              display: "flex",
-              gap: 8,
-              marginBottom: 14,
-              flexWrap: "wrap",
-            }}
-          >
+          <div className="flex gap-2 mb-3.5 flex-wrap">
             {prices.slice(0, 5).map((coin, i) => (
               <button
                 key={i}
                 onClick={() => setActiveCoin(i)}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 6,
-                  padding: "5px 12px",
-                  borderRadius: 8,
-                  border: `1px solid ${
-                    activeCoin === i ? T.primary : border
-                  }`,
-                  background:
-                    activeCoin === i ? `${T.primary}12` : "transparent",
-                  cursor: "pointer",
-                  fontSize: 11,
-                  fontWeight: 700,
-                  color:
-                    activeCoin === i
-                      ? T.primary
-                      : dark
-                      ? "#9898b0"
-                      : "#64748b",
-                  fontFamily: "Montserrat, sans-serif",
-                }}
+                className={`flex items-center gap-1.5 px-3 py-1.25 rounded-lg border text-[11px] font-bold cursor-pointer ${
+                  activeCoin === i
+                    ? "border-[#006AD9] bg-[#006AD9]/7 text-[#006AD9]"
+                    : `border-gray-200 dark:border-[#2B2B38] bg-transparent text-slate-600 dark:text-[#9898b0]`
+                }`}
               >
                 <div
-                  style={{
-                    width: 6,
-                    height: 6,
-                    borderRadius: "50%",
-                    background: coin.color,
-                  }}
+                  className="w-1.5 h-1.5 rounded-full"
+                  style={{ background: coin.color }}
                 />
                 {coin.sym}
               </button>
             ))}
           </div>
-          <div
-            style={{
-              background: dark ? T.dark200 : T.white,
-              border: `1px solid ${border}`,
-              borderRadius: 12,
-              padding: 18,
-              height: 200,
-            }}
-          >
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "flex-start",
-                marginBottom: 10,
-              }}
-            >
+          <div className="bg-white dark:bg-[#20202A] border border-gray-200 dark:border-[#2B2B38] rounded-xl p-4.5 h-[200px]">
+            <div className="flex justify-between items-start mb-2.5">
               <div>
-                <div
-                  style={{
-                    fontFamily: "'Space Mono',monospace",
-                    fontSize: 24,
-                    fontWeight: 700,
-                    color: dark ? T.white : T.dark,
-                  }}
-                >
+                <div className="font-mono text-2xl font-bold text-gray-900 dark:text-white">
                   ${c.price.toLocaleString()}
                 </div>
                 <div
-                  style={{
-                    fontSize: 12,
-                    color: c.chg >= 0 ? T.secondary : T.danger,
-                    fontWeight: 700,
-                    fontFamily: "'Space Mono',monospace",
-                  }}
+                  className={`text-xs font-bold font-mono ${
+                    c.chg >= 0 ? "text-[#4A9D7F]" : "text-[#FF6B6B]"
+                  }`}
                 >
                   {c.chg >= 0 ? "▲" : "▼"} {c.chg >= 0 ? "+" : ""}
                   {c.chg}% today
                 </div>
               </div>
-              <div
-                style={{
-                  fontSize: 10,
-                  color: dark ? "#6b6b85" : "#94a3b8",
-                  textAlign: "right",
-                  fontFamily: "'Space Mono',monospace",
-                }}
-              >
+              <div className="text-[10px] text-slate-500 dark:text-[#6b6b85] text-right font-mono">
                 <div>H: ${(c.price * 1.01).toFixed(0)}</div>
                 <div>L: ${(c.price * 0.98).toFixed(0)}</div>
               </div>
             </div>
-            <canvas ref={canvasRef} style={{ width: "100%", height: 120 }} />
+            <canvas ref={canvasRef} className="w-full h-[120px]" />
           </div>
         </div>
       </div>
@@ -987,57 +545,23 @@ function ChartSection({ dark, prices }) {
 
 // ─── Market Table ───────────────────────────────────────────────────────
 function MarketTable({ dark, prices }) {
-  const border = dark ? T.dark300 : T.light200;
   return (
     <RevealSection>
-      <div
-        style={{
-          padding: "60px 32px",
-          maxWidth: 1200,
-          margin: "0 auto",
-          overflowX: "auto",
-        }}
-      >
-        <div
-          style={{
-            fontSize: 10,
-            fontWeight: 700,
-            color: T.primary,
-            letterSpacing: ".1em",
-            textTransform: "uppercase",
-            marginBottom: 6,
-          }}
-        >
+      <div className="py-15 px-8 max-w-[1200px] mx-auto overflow-x-auto">
+        <div className="text-[10px] font-bold text-[#006AD9] tracking-[.1em] uppercase mb-1.5">
           Markets
         </div>
-        <div
-          style={{
-            fontSize: 32,
-            fontWeight: 800,
-            letterSpacing: "-.03em",
-            color: dark ? T.white : T.dark,
-            marginBottom: 28,
-          }}
-        >
+        <div className="text-[32px] font-extrabold tracking-[-.03em] text-gray-900 dark:text-white mb-7">
           Top Assets
         </div>
-        <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 560 }}>
+        <table className="w-full border-collapse min-w-[560px]">
           <thead>
             <tr>
               {["#", "Asset", "Price", "24h Change", "Market Cap", "7d Chart", ""].map(
                 (h, i) => (
                   <th
                     key={i}
-                    style={{
-                      textAlign: "left",
-                      fontSize: 10,
-                      fontWeight: 700,
-                      color: dark ? "#6b6b85" : "#94a3b8",
-                      letterSpacing: ".07em",
-                      textTransform: "uppercase",
-                      padding: "0 16px 12px",
-                      borderBottom: `1px solid ${border}`,
-                    }}
+                    className="text-left text-[10px] font-bold text-slate-500 dark:text-[#6b6b85] tracking-[.07em] uppercase px-4 pb-3 border-b border-gray-200 dark:border-[#2B2B38]"
                   >
                     {h}
                   </th>
@@ -1047,123 +571,50 @@ function MarketTable({ dark, prices }) {
           </thead>
           <tbody>
             {prices.map((c, i) => (
-              <tr
-                key={i}
-                style={{ borderBottom: `1px solid ${border}40` }}
-              >
-                <td
-                  style={{
-                    padding: "12px 16px",
-                    fontSize: 11,
-                    fontFamily: "'Space Mono',monospace",
-                    color: dark ? "#6b6b85" : "#94a3b8",
-                  }}
-                >
+              <tr key={i} className="border-b border-gray-200/25 dark:border-[#2B2B38]/25">
+                <td className="py-3 px-4 text-[11px] font-mono text-slate-500 dark:text-[#6b6b85]">
                   {i + 1}
                 </td>
-                <td style={{ padding: "12px 16px" }}>
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 10,
-                    }}
-                  >
+                <td className="py-3 px-4">
+                  <div className="flex items-center gap-2.5">
                     <div
-                      style={{
-                        width: 32,
-                        height: 32,
-                        borderRadius: "50%",
-                        background: c.bg,
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        fontSize: 12,
-                        fontWeight: 800,
-                        color: c.color,
-                        fontFamily: "'Space Mono',monospace",
-                        flexShrink: 0,
-                      }}
+                      className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-extrabold font-mono flex-shrink-0"
+                      style={{ background: c.bg, color: c.color }}
                     >
                       {c.sym[0]}
                     </div>
                     <div>
-                      <div
-                        style={{
-                          fontWeight: 700,
-                          fontSize: 12,
-                          color: dark ? T.white : T.dark,
-                        }}
-                      >
+                      <div className="font-bold text-xs text-gray-900 dark:text-white">
                         {c.name}
                       </div>
-                      <div
-                        style={{
-                          fontSize: 10,
-                          color: dark ? "#6b6b85" : "#94a3b8",
-                          fontFamily: "'Space Mono',monospace",
-                        }}
-                      >
+                      <div className="text-[10px] text-slate-500 dark:text-[#6b6b85] font-mono">
                         {c.sym}
                       </div>
                     </div>
                   </div>
                 </td>
-                <td
-                  style={{
-                    padding: "12px 16px",
-                    fontFamily: "'Space Mono',monospace",
-                    fontWeight: 700,
-                    fontSize: 12,
-                    color: dark ? T.white : T.dark,
-                  }}
-                >
+                <td className="py-3 px-4 font-mono font-bold text-xs text-gray-900 dark:text-white">
                   ${c.price.toLocaleString()}
                 </td>
-                <td style={{ padding: "12px 16px" }}>
+                <td className="py-3 px-4">
                   <span
-                    style={{
-                      display: "inline-block",
-                      padding: "2px 8px",
-                      borderRadius: 6,
-                      fontSize: 10,
-                      fontWeight: 800,
-                      fontFamily: "'Space Mono',monospace",
-                      background:
-                        c.chg >= 0 ? `${T.secondary}18` : `${T.danger}18`,
-                      color: c.chg >= 0 ? T.secondary : T.danger,
-                    }}
+                    className={`inline-block px-2 py-0.5 rounded-md text-[10px] font-extrabold font-mono ${
+                      c.chg >= 0
+                        ? "bg-[#4A9D7F]/15 text-[#4A9D7F]"
+                        : "bg-[#FF6B6B]/15 text-[#FF6B6B]"
+                    }`}
                   >
                     {c.chg >= 0 ? "▲" : "▼"} {Math.abs(c.chg)}%
                   </span>
                 </td>
-                <td
-                  style={{
-                    padding: "12px 16px",
-                    fontFamily: "'Space Mono',monospace",
-                    fontSize: 11,
-                    color: dark ? "#9898b0" : "#64748b",
-                  }}
-                >
+                <td className="py-3 px-4 font-mono text-[11px] text-slate-600 dark:text-[#9898b0]">
                   {c.cap}
                 </td>
-                <td style={{ padding: "12px 16px" }}>
+                <td className="py-3 px-4">
                   <Spark data={c.hist} color={c.color} />
                 </td>
-                <td style={{ padding: "12px 16px" }}>
-                  <button
-                    style={{
-                      padding: "4px 14px",
-                      borderRadius: 7,
-                      border: `1px solid ${T.primary}60`,
-                      background: "transparent",
-                      color: T.primary,
-                      fontSize: 11,
-                      fontWeight: 700,
-                      cursor: "pointer",
-                      fontFamily: "Montserrat, sans-serif",
-                    }}
-                  >
+                <td className="py-3 px-4">
+                  <button className="px-3.5 py-1 rounded-md border border-[#006AD9]/40 bg-transparent text-[#006AD9] text-[11px] font-bold cursor-pointer">
                     Trade
                   </button>
                 </td>
@@ -1178,7 +629,6 @@ function MarketTable({ dark, prices }) {
 
 // ─── Investment Plans ───────────────────────────────────────────────────
 function Plans({ dark }) {
-  const border = dark ? T.dark300 : T.light200;
   const plans = [
     {
       name: "Basic",
@@ -1220,197 +670,67 @@ function Plans({ dark }) {
   ];
   return (
     <RevealSection>
-      <div
-        style={{
-          padding: "60px 32px",
-          background: dark ? T.dark50 : T.primary50,
-          borderTop: `1px solid ${border}`,
-        }}
-      >
-        <div style={{ maxWidth: 1200, margin: "0 auto" }}>
-          <div
-            style={{
-              textAlign: "center",
-              maxWidth: 500,
-              margin: "0 auto 40px",
-            }}
-          >
-            <div
-              style={{
-                fontSize: 10,
-                fontWeight: 700,
-                color: T.primary,
-                letterSpacing: ".1em",
-                textTransform: "uppercase",
-                marginBottom: 6,
-              }}
-            >
+      <div className="py-15 px-8 bg-[#E6F1FD] dark:bg-[#0E0E12] border-t border-t-gray-200 dark:border-t-[#2B2B38]">
+        <div className="max-w-[1200px] mx-auto">
+          <div className="text-center max-w-[500px] mx-auto mb-10">
+            <div className="text-[10px] font-bold text-[#006AD9] tracking-[.1em] uppercase mb-1.5">
               Investment Plans
             </div>
-            <div
-              style={{
-                fontSize: 32,
-                fontWeight: 800,
-                letterSpacing: "-.03em",
-                color: dark ? T.white : T.dark,
-                marginBottom: 10,
-              }}
-            >
+            <div className="text-[32px] font-extrabold tracking-[-.03em] text-gray-900 dark:text-white mb-2.5">
               Grow Your Capital
             </div>
-            <div
-              style={{
-                fontSize: 13,
-                color: dark ? "#9898b0" : "#64748b",
-                lineHeight: 1.6,
-              }}
-            >
+            <div className="text-[13px] text-slate-600 dark:text-[#9898b0] leading-relaxed">
               Choose a plan. Start earning daily passive returns from day one.
             </div>
           </div>
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
-              gap: 20,
-            }}
-          >
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {plans.map((p, i) => (
               <motion.div
                 key={i}
                 whileHover={{ y: -4 }}
-                style={{
-                  border: `1px solid ${p.featured ? T.primary : border}`,
-                  borderRadius: 16,
-                  padding: 28,
-                  background: p.featured
-                    ? dark
-                      ? `linear-gradient(160deg,${T.primary}0a 0%,${T.dark200} 60%)`
-                      : `linear-gradient(160deg,${T.primary50} 0%,${T.white} 60%)`
-                    : dark
-                    ? T.dark200
-                    : T.white,
-                  position: "relative",
-                  transition: ".25s",
-                }}
+                className={`relative rounded-2xl p-7 transition-all ${
+                  p.featured
+                    ? "border border-[#006AD9] bg-gradient-to-br from-[#006AD9]/5 to-white dark:to-[#20202A]"
+                    : `border border-gray-200 dark:border-[#2B2B38] bg-white dark:bg-[#20202A]`
+                }`}
               >
                 {p.featured && (
-                  <div
-                    style={{
-                      position: "absolute",
-                      top: -10,
-                      left: "50%",
-                      transform: "translateX(-50%)",
-                      background: T.primary,
-                      color: T.white,
-                      fontSize: 9,
-                      fontWeight: 800,
-                      padding: "3px 12px",
-                      borderRadius: 100,
-                      letterSpacing: ".07em",
-                      textTransform: "uppercase",
-                      whiteSpace: "nowrap",
-                    }}
-                  >
+                  <div className="absolute -top-2.5 left-1/2 -translate-x-1/2 bg-[#006AD9] text-white text-[9px] font-extrabold px-3 py-0.5 rounded-full tracking-[.07em] uppercase whitespace-nowrap">
                     Most Popular
                   </div>
                 )}
-                <div
-                  style={{
-                    fontSize: 12,
-                    fontWeight: 700,
-                    color: dark ? "#9898b0" : "#64748b",
-                    letterSpacing: ".06em",
-                    textTransform: "uppercase",
-                    marginBottom: 14,
-                  }}
-                >
+                <div className="text-xs font-bold text-slate-600 dark:text-[#9898b0] tracking-[.06em] uppercase mb-3.5">
                   {p.name}
                 </div>
-                <div
-                  style={{
-                    fontSize: 46,
-                    fontWeight: 800,
-                    lineHeight: 1,
-                    color: dark ? T.white : T.dark,
-                    letterSpacing: "-.04em",
-                    fontFamily: "'Space Mono',monospace",
-                  }}
-                >
+                <div className="text-[46px] font-extrabold leading-none text-gray-900 dark:text-white tracking-[-.04em] font-mono">
                   {p.rate}
-                  <span
-                    style={{
-                      fontSize: 20,
-                      color: T.primary,
-                      verticalAlign: "super",
-                      marginLeft: 2,
-                    }}
-                  >
+                  <span className="text-xl text-[#006AD9] align-super ml-0.5">
                     %
                   </span>
                 </div>
-                <div
-                  style={{
-                    fontSize: 11,
-                    color: dark ? "#6b6b85" : "#94a3b8",
-                    marginTop: 5,
-                    marginBottom: 20,
-                  }}
-                >
+                <div className="text-[11px] text-slate-500 dark:text-[#6b6b85] mt-1.25 mb-5">
                   daily return · {p.period}
                 </div>
-                <div
-                  style={{ height: 1, background: border, marginBottom: 20 }}
-                />
+                <div className="h-px bg-gray-200 dark:bg-[#2B2B38] mb-5" />
                 {p.feats.map((f, j) => (
                   <div
                     key={j}
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 8,
-                      fontSize: 12,
-                      color: dark ? "#9898b0" : "#64748b",
-                      marginBottom: 10,
-                    }}
+                    className="flex items-center gap-2 text-xs text-slate-600 dark:text-[#9898b0] mb-2.5"
                   >
-                    <CheckCircle size={14} color={T.secondary} />
+                    <CheckCircle size={14} color="#4A9D7F" />
                     {f}
                   </div>
                 ))}
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    marginTop: 20,
-                    paddingTop: 16,
-                    borderTop: `1px solid ${border}`,
-                  }}
-                >
+                <div className="flex justify-between mt-5 pt-4 border-t border-gray-200 dark:border-[#2B2B38]">
                   {[
                     ["Min", p.min],
                     ["Max", p.max],
                   ].map(([lbl, val]) => (
-                    <div key={lbl} style={{ textAlign: "center" }}>
-                      <div
-                        style={{
-                          fontFamily: "'Space Mono',monospace",
-                          fontSize: 13,
-                          fontWeight: 700,
-                          color: dark ? T.white : T.dark,
-                        }}
-                      >
+                    <div key={lbl} className="text-center">
+                      <div className="font-mono text-[13px] font-bold text-gray-900 dark:text-white">
                         {val}
                       </div>
-                      <div
-                        style={{
-                          fontSize: 9,
-                          color: dark ? "#6b6b85" : "#94a3b8",
-                          marginTop: 2,
-                          textTransform: "uppercase",
-                          letterSpacing: ".05em",
-                        }}
-                      >
+                      <div className="text-[9px] text-slate-500 dark:text-[#6b6b85] mt-0.5 uppercase tracking-[.05em]">
                         {lbl}
                       </div>
                     </div>
@@ -1419,25 +739,11 @@ function Plans({ dark }) {
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  style={{
-                    display: "block",
-                    width: "100%",
-                    marginTop: 24,
-                    padding: 11,
-                    borderRadius: 9,
-                    fontSize: 12,
-                    fontWeight: 800,
-                    textAlign: "center",
-                    cursor: "pointer",
-                    fontFamily: "Montserrat, sans-serif",
-                    border: p.featured ? "none" : `1px solid ${border}`,
-                    background: p.featured ? T.primary : "transparent",
-                    color: p.featured
-                      ? T.white
-                      : dark
-                      ? T.white
-                      : T.dark,
-                  }}
+                  className={`block w-full mt-6 py-2.75 rounded-lg text-xs font-extrabold text-center cursor-pointer ${
+                    p.featured
+                      ? "border-none bg-[#006AD9] text-white"
+                      : `border border-gray-200 dark:border-[#2B2B38] bg-transparent text-gray-900 dark:text-white`
+                  }`}
                 >
                   Start with {p.name}
                 </motion.button>
@@ -1452,129 +758,72 @@ function Plans({ dark }) {
 
 // ─── Features Grid ──────────────────────────────────────────────────────
 function Features({ dark }) {
-  const border = dark ? T.dark300 : T.light200;
   const feats = [
     {
       icon: Shield,
       title: "Bank-Grade Security",
       desc: "256-bit SSL, 2FA, and cold storage for 95% of assets.",
-      accent: T.primary,
+      accent: "#006AD9",
     },
     {
       icon: Zap,
       title: "Lightning Transactions",
       desc: "Deposits credited in seconds. Withdrawals under 60 min.",
-      accent: T.accent,
+      accent: "#F0B90B",
     },
     {
       icon: LineChart,
       title: "Real-Time Markets",
       desc: "Live prices, advanced charting, deep order book data.",
-      accent: T.secondary,
+      accent: "#4A9D7F",
     },
     {
       icon: Coins,
       title: "Daily Passive Income",
       desc: "Earn up to 2.5% daily returns with zero active management.",
-      accent: T.tertiary,
+      accent: "#627EEA",
     },
     {
       icon: Users,
       title: "Referral Program",
       desc: "Earn 5% commission on every referral's investment.",
-      accent: T.purple,
+      accent: "#9164CC",
     },
     {
       icon: Lock,
       title: "KYC Compliant",
       desc: "Fully regulated, KYC-verified platform.",
-      accent: T.secondary,
+      accent: "#4A9D7F",
     },
   ];
   return (
     <RevealSection>
-      <section
-        style={{
-          padding: "60px 32px",
-          maxWidth: 1200,
-          margin: "0 auto",
-        }}
-      >
-        <div style={{ textAlign: "center", maxWidth: 500, margin: "0 auto 40px" }}>
-          <div
-            style={{
-              fontSize: 10,
-              fontWeight: 700,
-              color: T.primary,
-              letterSpacing: ".1em",
-              textTransform: "uppercase",
-              marginBottom: 6,
-            }}
-          >
+      <section className="py-15 px-8 max-w-[1200px] mx-auto">
+        <div className="text-center max-w-[500px] mx-auto mb-10">
+          <div className="text-[10px] font-bold text-[#006AD9] tracking-[.1em] uppercase mb-1.5">
             Why Wix Capital
           </div>
-          <div
-            style={{
-              fontSize: 32,
-              fontWeight: 800,
-              letterSpacing: "-.03em",
-              color: dark ? T.white : T.dark,
-            }}
-          >
+          <div className="text-[32px] font-extrabold tracking-[-.03em] text-gray-900 dark:text-white">
             Built for serious traders
           </div>
         </div>
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
-            gap: 20,
-          }}
-        >
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {feats.map((f, i) => (
             <motion.div
               key={i}
               whileHover={{ y: -4 }}
-              style={{
-                border: `1px solid ${border}`,
-                borderRadius: 14,
-                padding: 24,
-                background: dark ? T.dark200 : T.white,
-              }}
+              className="border border-gray-200 dark:border-[#2B2B38] rounded-xl p-6 bg-white dark:bg-[#20202A]"
             >
               <div
-                style={{
-                  width: 40,
-                  height: 40,
-                  borderRadius: 10,
-                  background: `${f.accent}14`,
-                  border: `1px solid ${f.accent}28`,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  marginBottom: 18,
-                  color: f.accent,
-                }}
+                className="w-10 h-10 rounded-[10px] flex items-center justify-center mb-4.5"
+                style={{ background: `${f.accent}14`, border: `1px solid ${f.accent}28`, color: f.accent }}
               >
                 <f.icon size={20} />
               </div>
-              <div
-                style={{
-                  fontSize: 14,
-                  fontWeight: 700,
-                  marginBottom: 6,
-                  color: dark ? T.white : T.dark,
-                }}
-              >
+              <div className="text-sm font-bold mb-1.5 text-gray-900 dark:text-white">
                 {f.title}
               </div>
-              <div
-                style={{
-                  fontSize: 12,
-                  color: dark ? "#9898b0" : "#64748b",
-                  lineHeight: 1.6,
-                }}
-              >
+              <div className="text-xs text-slate-600 dark:text-[#9898b0] leading-relaxed">
                 {f.desc}
               </div>
             </motion.div>
@@ -1587,7 +836,6 @@ function Features({ dark }) {
 
 // ─── Recent Transactions ────────────────────────────────────────────────
 function RecentTransactions({ dark }) {
-  const border = dark ? T.dark300 : T.light200;
   const transactions = [
     { id: 1, type: "Buy", asset: "BTC", amount: "0.024", value: "$1,620", status: "Completed", time: "2 min ago" },
     { id: 2, type: "Staking", asset: "ETH", amount: "2.5", value: "$9,605", status: "Earning", time: "1 hour ago" },
@@ -1596,52 +844,21 @@ function RecentTransactions({ dark }) {
   ];
   return (
     <RevealSection>
-      <div style={{ padding: "60px 32px", maxWidth: 1200, margin: "0 auto" }}>
-        <div
-          style={{
-            fontSize: 10,
-            fontWeight: 700,
-            color: T.primary,
-            letterSpacing: ".1em",
-            textTransform: "uppercase",
-            marginBottom: 6,
-          }}
-        >
+      <div className="py-15 px-8 max-w-[1200px] mx-auto">
+        <div className="text-[10px] font-bold text-[#006AD9] tracking-[.1em] uppercase mb-1.5">
           Activity
         </div>
-        <div
-          style={{
-            fontSize: 32,
-            fontWeight: 800,
-            letterSpacing: "-.03em",
-            color: dark ? T.white : T.dark,
-            marginBottom: 28,
-          }}
-        >
+        <div className="text-[32px] font-extrabold tracking-[-.03em] text-gray-900 dark:text-white mb-7">
           Recent Transactions
         </div>
-        <div
-          style={{
-            background: dark ? T.dark100 : T.white,
-            borderRadius: 16,
-            border: `1px solid ${border}`,
-            overflowX: "auto",
-          }}
-        >
-          <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 500 }}>
+        <div className="bg-white dark:bg-[#16161D] rounded-2xl border border-gray-200 dark:border-[#2B2B38] overflow-x-auto">
+          <table className="w-full border-collapse min-w-[500px]">
             <thead>
-              <tr style={{ borderBottom: `1px solid ${border}` }}>
+              <tr className="border-b border-gray-200 dark:border-[#2B2B38]">
                 {["Type", "Asset", "Amount", "Value", "Status", "Time"].map((h) => (
                   <th
                     key={h}
-                    style={{
-                      textAlign: "left",
-                      padding: "14px 20px",
-                      fontSize: 10,
-                      fontWeight: 700,
-                      color: dark ? "#6b6b85" : "#94a3b8",
-                      textTransform: "uppercase",
-                    }}
+                    className="text-left px-5 py-3.5 text-[10px] font-bold text-slate-500 dark:text-[#6b6b85] uppercase"
                   >
                     {h}
                   </th>
@@ -1650,78 +867,33 @@ function RecentTransactions({ dark }) {
             </thead>
             <tbody>
               {transactions.map((tx) => (
-                <tr key={tx.id} style={{ borderBottom: `1px solid ${border}40` }}>
-                  <td
-                    style={{
-                      padding: "12px 20px",
-                      fontWeight: 600,
-                      fontSize: 12,
-                      color: dark ? T.white : T.dark,
-                    }}
-                  >
+                <tr key={tx.id} className="border-b border-gray-200/25 dark:border-[#2B2B38]/25">
+                  <td className="px-5 py-3 font-semibold text-xs text-gray-900 dark:text-white">
                     {tx.type}
                   </td>
-                  <td
-                    style={{
-                      padding: "12px 20px",
-                      fontFamily: "'Space Mono',monospace",
-                      fontSize: 11,
-                      color: dark ? "#9898b0" : "#64748b",
-                    }}
-                  >
+                  <td className="px-5 py-3 font-mono text-[11px] text-slate-600 dark:text-[#9898b0]">
                     {tx.asset}
                   </td>
-                  <td
-                    style={{
-                      padding: "12px 20px",
-                      fontFamily: "'Space Mono',monospace",
-                      fontSize: 12,
-                      color: dark ? T.white : T.dark,
-                    }}
-                  >
+                  <td className="px-5 py-3 font-mono text-xs text-gray-900 dark:text-white">
                     {tx.amount}
                   </td>
-                  <td
-                    style={{
-                      padding: "12px 20px",
-                      fontFamily: "'Space Mono',monospace",
-                      fontSize: 12,
-                      color: dark ? T.white : T.dark,
-                    }}
-                  >
+                  <td className="px-5 py-3 font-mono text-xs text-gray-900 dark:text-white">
                     {tx.value}
                   </td>
-                  <td style={{ padding: "12px 20px" }}>
+                  <td className="px-5 py-3">
                     <span
-                      style={{
-                        padding: "2px 8px",
-                        borderRadius: 20,
-                        fontSize: 10,
-                        fontWeight: 700,
-                        background:
-                          tx.status === "Completed"
-                            ? `${T.secondary}18`
-                            : tx.status === "Earning"
-                            ? `${T.accent}18`
-                            : `${T.danger}18`,
-                        color:
-                          tx.status === "Completed"
-                            ? T.secondary
-                            : tx.status === "Earning"
-                            ? T.accent
-                            : T.danger,
-                      }}
+                      className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                        tx.status === "Completed"
+                          ? "bg-[#4A9D7F]/15 text-[#4A9D7F]"
+                          : tx.status === "Earning"
+                          ? "bg-[#F0B90B]/15 text-[#F0B90B]"
+                          : "bg-[#FF6B6B]/15 text-[#FF6B6B]"
+                      }`}
                     >
                       {tx.status}
                     </span>
                   </td>
-                  <td
-                    style={{
-                      padding: "12px 20px",
-                      fontSize: 11,
-                      color: dark ? "#6b6b85" : "#94a3b8",
-                    }}
-                  >
+                  <td className="px-5 py-3 text-[11px] text-slate-500 dark:text-[#6b6b85]">
                     {tx.time}
                   </td>
                 </tr>
@@ -1736,7 +908,6 @@ function RecentTransactions({ dark }) {
 
 // ─── Testimonials ───────────────────────────────────────────────────────
 function Testimonials({ dark }) {
-  const border = dark ? T.dark300 : T.light200;
   const testimonials = [
     {
       name: "Sarah Chen",
@@ -1759,108 +930,35 @@ function Testimonials({ dark }) {
   ];
   return (
     <RevealSection>
-      <div
-        style={{
-          padding: "60px 32px",
-          background: dark ? T.dark50 : T.primary50,
-          borderTop: `1px solid ${border}`,
-          borderBottom: `1px solid ${border}`,
-        }}
-      >
-        <div style={{ maxWidth: 1200, margin: "0 auto", textAlign: "center" }}>
-          <div
-            style={{
-              fontSize: 10,
-              fontWeight: 700,
-              color: T.primary,
-              letterSpacing: ".1em",
-              textTransform: "uppercase",
-              marginBottom: 6,
-            }}
-          >
+      <div className="py-15 px-8 bg-[#E6F1FD] dark:bg-[#0E0E12] border-t border-t-gray-200 dark:border-t-[#2B2B38] border-b border-b-gray-200 dark:border-b-[#2B2B38]">
+        <div className="max-w-[1200px] mx-auto text-center">
+          <div className="text-[10px] font-bold text-[#006AD9] tracking-[.1em] uppercase mb-1.5">
             Social Proof
           </div>
-          <div
-            style={{
-              fontSize: 32,
-              fontWeight: 800,
-              letterSpacing: "-.03em",
-              color: dark ? T.white : T.dark,
-              marginBottom: 40,
-            }}
-          >
+          <div className="text-[32px] font-extrabold tracking-[-.03em] text-gray-900 dark:text-white mb-10">
             What Investors Say
           </div>
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
-              gap: 24,
-            }}
-          >
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {testimonials.map((t, i) => (
               <motion.div
                 key={i}
                 whileHover={{ y: -4 }}
-                style={{
-                  background: dark ? T.dark200 : T.white,
-                  borderRadius: 20,
-                  padding: 24,
-                  border: `1px solid ${border}`,
-                  textAlign: "left",
-                }}
+                className="bg-white dark:bg-[#20202A] rounded-2xl p-6 border border-gray-200 dark:border-[#2B2B38] text-left"
               >
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 12,
-                    marginBottom: 16,
-                  }}
-                >
-                  <div
-                    style={{
-                      width: 44,
-                      height: 44,
-                      borderRadius: 100,
-                      background: `${T.primary}20`,
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      fontWeight: 800,
-                      fontSize: 16,
-                      color: T.primary,
-                    }}
-                  >
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-11 h-11 rounded-full bg-[#006AD9]/20 flex items-center justify-center font-extrabold text-base text-[#006AD9]">
                     {t.avatar}
                   </div>
                   <div>
-                    <div
-                      style={{
-                        fontWeight: 700,
-                        fontSize: 13,
-                        color: dark ? T.white : T.dark,
-                      }}
-                    >
+                    <div className="font-bold text-[13px] text-gray-900 dark:text-white">
                       {t.name}
                     </div>
-                    <div
-                      style={{
-                        fontSize: 11,
-                        color: dark ? "#6b6b85" : "#94a3b8",
-                      }}
-                    >
+                    <div className="text-[11px] text-slate-500 dark:text-[#6b6b85]">
                       {t.role}
                     </div>
                   </div>
                 </div>
-                <p
-                  style={{
-                    fontSize: 13,
-                    lineHeight: 1.6,
-                    color: dark ? "#9898b0" : "#64748b",
-                  }}
-                >
+                <p className="text-[13px] leading-relaxed text-slate-600 dark:text-[#9898b0]">
                   “{t.text}”
                 </p>
               </motion.div>
@@ -1874,7 +972,6 @@ function Testimonials({ dark }) {
 
 // ─── Crypto Education ───────────────────────────────────────────────────
 function Education({ dark }) {
-  const border = dark ? T.dark300 : T.light200;
   const articles = [
     {
       title: "How to start earning daily passive income",
@@ -1894,107 +991,35 @@ function Education({ dark }) {
   ];
   return (
     <RevealSection>
-      <div style={{ padding: "60px 32px", maxWidth: 1200, margin: "0 auto" }}>
-        <div style={{ textAlign: "center", maxWidth: 600, margin: "0 auto 40px" }}>
-          <div
-            style={{
-              fontSize: 10,
-              fontWeight: 700,
-              color: T.primary,
-              letterSpacing: ".1em",
-              textTransform: "uppercase",
-              marginBottom: 6,
-            }}
-          >
+      <div className="py-15 px-8 max-w-[1200px] mx-auto">
+        <div className="text-center max-w-[600px] mx-auto mb-10">
+          <div className="text-[10px] font-bold text-[#006AD9] tracking-[.1em] uppercase mb-1.5">
             Learn & Earn
           </div>
-          <div
-            style={{
-              fontSize: 32,
-              fontWeight: 800,
-              letterSpacing: "-.03em",
-              color: dark ? T.white : T.dark,
-              marginBottom: 10,
-            }}
-          >
+          <div className="text-[32px] font-extrabold tracking-[-.03em] text-gray-900 dark:text-white mb-2.5">
             Crypto Education
           </div>
-          <div
-            style={{
-              fontSize: 13,
-              color: dark ? "#9898b0" : "#64748b",
-            }}
-          >
+          <div className="text-[13px] text-slate-600 dark:text-[#9898b0]">
             Master crypto investing with our free guides and insights.
           </div>
         </div>
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
-            gap: 24,
-          }}
-        >
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {articles.map((art, i) => (
             <motion.div
               key={i}
               whileHover={{ y: -4 }}
-              style={{
-                border: `1px solid ${border}`,
-                borderRadius: 16,
-                padding: 24,
-                background: dark ? T.dark100 : T.white,
-                cursor: "pointer",
-              }}
+              className="border border-gray-200 dark:border-[#2B2B38] rounded-2xl p-6 bg-white dark:bg-[#16161D] cursor-pointer"
             >
-              <div
-                style={{
-                  width: 40,
-                  height: 40,
-                  borderRadius: 10,
-                  background: `${T.primary}14`,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  marginBottom: 16,
-                  color: T.primary,
-                }}
-              >
+              <div className="w-10 h-10 rounded-[10px] bg-[#006AD9]/14 flex items-center justify-center mb-4 text-[#006AD9]">
                 <art.icon size={20} />
               </div>
-              <div
-                style={{
-                  fontSize: 15,
-                  fontWeight: 700,
-                  marginBottom: 8,
-                  color: dark ? T.white : T.dark,
-                }}
-              >
+              <div className="text-[15px] font-bold mb-2 text-gray-900 dark:text-white">
                 {art.title}
               </div>
-              <div
-                style={{
-                  fontSize: 12,
-                  color: dark ? "#9898b0" : "#64748b",
-                  marginBottom: 16,
-                  lineHeight: 1.5,
-                }}
-              >
+              <div className="text-xs text-slate-600 dark:text-[#9898b0] mb-4 leading-relaxed">
                 {art.desc}
               </div>
-              <button
-                style={{
-                  background: "transparent",
-                  border: "none",
-                  color: T.primary,
-                  fontWeight: 700,
-                  fontSize: 12,
-                  cursor: "pointer",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 4,
-                }}
-              >
+              <button className="bg-transparent border-none text-[#006AD9] font-bold text-xs cursor-pointer flex items-center gap-1">
                 Read more <ArrowRight size={12} />
               </button>
             </motion.div>
@@ -2008,7 +1033,6 @@ function Education({ dark }) {
 // ─── FAQ Accordion ──────────────────────────────────────────────────────
 function FAQ({ dark }) {
   const [openIndex, setOpenIndex] = useState(null);
-  const border = dark ? T.dark300 : T.light200;
   const faqs = [
     { q: "How are daily returns calculated?", a: "Daily returns are based on your invested amount multiplied by the plan's daily rate, credited every 24 hours." },
     { q: "Is my capital protected?", a: "We use multi-layer security, cold storage, and insurance funds to protect assets against breaches." },
@@ -2017,67 +1041,26 @@ function FAQ({ dark }) {
   ];
   return (
     <RevealSection>
-      <div
-        style={{
-          padding: "60px 32px",
-          background: dark ? T.dark50 : T.primary50,
-          borderTop: `1px solid ${border}`,
-        }}
-      >
-        <div style={{ maxWidth: 900, margin: "0 auto" }}>
-          <div style={{ textAlign: "center", marginBottom: 40 }}>
-            <div
-              style={{
-                fontSize: 10,
-                fontWeight: 700,
-                color: T.primary,
-                letterSpacing: ".1em",
-                textTransform: "uppercase",
-              }}
-            >
+      <div className="py-15 px-8 bg-[#E6F1FD] dark:bg-[#0E0E12] border-t border-t-gray-200 dark:border-t-[#2B2B38]">
+        <div className="max-w-[900px] mx-auto">
+          <div className="text-center mb-10">
+            <div className="text-[10px] font-bold text-[#006AD9] tracking-[.1em] uppercase">
               FAQ
             </div>
-            <div
-              style={{
-                fontSize: 32,
-                fontWeight: 800,
-                letterSpacing: "-.03em",
-                color: dark ? T.white : T.dark,
-                marginTop: 6,
-              }}
-            >
+            <div className="text-[32px] font-extrabold tracking-[-.03em] text-gray-900 dark:text-white mt-1.5">
               Frequently Asked Questions
             </div>
           </div>
           {faqs.map((faq, idx) => (
-            <div
-              key={idx}
-              style={{ borderBottom: `1px solid ${border}`, marginBottom: 16 }}
-            >
+            <div key={idx} className="border-b border-gray-200 dark:border-[#2B2B38] mb-4">
               <button
                 onClick={() => setOpenIndex(openIndex === idx ? null : idx)}
-                style={{
-                  width: "100%",
-                  textAlign: "left",
-                  padding: "18px 0",
-                  background: "transparent",
-                  border: "none",
-                  cursor: "pointer",
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                }}
+                className="w-full text-left py-4.5 bg-transparent border-none cursor-pointer flex justify-between items-center"
               >
-                <span
-                  style={{
-                    fontWeight: 700,
-                    fontSize: 14,
-                    color: dark ? T.white : T.dark,
-                  }}
-                >
+                <span className="font-bold text-sm text-gray-900 dark:text-white">
                   {faq.q}
                 </span>
-                <span style={{ fontSize: 20, color: T.primary }}>
+                <span className="text-xl text-[#006AD9]">
                   {openIndex === idx ? "−" : "+"}
                 </span>
               </button>
@@ -2086,12 +1069,7 @@ function FAQ({ dark }) {
                   initial={{ height: 0, opacity: 0 }}
                   animate={{ height: "auto", opacity: 1 }}
                   exit={{ height: 0, opacity: 0 }}
-                  style={{
-                    paddingBottom: 20,
-                    fontSize: 13,
-                    color: dark ? "#9898b0" : "#64748b",
-                    lineHeight: 1.6,
-                  }}
+                  className="pb-5 text-[13px] text-slate-600 dark:text-[#9898b0] leading-relaxed"
                 >
                   {faq.a}
                 </motion.div>
@@ -2106,64 +1084,19 @@ function FAQ({ dark }) {
 
 // ─── Footer ─────────────────────────────────────────────────────────────
 function Footer({ dark }) {
-  const border = dark ? T.dark300 : T.light200;
   return (
-    <footer
-      style={{
-        borderTop: `1px solid ${border}`,
-        padding: "32px 32px",
-        background: dark ? T.dark : T.white,
-      }}
-    >
-      <div
-        style={{
-          maxWidth: 1200,
-          margin: "0 auto",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          flexWrap: "wrap",
-          gap: 16,
-        }}
-      >
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 8,
-            fontSize: 14,
-            fontWeight: 800,
-            color: dark ? T.white : T.dark,
-          }}
-        >
-          <div
-            style={{
-              width: 8,
-              height: 8,
-              borderRadius: "50%",
-              background: T.primary,
-            }}
-          />
+    <footer className="border-t border-gray-200 dark:border-[#2B2B38] py-8 px-8 bg-white dark:bg-[#09090B]">
+      <div className="max-w-[1200px] mx-auto flex items-center justify-between flex-wrap gap-4">
+        <div className="flex items-center gap-2 text-sm font-extrabold text-gray-900 dark:text-white">
+          <div className="w-2 h-2 rounded-full bg-[#006AD9]" />
           Wix Capital
         </div>
-        <div
-          style={{
-            fontSize: 11,
-            color: dark ? "#6b6b85" : "#94a3b8",
-          }}
-        >
+        <div className="text-[11px] text-slate-500 dark:text-[#6b6b85]">
           © 2026 Wix Capital. All rights reserved.
         </div>
-        <div
-          style={{
-            display: "flex",
-            gap: 20,
-            fontSize: 11,
-            color: dark ? "#6b6b85" : "#94a3b8",
-          }}
-        >
+        <div className="flex gap-5 text-[11px] text-slate-500 dark:text-[#6b6b85]">
           {["Privacy", "Terms", "Support", "API"].map((l) => (
-            <a key={l} href="#" style={{ textDecoration: "none", color: "inherit" }}>
+            <a key={l} href="#" className="hover:text-[#006AD9] transition">
               {l}
             </a>
           ))}
@@ -2172,24 +1105,6 @@ function Footer({ dark }) {
     </footer>
   );
 }
-
-// ─── Global Styles (CSS keyframes, fonts) ───────────────────────────────
-const globalStyles = `
-  @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Montserrat:wght@300;400;500;600;700;800;900&display=swap');
-  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.4;transform:scale(.7)} }
-  @keyframes float1 { 0%{transform:translate(0,0) rotate(0deg)} 25%{transform:translate(15px,15px) rotate(90deg)} 50%{transform:translate(0,30px) rotate(180deg)} 75%{transform:translate(-15px,15px) rotate(270deg)} 100%{transform:translate(0,0) rotate(360deg)} }
-  @keyframes float2 { 0%{transform:translate(0,0)} 25%{transform:translate(-20px,10px)} 50%{transform:translate(0,20px)} 75%{transform:translate(20px,10px)} 100%{transform:translate(0,0)} }
-  @keyframes float3 { 0%{transform:translate(0,0)} 33%{transform:translate(15px,-15px)} 66%{transform:translate(-15px,-15px)} 100%{transform:translate(0,0)} }
-  @keyframes float4 { 0%{transform:translate(0,0)} 33%{transform:translate(-20px,-10px)} 66%{transform:translate(20px,-20px)} 100%{transform:translate(0,0)} }
-  .floating-element { position:absolute; border-radius:50%; animation-duration:15s; animation-iteration-count:infinite; animation-timing-function:ease-in-out; }
-  .elem-1 { animation-name:float1; }
-  .elem-2 { animation-name:float2; }
-  .elem-3 { animation-name:float3; }
-  .elem-4 { animation-name:float4; }
-  * { margin:0; padding:0; box-sizing:border-box; }
-  body { font-family:'Montserrat',sans-serif; }
-  a { text-decoration:none; color:inherit; }
-`;
 
 // ─── Root Component ─────────────────────────────────────────────────────
 export default function WixCapital() {
@@ -2203,18 +1118,6 @@ export default function WixCapital() {
     checkMobile();
     window.addEventListener("resize", checkMobile);
     return () => window.removeEventListener("resize", checkMobile);
-  }, []);
-
-  useEffect(() => {
-    const style = document.createElement("style");
-    style.textContent = globalStyles;
-    document.head.appendChild(style);
-    const script = document.createElement("script");
-    script.src = "https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js";
-    document.head.appendChild(script);
-    return () => {
-      document.head.removeChild(style);
-    };
   }, []);
 
   // Live price wiggle
@@ -2235,16 +1138,8 @@ export default function WixCapital() {
   }, []);
 
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        background: dark ? T.dark : T.light,
-        color: dark ? T.white : T.dark,
-        fontFamily: "Montserrat, sans-serif",
-        transition: "background .2s, color .2s",
-      }}
-    >
-      <div style={{ position: "sticky", top: 0, zIndex: 100, background: "inherit" }}>
+    <div className="min-h-screen bg-gray-50 dark:bg-[#09090B] text-gray-900 dark:text-white font-sans transition-colors duration-200">
+      <div className="sticky top-0 z-[100] bg-inherit">
         <TickerBar prices={prices} />
         <Nav
           dark={dark}
