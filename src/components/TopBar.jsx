@@ -1,23 +1,68 @@
-import { Menu, Sun, Moon, Shield, Bell, User, ChevronDown, LogOut } from 'lucide-react';
+import { Menu, Sun, Moon, Shield, Bell, User, ChevronDown, LogOut, ArrowUp, ArrowDown } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
 const TopBar = ({ onMenuClick }) => {
   const { dark, toggleDark } = useTheme();
   const [userMenuOpen, setUserMenuOpen] = useState(false);
 
+  // ─── Ticker data & live updates (mirroring Home.jsx) ─────────────
+  const initialCoins = [
+    {
+      sym: 'BTC', price: 67420, chg: 2.34,
+      color: '#f7931a', bg: 'rgba(247,147,26,.1)',
+    },
+    {
+      sym: 'ETH', price: 3842, chg: -1.12,
+      color: '#627eea', bg: 'rgba(98,126,234,.1)',
+    },
+    {
+      sym: 'SOL', price: 178.4, chg: 5.67,
+      color: '#9945ff', bg: 'rgba(153,69,255,.1)',
+    },
+    {
+      sym: 'BNB', price: 612.3, chg: 0.89,
+      color: '#f3ba2f', bg: 'rgba(243,186,47,.1)',
+    },
+    {
+      sym: 'ADA', price: 0.614, chg: -2.45,
+      color: '#4a9dff', bg: 'rgba(74,157,255,.1)',
+    },
+    {
+      sym: 'AVAX', price: 42.18, chg: 3.21,
+      color: '#e84142', bg: 'rgba(232,65,66,.1)',
+    },
+  ];
+
+  const [coins, setCoins] = useState(initialCoins);
+
+  // Simulate live price changes
+  useEffect(() => {
+    const iv = setInterval(() => {
+      setCoins(prev =>
+        prev.map(c => ({
+          ...c,
+          price: parseFloat(
+            (c.price * (1 + (Math.random() - 0.499) * 0.001)).toFixed(
+              c.price > 100 ? 2 : 4
+            )
+          ),
+        }))
+      );
+    }, 2000);
+    return () => clearInterval(iv);
+  }, []);
+
+  // ─── Logout ──────────────────────────────────────────────────────
   const handleLogout = () => {
     localStorage.removeItem('token');
     window.location.replace('/login');
   };
 
   return (
-    <header
-      className="flex h-16 items-center justify-between px-4 sm:px-6 border-b border-[#1a1a28] bg-[#0c0c16] shadow-md sticky top-0 z-[9999]"
-      style={{ fontFamily: "'Syne', sans-serif" }}
-    >
-      {/* Styles – includes glow animation */}
+    <div className="sticky top-0 z-[9999]">
+      {/* ─── CSS animations ──────────────────────────────────────── */}
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;500;600;700;800&display=swap');
 
@@ -32,95 +77,156 @@ const TopBar = ({ onMenuClick }) => {
         .glow-text {
           text-shadow: 0 0 12px rgba(0,200,150,0.6), 0 0 24px rgba(0,168,255,0.4);
         }
+
+        /* Ticker animation */
+        @keyframes tickerRoll {
+          0% { transform: translateX(0); }
+          100% { transform: translateX(-50%); }
+        }
+        .animate-ticker {
+          animation: tickerRoll 50s linear infinite;
+        }
+        .animate-ticker:hover {
+          animation-play-state: paused;
+        }
       `}</style>
 
-      <div className="flex items-center gap-4">
-        {/* Mobile menu toggle */}
-        <button
-          onClick={onMenuClick}
-          className="md:hidden p-1.5 rounded-lg hover:bg-[#1a1a28] transition-colors"
-        >
-          <Menu className="h-5 w-5 text-[#9898b0]" />
-        </button>
-
-        {/* Glowing Logo (visible on all screens) */}
-        <Link
-          to="/dashboard/overview"
-          className="flex items-center gap-2.5 text-[17px] font-extrabold tracking-tight no-underline"
-        >
-          <div className="w-2 h-2 rounded-full bg-[#00c896] glow-dot" />
-          <span className="text-[#e8e8f0]">Wix</span>
-          <span className="bg-gradient-to-r from-[#00c896] to-[#00a8ff] bg-clip-text text-transparent glow-text">
-            Capital
-          </span>
-        </Link>
+      {/* ─── Live Crypto Ticker (fixed at the very top) ──────────── */}
+      <div className="bg-[#060610] border-b border-[#1a1a28] overflow-hidden h-9 flex items-center relative z-50">
+        <div className="flex animate-ticker whitespace-nowrap">
+          {[...coins, ...coins, ...coins].map((c, i) => (
+            <div
+              key={i}
+              className="inline-flex items-center gap-2.5 px-6 border-r border-[#1a1a28]"
+            >
+              <span className="text-[10px] font-bold font-mono text-[#9898b0]">
+                {c.sym}
+              </span>
+              <span className="text-[10px] font-mono text-[#e8e8f0]">
+                ${c.price.toLocaleString()}
+              </span>
+              <span
+                className={`text-[10px] font-mono font-bold ${
+                  c.chg >= 0 ? 'text-[#00c896]' : 'text-[#ff5b6e]'
+                }`}
+              >
+                {c.chg >= 0 ? (
+                  <ArrowUp className="w-3 h-3 inline" />
+                ) : (
+                  <ArrowDown className="w-3 h-3 inline" />
+                )}{' '}
+                {Math.abs(c.chg)}%
+              </span>
+            </div>
+          ))}
+        </div>
       </div>
 
-      <div className="flex items-center gap-1.5 sm:gap-3">
-        {/* Theme toggle */}
-        <button
-          onClick={toggleDark}
-          className="p-1.5 rounded-lg bg-[#1a1a28] hover:bg-[#2a2a3e] transition-colors"
-        >
-          {dark ? <Sun className="h-4 w-4 text-[#e8e8f0]" /> : <Moon className="h-4 w-4 text-[#e8e8f0]" />}
-        </button>
-
-        {/* KYC Button */}
-        <div className="relative">
-          <button className="flex items-center px-2 py-1 rounded-lg text-xs border border-[#1a1a28] bg-[#1a1a28] hover:bg-[#2a2a3e] text-[#9898b0]">
-            <Shield className="h-3.5 w-3.5 mr-1" />
-            <span className="hidden sm:inline-block">KYC</span>
-          </button>
-        </div>
-
-        {/* User dropdown */}
-        <div className="relative">
+      {/* ─── Main TopBar (logo, menu, user) ──────────────────────── */}
+      <header
+        className="flex h-16 items-center justify-between px-4 sm:px-6 border-b border-[#1a1a28] bg-[#0c0c16] shadow-md"
+        style={{ fontFamily: "'Syne', sans-serif" }}
+      >
+        <div className="flex items-center gap-4">
+          {/* Mobile menu toggle */}
           <button
-            onClick={() => setUserMenuOpen(!userMenuOpen)}
-            className="flex items-center gap-2 p-1 rounded-lg hover:bg-[#1a1a28] transition-colors"
+            onClick={onMenuClick}
+            className="md:hidden p-1.5 rounded-lg hover:bg-[#1a1a28] transition-colors"
           >
-            <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-r from-[#00c896] to-[#4a9dff] rounded-full opacity-80" />
-              <div className="relative h-7 w-7 sm:h-8 sm:w-8 bg-[#00c896] rounded-full flex items-center justify-center text-sm font-medium border-2 border-[#1a1a28]">
-                Lo
-              </div>
-            </div>
-            <span className="hidden md:block text-sm font-medium text-[#e8e8f0]">
-              Lowincomehomes47@gmail.com
-            </span>
-            <ChevronDown className="h-4 w-4 text-[#6b6b85] hidden md:block" />
+            <Menu className="h-5 w-5 text-[#9898b0]" />
           </button>
 
-          {userMenuOpen && (
-            <div className="absolute right-0 mt-2 w-56 bg-[#0c0c16] border border-[#1a1a28] rounded-lg shadow-lg z-[10000]">
-              <div className="px-4 py-3 border-b border-[#1a1a28]">
-                <h6 className="text-sm font-medium text-[#e8e8f0]">Low Income</h6>
-                <p className="text-xs text-[#9898b0] mt-0.5">Lowincomehomes47@gmail.com</p>
-              </div>
-              <div className="py-2">
-                <Link to="/dashboard/settings" className="flex items-center gap-2 px-4 py-2 text-sm text-[#9898b0] hover:bg-[#1a1a28] hover:text-[#e8e8f0] transition-colors">
-                  <User className="h-4 w-4" />
-                  <span>My Profile</span>
-                </Link>
-                <Link to="/dashboard/transactions" className="flex items-center gap-2 px-4 py-2 text-sm text-[#9898b0] hover:bg-[#1a1a28] hover:text-[#e8e8f0] transition-colors">
-                  <Bell className="h-4 w-4" />
-                  <span>Transaction History</span>
-                </Link>
-              </div>
-              <div className="py-2 border-t border-[#1a1a28]">
-                <button
-                  onClick={handleLogout}
-                  className="flex items-center gap-2 px-4 py-2 text-sm text-[#ff5b6e] w-full text-left hover:bg-[#1a1a28] transition-colors"
-                >
-                  <LogOut className="h-4 w-4" />
-                  <span>Logout</span>
-                </button>
-              </div>
-            </div>
-          )}
+          {/* Glowing Logo */}
+          <Link
+            to="/dashboard/overview"
+            className="flex items-center gap-2.5 text-[17px] font-extrabold tracking-tight no-underline"
+          >
+            <div className="w-2 h-2 rounded-full bg-[#00c896] glow-dot" />
+            <span className="text-[#e8e8f0]">Wix</span>
+            <span className="bg-gradient-to-r from-[#00c896] to-[#00a8ff] bg-clip-text text-transparent glow-text">
+              Capital
+            </span>
+          </Link>
         </div>
-      </div>
-    </header>
+
+        <div className="flex items-center gap-1.5 sm:gap-3">
+          {/* Theme toggle */}
+          <button
+            onClick={toggleDark}
+            className="p-1.5 rounded-lg bg-[#1a1a28] hover:bg-[#2a2a3e] transition-colors"
+          >
+            {dark ? (
+              <Sun className="h-4 w-4 text-[#e8e8f0]" />
+            ) : (
+              <Moon className="h-4 w-4 text-[#e8e8f0]" />
+            )}
+          </button>
+
+          {/* KYC Button */}
+          <div className="relative">
+            <button className="flex items-center px-2 py-1 rounded-lg text-xs border border-[#1a1a28] bg-[#1a1a28] hover:bg-[#2a2a3e] text-[#9898b0]">
+              <Shield className="h-3.5 w-3.5 mr-1" />
+              <span className="hidden sm:inline-block">KYC</span>
+            </button>
+          </div>
+
+          {/* User dropdown */}
+          <div className="relative">
+            <button
+              onClick={() => setUserMenuOpen(!userMenuOpen)}
+              className="flex items-center gap-2 p-1 rounded-lg hover:bg-[#1a1a28] transition-colors"
+            >
+              <div className="relative">
+                <div className="absolute inset-0 bg-gradient-to-r from-[#00c896] to-[#4a9dff] rounded-full opacity-80" />
+                <div className="relative h-7 w-7 sm:h-8 sm:w-8 bg-[#00c896] rounded-full flex items-center justify-center text-sm font-medium border-2 border-[#1a1a28]">
+                  Lo
+                </div>
+              </div>
+              <span className="hidden md:block text-sm font-medium text-[#e8e8f0]">
+                Lowincomehomes47@gmail.com
+              </span>
+              <ChevronDown className="h-4 w-4 text-[#6b6b85] hidden md:block" />
+            </button>
+
+            {userMenuOpen && (
+              <div className="absolute right-0 mt-2 w-56 bg-[#0c0c16] border border-[#1a1a28] rounded-lg shadow-lg z-[10000]">
+                <div className="px-4 py-3 border-b border-[#1a1a28]">
+                  <h6 className="text-sm font-medium text-[#e8e8f0]">Low Income</h6>
+                  <p className="text-xs text-[#9898b0] mt-0.5">
+                    Lowincomehomes47@gmail.com
+                  </p>
+                </div>
+                <div className="py-2">
+                  <Link
+                    to="/dashboard/settings"
+                    className="flex items-center gap-2 px-4 py-2 text-sm text-[#9898b0] hover:bg-[#1a1a28] hover:text-[#e8e8f0] transition-colors"
+                  >
+                    <User className="h-4 w-4" />
+                    <span>My Profile</span>
+                  </Link>
+                  <Link
+                    to="/dashboard/transactions"
+                    className="flex items-center gap-2 px-4 py-2 text-sm text-[#9898b0] hover:bg-[#1a1a28] hover:text-[#e8e8f0] transition-colors"
+                  >
+                    <Bell className="h-4 w-4" />
+                    <span>Transaction History</span>
+                  </Link>
+                </div>
+                <div className="py-2 border-t border-[#1a1a28]">
+                  <button
+                    onClick={handleLogout}
+                    className="flex items-center gap-2 px-4 py-2 text-sm text-[#ff5b6e] w-full text-left hover:bg-[#1a1a28] transition-colors"
+                  >
+                    <LogOut className="h-4 w-4" />
+                    <span>Logout</span>
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </header>
+    </div>
   );
 };
 
