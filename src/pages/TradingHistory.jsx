@@ -38,118 +38,200 @@ const TradingHistory = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen" style={{ fontFamily: "'Syne', sans-serif" }}>
-        <style>{`@import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;500;600;700;800&display=swap');`}</style>
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#00c896] mx-auto"></div>
-          <p className="mt-4 text-[#6b6b85]">Loading trading history...</p>
-        </div>
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        minHeight: '100vh',
+        background: '#0d0600',
+        fontFamily: "'Syne', sans-serif"
+      }}>
+        <div style={{
+          width: '48px',
+          height: '48px',
+          border: '3px solid rgba(249,115,22,0.2)',
+          borderTopColor: '#f97316',
+          borderRadius: '50%',
+          animation: 'spin 1s linear infinite'
+        }} />
+        <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
       </div>
     );
   }
 
   return (
-    <div className="p-4 md:p-6 pb-20 md:pb-8 overflow-x-hidden flex-grow space-y-6" style={{ fontFamily: "'Syne', sans-serif" }}>
+    <div style={{
+      padding: '24px',
+      overflowX: 'hidden',
+      flexGrow: 1,
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '24px',
+      fontFamily: "'Syne', sans-serif",
+      background: '#0d0600',
+      minHeight: '100vh'
+    }}>
       <style>{`@import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;500;600;700;800&display=swap');`}</style>
 
-      <div className="bg-[#0c0c18] border border-[#1a1a28] rounded-xl p-6 md:p-8 relative overflow-hidden">
-        <div className="relative z-10">
-          <div className="flex items-center gap-4 mb-2 text-[#6b6b85] text-sm">
-            <div className="flex items-center gap-1">
-              <Calendar className="w-4 h-4" />
+      <div style={{
+        background: '#0a0400',
+        border: '1px solid rgba(249,115,22,0.09)',
+        borderRadius: '16px',
+        padding: '24px 32px'
+      }}>
+        <div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '8px', color: '#8a7060', fontSize: '13px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+              <Calendar size={14} />
               <span>ROI History</span>
             </div>
-            <div className="flex items-center gap-1 text-xs text-[#4a4a64]">
-              <Activity className="w-4 h-4" />
+            <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px', color: '#6a4a30' }}>
+              <Activity size={14} />
               <span>{stats.totalTransactions} trades</span>
             </div>
           </div>
-          <h1 className="text-3xl font-bold text-[#e8e8f0] mb-2">Your ROI History</h1>
-          <p className="text-[#6b6b85] mb-6 max-w-lg">Track all your returns on investment from trading and staking.</p>
+          <h1 style={{ fontSize: 'clamp(24px, 5vw, 32px)', fontWeight: 800, color: '#fff', marginBottom: '8px' }}>
+            Your ROI History
+          </h1>
+          <p style={{ color: '#8a7060', marginBottom: '0', maxWidth: '500px', fontSize: '14px' }}>
+            Track all your returns on investment from trading and staking.
+          </p>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-[#0c0c18] border border-[#1a1a28] rounded-xl p-4">
-          <div className="flex items-center">
-            <div className="w-12 h-12 rounded-full bg-[rgba(0,200,150,0.1)] flex items-center justify-center mr-4">
-              <TrendingUp className="w-6 h-6 text-[#00c896]" />
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+        gap: '24px'
+      }}>
+        <div style={{
+          background: '#0a0400',
+          border: '1px solid rgba(249,115,22,0.09)',
+          borderRadius: '16px',
+          padding: '16px'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <div style={{
+              width: '48px',
+              height: '48px',
+              borderRadius: '50%',
+              background: 'rgba(249,115,22,0.1)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginRight: '16px'
+            }}>
+              <TrendingUp size={24} style={{ color: '#f97316' }} />
             </div>
             <div>
-              <p className="text-xs text-[#6b6b85] uppercase font-medium">Total Returns</p>
-              <p className="text-xl font-bold text-[#e8e8f0] mt-1">{formatAmount(stats.totalReturns)}</p>
+              <p style={{ fontSize: '10px', color: '#8a7060', textTransform: 'uppercase' }}>Total Returns</p>
+              <p style={{ fontSize: '20px', fontWeight: 800, color: '#fff' }}>{formatAmount(stats.totalReturns)}</p>
             </div>
           </div>
         </div>
-        <div className="bg-[#0c0c18] border border-[#1a1a28] rounded-xl p-4">
-          <div className="flex items-center">
-            <div className="w-12 h-12 rounded-full bg-[rgba(0,200,150,0.1)] flex items-center justify-center mr-4">
-              <TrendingUp className="w-6 h-6 text-[#00c896]" />
+        <div style={{
+          background: '#0a0400',
+          border: '1px solid rgba(249,115,22,0.09)',
+          borderRadius: '16px',
+          padding: '16px'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <div style={{
+              width: '48px',
+              height: '48px',
+              borderRadius: '50%',
+              background: 'rgba(249,115,22,0.1)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginRight: '16px'
+            }}>
+              <TrendingUp size={24} style={{ color: '#f97316' }} />
             </div>
             <div>
-              <p className="text-xs text-[#6b6b85] uppercase font-medium">Last Return</p>
-              <p className="text-xl font-bold text-[#e8e8f0] mt-1">{formatAmount(stats.lastReturn)}</p>
-              <p className="text-xs text-[#4a4a64] mt-1">{stats.lastReturn > 0 ? 'Most recent ROI' : 'No returns yet'}</p>
+              <p style={{ fontSize: '10px', color: '#8a7060', textTransform: 'uppercase' }}>Last Return</p>
+              <p style={{ fontSize: '20px', fontWeight: 800, color: '#fff' }}>{formatAmount(stats.lastReturn)}</p>
+              <p style={{ fontSize: '10px', color: '#6a4a30', marginTop: '4px' }}>{stats.lastReturn > 0 ? 'Most recent ROI' : 'No returns yet'}</p>
             </div>
           </div>
         </div>
-        <div className="bg-[#0c0c18] border border-[#1a1a28] rounded-xl p-4">
-          <div className="flex items-center">
-            <div className="w-12 h-12 rounded-full bg-[rgba(74,157,255,0.1)] flex items-center justify-center mr-4">
-              <Activity className="w-6 h-6 text-[#4a9dff]" />
+        <div style={{
+          background: '#0a0400',
+          border: '1px solid rgba(249,115,22,0.09)',
+          borderRadius: '16px',
+          padding: '16px'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <div style={{
+              width: '48px',
+              height: '48px',
+              borderRadius: '50%',
+              background: 'rgba(249,115,22,0.1)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginRight: '16px'
+            }}>
+              <Activity size={24} style={{ color: '#f97316' }} />
             </div>
             <div>
-              <p className="text-xs text-[#6b6b85] uppercase font-medium">Total Transactions</p>
-              <p className="text-xl font-bold text-[#e8e8f0] mt-1">{stats.totalTransactions}</p>
-              <p className="text-xs text-[#4a4a64] mt-1">ROI payments received</p>
+              <p style={{ fontSize: '10px', color: '#8a7060', textTransform: 'uppercase' }}>Total Transactions</p>
+              <p style={{ fontSize: '20px', fontWeight: 800, color: '#fff' }}>{stats.totalTransactions}</p>
+              <p style={{ fontSize: '10px', color: '#6a4a30', marginTop: '4px' }}>ROI payments received</p>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="bg-[#0c0c18] border border-[#1a1a28] rounded-xl overflow-hidden">
-        <div className="p-4 border-b border-[#1a1a28]">
-          <h2 className="text-base font-bold text-[#e8e8f0] flex items-center">
-            <TrendingUp className="w-5 h-5 mr-2 text-[#00c896]" />
-            <span>Return on Investment History</span>
+      <div style={{
+        background: '#0a0400',
+        border: '1px solid rgba(249,115,22,0.09)',
+        borderRadius: '16px',
+        overflow: 'hidden'
+      }}>
+        <div style={{ padding: '16px', borderBottom: '1px solid rgba(249,115,22,0.08)' }}>
+          <h2 style={{ fontSize: '16px', fontWeight: 800, color: '#fff', display: 'flex', alignItems: 'center' }}>
+            <TrendingUp size={20} style={{ color: '#f97316', marginRight: '8px' }} />
+            Return on Investment History
           </h2>
         </div>
-        <div className="p-5">
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-full divide-y divide-[#1a1a28]">
+        <div style={{ padding: '20px' }}>
+          <div style={{ overflowX: 'auto' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
               <thead>
-                <tr className="bg-[#0c0c16]">
-                  <th className="px-4 py-3.5 text-left text-xs font-medium text-[#6b6b85] uppercase tracking-wider">Investment Plan</th>
-                  <th className="px-4 py-3.5 text-left text-xs font-medium text-[#6b6b85] uppercase tracking-wider">Amount</th>
-                  <th className="px-4 py-3.5 text-left text-xs font-medium text-[#6b6b85] uppercase tracking-wider">Type</th>
-                  <th className="px-4 py-3.5 text-left text-xs font-medium text-[#6b6b85] uppercase tracking-wider">Date</th>
+                <tr style={{ background: 'rgba(249,115,22,0.03)' }}>
+                  <th style={{ padding: '12px 16px', textAlign: 'left', color: '#8a7060', fontSize: '11px', textTransform: 'uppercase' }}>Investment Plan</th>
+                  <th style={{ padding: '12px 16px', textAlign: 'left', color: '#8a7060', fontSize: '11px', textTransform: 'uppercase' }}>Amount</th>
+                  <th style={{ padding: '12px 16px', textAlign: 'left', color: '#8a7060', fontSize: '11px', textTransform: 'uppercase' }}>Type</th>
+                  <th style={{ padding: '12px 16px', textAlign: 'left', color: '#8a7060', fontSize: '11px', textTransform: 'uppercase' }}>Date</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#1a1a28]">
+              <tbody>
                 {trades.length === 0 ? (
                   <tr>
-                    <td colSpan="4" className="px-4 py-8 text-sm text-center text-[#6b6b85]">
-                      <div className="flex flex-col items-center justify-center">
-                        <Activity className="w-10 h-10 mb-3 text-[#4a4a64]" />
-                        <p>No ROI history found</p>
-                      </div>
+                    <td colSpan="4" style={{ padding: '48px', textAlign: 'center', color: '#8a7060' }}>
+                      <Activity size={40} style={{ color: '#6a4a30', margin: '0 auto 12px' }} />
+                      <p>No ROI history found</p>
                     </td>
                   </tr>
                 ) : (
                   trades.map((trade, idx) => (
-                    <tr key={idx} className="hover:bg-[#1a1a28]/50 transition-colors">
-                      <td className="px-4 py-4 text-sm text-[#9898b0]">{trade.plan || 'N/A'}</td>
-                      <td className="px-4 py-4 text-sm font-medium text-[#e8e8f0]">{formatAmount(trade.amount)}</td>
-                      <td className="px-4 py-4 text-sm text-[#9898b0]">
-                        <span className={`px-2 py-1 text-xs rounded-full ${
-                          trade.type === 'profit' ? 'bg-[rgba(0,200,150,0.1)] text-[#00c896]' :
-                          trade.type === 'bonus' ? 'bg-[rgba(243,186,47,0.1)] text-[#f3ba2f]' :
-                          'bg-[rgba(74,157,255,0.1)] text-[#4a9dff]'
-                        }`}>
+                    <tr key={idx} style={{ borderTop: '1px solid rgba(249,115,22,0.05)' }}>
+                      <td style={{ padding: '12px 16px', color: '#a89070' }}>{trade.plan || 'N/A'}</td>
+                      <td style={{ padding: '12px 16px', color: '#fff', fontWeight: 500 }}>{formatAmount(trade.amount)}</td>
+                      <td style={{ padding: '12px 16px' }}>
+                        <span style={{
+                          padding: '4px 8px',
+                          borderRadius: '999px',
+                          fontSize: '10px',
+                          fontWeight: 600,
+                          background: trade.type === 'profit' ? 'rgba(249,115,22,0.15)' : trade.type === 'bonus' ? 'rgba(243,186,47,0.15)' : 'rgba(74,157,255,0.15)',
+                          color: trade.type === 'profit' ? '#f97316' : trade.type === 'bonus' ? '#f3ba2f' : '#4a9dff'
+                        }}>
                           {trade.type || 'ROI'}
                         </span>
-                      </td>
-                      <td className="px-4 py-4 text-sm text-[#9898b0]">{formatDate(trade.date || trade.createdAt)}</td>
+                       </td>
+                      <td style={{ padding: '12px 16px', color: '#8a7060' }}>{formatDate(trade.date || trade.createdAt)}</td>
                     </tr>
                   ))
                 )}

@@ -12,6 +12,7 @@ import AdminLogin from './pages/admin/AdminLogin';
 import AdminLayout from './pages/admin/AdminLayout';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import AdminUsers from './pages/admin/AdminUsers';
+import AdminUserDetail from './pages/admin/AdminUserDetail'; // ✅ import detail page
 import AdminDeposits from './pages/admin/AdminDeposits';
 import AdminWithdrawals from './pages/admin/AdminWithdrawals';
 import AdminInvestmentPlans from './pages/admin/AdminInvestmentPlans';
@@ -21,8 +22,8 @@ import AdminSettings from './pages/admin/AdminSettings';
 import Overview from './pages/Overview';
 import Deposit from './pages/Deposit';
 import Withdraw from './pages/Withdraw';
-import DepositPayment from './pages/DepositPayment'; 
-import WithdrawFunds from './pages/WithdrawFunds'; 
+import DepositPayment from './pages/DepositPayment';
+import WithdrawFunds from './pages/WithdrawFunds';
 import Markets from './pages/Markets';
 import Trade from './pages/Trade';
 import InvestmentPlans from './pages/InvestmentPlans';
@@ -32,8 +33,6 @@ import TradingHistory from './pages/TradingHistory';
 import Settings from './pages/Settings';
 import Referrals from './pages/Referrals';
 import Support from './pages/Support';
-
-
 
 import HomeLayout from './pages/home/HomeLayout';
 import MarketsPage from './pages/home/MarketsPage';
@@ -45,7 +44,6 @@ import AboutPage from './pages/home/AboutPage';
 import CareersPage from './pages/home/CareersPage';
 import ContactPage from './pages/home/ContactPage';
 
-
 // Auth pages
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -55,22 +53,22 @@ function App() {
     <ThemeProvider>
       <BrowserRouter>
         <Routes>
-          {/* ─── Public Routes ──────────────────────────────────────── */}
+          {/* Public Routes */}
           <Route path="/" element={<Home />} />
           <Route element={<HomeLayout />}>
-  <Route path="/markets" element={<MarketsPage />} />
-  <Route path="/trade" element={<TradePage />} />
-  <Route path="/invest" element={<InvestPage />} />
-  <Route path="/analytics" element={<AnalyticsPage />} />
-  <Route path="/company" element={<CompanyPage />} />
-  <Route path="/about" element={<AboutPage />} />
-  <Route path="/careers" element={<CareersPage />} />
-  <Route path="/contact" element={<ContactPage />} />
-</Route>
+            <Route path="/markets" element={<MarketsPage />} />
+            <Route path="/trade" element={<TradePage />} />
+            <Route path="/invest" element={<InvestPage />} />
+            <Route path="/analytics" element={<AnalyticsPage />} />
+            <Route path="/company" element={<CompanyPage />} />
+            <Route path="/about" element={<AboutPage />} />
+            <Route path="/careers" element={<CareersPage />} />
+            <Route path="/contact" element={<ContactPage />} />
+          </Route>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
 
-          {/* ─── User Protected Routes ──────────────────────────────── */}
+          {/* User Protected Routes */}
           <Route path="/dashboard" element={<Layout />}>
             <Route index element={<Navigate to="/dashboard/overview" replace />} />
             <Route path="overview" element={<PrivateRoute><Overview /></PrivateRoute>} />
@@ -86,17 +84,18 @@ function App() {
             <Route path="trading-history" element={<PrivateRoute><TradingHistory /></PrivateRoute>} />
             <Route path="settings" element={<PrivateRoute><Settings /></PrivateRoute>} />
             <Route path="referrals" element={<PrivateRoute><Referrals /></PrivateRoute>} />
-<Route path="support" element={<PrivateRoute><Support /></PrivateRoute>} />
+            <Route path="support" element={<PrivateRoute><Support /></PrivateRoute>} />
             <Route path="*" element={<Navigate to="/dashboard/overview" replace />} />
           </Route>
 
-          {/* ─── Admin Routes ────────────────────────────────────────── */}
+          {/* Admin Routes */}
           <Route path="/admin/login" element={<AdminLogin />} />
-          
           <Route path="/admin" element={<AdminLayout />}>
             <Route index element={<Navigate to="/admin/dashboard" replace />} />
             <Route path="dashboard" element={<AdminPrivateRoute><AdminDashboard /></AdminPrivateRoute>} />
             <Route path="users" element={<AdminPrivateRoute><AdminUsers /></AdminPrivateRoute>} />
+            {/* ✅ Add dynamic user detail route */}
+            <Route path="users/:userId" element={<AdminPrivateRoute><AdminUserDetail /></AdminPrivateRoute>} />
             <Route path="deposits" element={<AdminPrivateRoute><AdminDeposits /></AdminPrivateRoute>} />
             <Route path="withdrawals" element={<AdminPrivateRoute><AdminWithdrawals /></AdminPrivateRoute>} />
             <Route path="investment-plans" element={<AdminPrivateRoute><AdminInvestmentPlans /></AdminPrivateRoute>} />

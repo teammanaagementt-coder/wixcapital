@@ -78,47 +78,74 @@ const Deposit = () => {
   };
 
   return (
-    <div className="p-4 md:p-6 pb-20 md:pb-8 overflow-x-hidden flex-grow space-y-6" style={{ fontFamily: "'Syne', sans-serif" }}>
+    <div style={{
+      padding: '24px',
+      overflowX: 'hidden',
+      flexGrow: 1,
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '24px',
+      fontFamily: "'Syne', sans-serif",
+      background: '#0d0600',
+      minHeight: '100vh'
+    }}>
       <style>{`@import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;500;600;700;800&display=swap');`}</style>
 
       {/* Header */}
-      <div className="bg-[#0c0c18] border border-[#1a1a28] rounded-xl p-6 md:p-8 relative overflow-hidden">
-        <div className="relative z-10">
-          <div className="flex items-center gap-4 mb-2 text-[#6b6b85] text-sm">
-            <div className="flex items-center gap-1">
-              <Calendar className="w-4 h-4" />
+      <div style={{
+        background: '#0a0400',
+        border: '1px solid rgba(249,115,22,0.09)',
+        borderRadius: '16px',
+        padding: '24px 32px'
+      }}>
+        <div>
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '16px',
+            marginBottom: '8px',
+            color: '#8a7060',
+            fontSize: '13px'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+              <Calendar size={14} />
               <span>Deposit Funds</span>
             </div>
-            <div className="flex items-center gap-1 text-xs text-[#4a4a64]">
-              <Wallet className="w-4 h-4" />
-              <span>
-                Balance: {loadingBalance ? '...' : `$${userBalance.toFixed(2)}`}
-              </span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px', color: '#6a4a30' }}>
+              <Wallet size={14} />
+              <span>Balance: {loadingBalance ? '...' : `$${userBalance.toFixed(2)}`}</span>
             </div>
           </div>
-          <h1 className="text-3xl font-bold text-[#e8e8f0] mb-2">Fund Your Account</h1>
-          <p className="text-[#6b6b85] mb-6 max-w-lg">
+          <h1 style={{ fontSize: 'clamp(24px, 5vw, 32px)', fontWeight: 800, color: '#fff', marginBottom: '8px' }}>
+            Fund Your Account
+          </h1>
+          <p style={{ color: '#8a7060', marginBottom: '0', maxWidth: '500px', fontSize: '14px' }}>
             Add funds to start investing or trading. Choose your preferred method below.
           </p>
         </div>
       </div>
 
       {/* Deposit Form */}
-      <div className="bg-[#0c0c18] border border-[#1a1a28] rounded-xl overflow-hidden">
-        <div className="p-5 border-b border-[#1a1a28]">
-          <h2 className="text-base font-semibold text-[#e8e8f0] flex items-center">
-            <DollarSign className="w-5 h-5 mr-2 text-[#00c896]" />
+      <div style={{
+        background: '#0a0400',
+        border: '1px solid rgba(249,115,22,0.09)',
+        borderRadius: '16px',
+        overflow: 'hidden'
+      }}>
+        <div style={{ padding: '20px', borderBottom: '1px solid rgba(249,115,22,0.08)' }}>
+          <h2 style={{ fontSize: '16px', fontWeight: 700, color: '#fff', display: 'flex', alignItems: 'center' }}>
+            <DollarSign size={20} style={{ color: '#f97316', marginRight: '8px' }} />
             Deposit Details
           </h2>
         </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="p-6 space-y-6">
+        <form onSubmit={handleSubmit(onSubmit)} style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
           {/* Amount */}
-          <div className="space-y-2">
-            <label htmlFor="amount" className="text-sm font-medium text-[#9898b0]">Amount to deposit</label>
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                <span className="text-[#6b6b85]">$</span>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            <label htmlFor="amount" style={{ fontSize: '13px', fontWeight: 500, color: '#8a7060' }}>Amount to deposit</label>
+            <div style={{ position: 'relative' }}>
+              <div style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }}>
+                <span style={{ color: '#6a4a30' }}>$</span>
               </div>
               <input
                 id="amount"
@@ -126,47 +153,86 @@ const Deposit = () => {
                 step="any"
                 min="50"
                 {...register('amount', { required: 'Amount is required', min: 50 })}
-                className="block w-full pl-10 pr-12 py-3 text-lg rounded-xl bg-[#0c0c16] border border-[#1a1a28] focus:ring-2 focus:ring-[#00c896] focus:border-transparent text-[#e8e8f0] transition-all placeholder-[#4a4a64]"
+                style={{
+                  width: '100%',
+                  padding: '12px 12px 12px 40px',
+                  fontSize: '18px',
+                  borderRadius: '16px',
+                  background: 'rgba(255,255,255,0.03)',
+                  border: '1px solid rgba(249,115,22,0.2)',
+                  color: '#fff',
+                  transition: 'all 0.2s',
+                  outline: 'none'
+                }}
                 placeholder="0.00"
+                onFocus={e => e.currentTarget.style.borderColor = '#f97316'}
+                onBlur={e => e.currentTarget.style.borderColor = 'rgba(249,115,22,0.2)'}
               />
             </div>
-            {errors.amount && <p className="text-sm text-[#ff5b6e]">{errors.amount.message}</p>}
+            {errors.amount && <p style={{ color: '#ff5b6e', fontSize: '12px', marginTop: '4px' }}>{errors.amount.message}</p>}
           </div>
 
           {/* Payment Methods Table */}
-          <div className="bg-[#0c0c18] border border-[#1a1a28] rounded-xl overflow-hidden">
-            <div className="p-5 border-b border-[#1a1a28]">
-              <h2 className="text-base font-semibold text-[#e8e8f0]">Select Deposit Method</h2>
+          <div style={{
+            background: '#0a0400',
+            border: '1px solid rgba(249,115,22,0.09)',
+            borderRadius: '16px',
+            overflow: 'hidden'
+          }}>
+            <div style={{ padding: '20px', borderBottom: '1px solid rgba(249,115,22,0.08)' }}>
+              <h2 style={{ fontSize: '16px', fontWeight: 700, color: '#fff' }}>Select Deposit Method</h2>
             </div>
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="bg-[#0c0c16] text-[#6b6b85] text-xs uppercase">
-                  <tr>
-                    <th className="px-6 py-3 text-left font-medium">Method</th>
-                    <th className="px-6 py-3 text-right font-medium">Action</th>
+            <div style={{ overflowX: 'auto' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <thead>
+                  <tr style={{ background: 'rgba(249,115,22,0.03)', color: '#8a7060', fontSize: '11px', textTransform: 'uppercase' }}>
+                    <th style={{ padding: '12px 24px', textAlign: 'left', fontWeight: 500 }}>Method</th>
+                    <th style={{ padding: '12px 24px', textAlign: 'right', fontWeight: 500 }}>Action</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#1a1a28]">
+                <tbody>
                   {paymentMethods.map(method => (
-                    <tr key={method.id} className="hover:bg-[#1a1a28]/50 transition-colors text-sm">
-                      <td className="px-6 py-4">
-                        <div className="flex items-center">
-                          <div className="w-8 h-8 rounded-lg bg-[#0c0c16] p-1.5 mr-3 flex items-center justify-center">
-                            <img src={method.icon} alt={method.name} className="h-full w-full object-contain" />
+                    <tr key={method.id} style={{ borderTop: '1px solid rgba(249,115,22,0.05)' }}>
+                      <td style={{ padding: '16px 24px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center' }}>
+                          <div style={{
+                            width: '32px',
+                            height: '32px',
+                            background: 'rgba(249,115,22,0.08)',
+                            borderRadius: '8px',
+                            padding: '6px',
+                            marginRight: '12px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center'
+                          }}>
+                            <img src={method.icon} alt={method.name} style={{ height: '100%', width: '100%', objectFit: 'contain' }} />
                           </div>
-                          <p className="font-medium text-[#e8e8f0]">{method.name}</p>
+                          <p style={{ fontWeight: 500, color: '#fff' }}>{method.name}</p>
                         </div>
-                      </td>
-                      <td className="px-6 py-4 text-right">
+                       </td>
+                      <td style={{ padding: '16px 24px', textAlign: 'right' }}>
                         <button
                           type="button"
                           onClick={() => selectMethod(method.id)}
-                          className="px-3 py-1.5 text-xs font-medium rounded-md bg-[#00c896] text-black hover:bg-[#00dea8] transition-colors"
+                          style={{
+                            padding: '6px 12px',
+                            fontSize: '11px',
+                            fontWeight: 600,
+                            borderRadius: '999px',
+                            background: '#f97316',
+                            color: '#fff',
+                            border: 'none',
+                            cursor: 'pointer',
+                            transition: 'background 0.2s'
+                          }}
+                          onMouseEnter={e => e.currentTarget.style.background = '#fb923c'}
+                          onMouseLeave={e => e.currentTarget.style.background = '#f97316'}
                         >
                           Select
                         </button>
-                      </td>
-                    </tr>
+                       </td>
+                      </tr>
                   ))}
                 </tbody>
               </table>
@@ -174,32 +240,72 @@ const Deposit = () => {
           </div>
 
           {selectedMethod && (
-            <div className="p-4 rounded-xl bg-[#0c0c16] border border-[#1a1a28] flex items-center justify-between">
-              <div className="flex items-center">
-                <div className="w-10 h-10 rounded-lg bg-[#1a1a28] p-2 mr-3 flex items-center justify-center">
-                  {methodIcon && <img src={methodIcon} alt="" className="h-full w-full object-contain" />}
+            <div style={{
+              padding: '16px',
+              borderRadius: '16px',
+              background: 'rgba(30,12,0,0.6)',
+              border: '1px solid rgba(249,115,22,0.2)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <div style={{
+                  width: '40px',
+                  height: '40px',
+                  background: '#0a0400',
+                  borderRadius: '10px',
+                  padding: '8px',
+                  marginRight: '12px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}>
+                  {methodIcon && <img src={methodIcon} alt="" style={{ height: '100%', width: '100%', objectFit: 'contain' }} />}
                 </div>
                 <div>
-                  <p className="text-sm text-[#6b6b85]">Selected Method</p>
-                  <p className="text-base font-medium text-[#e8e8f0]">{methodName}</p>
+                  <p style={{ fontSize: '12px', color: '#8a7060' }}>Selected Method</p>
+                  <p style={{ fontSize: '14px', fontWeight: 500, color: '#fff' }}>{methodName}</p>
                 </div>
               </div>
-              <button type="button" onClick={resetMethod} className="text-xs text-[#00c896] hover:underline">
+              <button
+                type="button"
+                onClick={resetMethod}
+                style={{ fontSize: '12px', color: '#f97316', background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline' }}
+              >
                 Change
               </button>
             </div>
           )}
 
-          <div className="pt-4">
+          <div style={{ paddingTop: '8px' }}>
             <button
               type="submit"
               disabled={!selectedMethod}
-              className="w-full py-4 px-4 rounded-xl bg-[#00c896] hover:bg-[#00dea8] text-black font-medium flex items-center justify-center gap-2 transition-all duration-300 hover:-translate-y-1 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+              style={{
+                width: '100%',
+                padding: '16px',
+                borderRadius: '999px',
+                background: '#f97316',
+                color: '#fff',
+                fontWeight: 600,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                border: 'none',
+                cursor: 'pointer',
+                transition: 'all 0.3s',
+                opacity: !selectedMethod ? 0.5 : 1,
+                pointerEvents: !selectedMethod ? 'none' : 'auto'
+              }}
+              onMouseEnter={e => { if (!selectedMethod) return; e.currentTarget.style.background = '#fb923c'; e.currentTarget.style.transform = 'translateY(-2px)' }}
+              onMouseLeave={e => { if (!selectedMethod) return; e.currentTarget.style.background = '#f97316'; e.currentTarget.style.transform = 'translateY(0)' }}
             >
               <span>Proceed to Payment</span>
-              <ArrowUpRight className="w-5 h-5" />
+              <ArrowUpRight size={16} />
             </button>
-            <p className="mt-3 text-center text-xs text-[#4a4a64]">
+            <p style={{ marginTop: '12px', textAlign: 'center', fontSize: '11px', color: '#6a4a30' }}>
               By proceeding, you agree to our terms of service
             </p>
           </div>
@@ -207,22 +313,46 @@ const Deposit = () => {
       </div>
 
       {/* Info Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
+        gap: '24px'
+      }}>
         {/* Deposit Process */}
-        <div className="bg-[#0c0c18] border border-[#1a1a28] rounded-xl overflow-hidden">
-          <div className="p-4 border-b border-[#1a1a28] flex items-center">
-            <CheckCircle className="w-5 h-5 text-[#00c896] mr-2" />
-            <h3 className="text-base font-medium text-[#e8e8f0]">Deposit Process</h3>
+        <div style={{
+          background: '#0a0400',
+          border: '1px solid rgba(249,115,22,0.09)',
+          borderRadius: '16px',
+          overflow: 'hidden'
+        }}>
+          <div style={{ padding: '16px', borderBottom: '1px solid rgba(249,115,22,0.08)', display: 'flex', alignItems: 'center' }}>
+            <CheckCircle size={20} style={{ color: '#f97316', marginRight: '8px' }} />
+            <h3 style={{ fontSize: '14px', fontWeight: 600, color: '#fff' }}>Deposit Process</h3>
           </div>
-          <div className="p-5">
-            <ol className="relative border-l border-[#1a1a28] ml-3 space-y-6">
+          <div style={{ padding: '20px' }}>
+            <ol style={{ position: 'relative', borderLeft: '1px solid rgba(249,115,22,0.2)', marginLeft: '12px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
               {['Select Method', 'Enter Amount', 'Complete Payment', 'Confirmation'].map((step, idx) => (
-                <li key={step} className="ml-6">
-                  <span className="absolute flex items-center justify-center w-6 h-6 bg-[#1a1a28] rounded-full -left-3 ring-4 ring-[#0c0c18]">
-                    <span className="text-xs font-bold text-[#00c896]">{idx + 1}</span>
+                <li key={step} style={{ marginLeft: '24px', position: 'relative' }}>
+                  <span style={{
+                    position: 'absolute',
+                    left: '-30px',
+                    top: '0',
+                    width: '24px',
+                    height: '24px',
+                    background: '#0a0400',
+                    border: '1px solid rgba(249,115,22,0.2)',
+                    borderRadius: '50%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '10px',
+                    fontWeight: 'bold',
+                    color: '#f97316'
+                  }}>
+                    {idx + 1}
                   </span>
-                  <h3 className="font-medium text-[#e8e8f0]">{step}</h3>
-                  <p className="text-xs text-[#6b6b85] mt-1">
+                  <h3 style={{ fontWeight: 600, color: '#fff', marginBottom: '4px' }}>{step}</h3>
+                  <p style={{ fontSize: '11px', color: '#8a7060' }}>
                     {idx === 0 && 'Choose your preferred deposit method.'}
                     {idx === 1 && 'Specify the amount you wish to deposit.'}
                     {idx === 2 && 'Follow instructions to complete your deposit.'}
@@ -235,67 +365,88 @@ const Deposit = () => {
         </div>
 
         {/* Security Tips */}
-        <div className="bg-[#0c0c18] border border-[#1a1a28] rounded-xl overflow-hidden">
-          <div className="p-4 border-b border-[#1a1a28] flex items-center">
-            <Shield className="w-5 h-5 text-[#00c896] mr-2" />
-            <h3 className="text-base font-medium text-[#e8e8f0]">Security Tips</h3>
+        <div style={{
+          background: '#0a0400',
+          border: '1px solid rgba(249,115,22,0.09)',
+          borderRadius: '16px',
+          overflow: 'hidden'
+        }}>
+          <div style={{ padding: '16px', borderBottom: '1px solid rgba(249,115,22,0.08)', display: 'flex', alignItems: 'center' }}>
+            <Shield size={20} style={{ color: '#f97316', marginRight: '8px' }} />
+            <h3 style={{ fontSize: '14px', fontWeight: 600, color: '#fff' }}>Security Tips</h3>
           </div>
-          <div className="p-5">
-            <ul className="space-y-3">
+          <div style={{ padding: '20px' }}>
+            <ul style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
               {[
                 'Always verify payment details before confirming.',
                 'Use secure and private internet connections.',
                 'Double-check network type for crypto deposits.',
                 'Never share your payment credentials.',
               ].map((tip, i) => (
-                <li key={i} className="flex">
-                  <div className="flex-shrink-0 w-5 h-5 rounded-full bg-[#1a1a28] flex items-center justify-center mr-3 mt-0.5">
-                    <CheckCircle className="w-3 h-3 text-[#00c896]" />
+                <li key={i} style={{ display: 'flex' }}>
+                  <div style={{ flexShrink: 0, width: '20px', height: '20px', background: 'rgba(249,115,22,0.15)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', marginRight: '12px', marginTop: '2px' }}>
+                    <CheckCircle size={12} style={{ color: '#f97316' }} />
                   </div>
-                  <p className="text-xs text-[#6b6b85]">{tip}</p>
+                  <p style={{ fontSize: '11px', color: '#8a7060' }}>{tip}</p>
                 </li>
               ))}
             </ul>
-            <div className="mt-5 pt-4 border-t border-[#1a1a28]">
-              <div className="flex items-center p-3 rounded-lg bg-[#0c0c16] border border-[#1a1a28]">
-                <Clock className="w-5 h-5 text-[#00c896] mr-3 flex-shrink-0" />
-                <p className="text-xs text-[#00c896]">
-                  Need help? Contact support via the help center.
-                </p>
+            <div style={{ marginTop: '20px', paddingTop: '16px', borderTop: '1px solid rgba(249,115,22,0.08)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', padding: '12px', borderRadius: '12px', background: 'rgba(30,12,0,0.6)', border: '1px solid rgba(249,115,22,0.1)' }}>
+                <Clock size={20} style={{ color: '#f97316', marginRight: '12px', flexShrink: 0 }} />
+                <p style={{ fontSize: '11px', color: '#f97316' }}>Need help? Contact support via the help center.</p>
               </div>
             </div>
           </div>
         </div>
 
         {/* Deposit Stats */}
-        <div className="bg-[#0c0c18] border border-[#1a1a28] rounded-xl overflow-hidden">
-          <div className="p-6">
-            <h3 className="text-lg font-medium text-[#e8e8f0] mb-4">Deposit Summary</h3>
-            <div className="bg-[#0c0c16] rounded-lg p-4 mb-4">
-              <div className="flex items-center justify-between">
+        <div style={{
+          background: '#0a0400',
+          border: '1px solid rgba(249,115,22,0.09)',
+          borderRadius: '16px',
+          overflow: 'hidden'
+        }}>
+          <div style={{ padding: '24px' }}>
+            <h3 style={{ fontSize: '16px', fontWeight: 600, color: '#fff', marginBottom: '16px' }}>Deposit Summary</h3>
+            <div style={{ background: 'rgba(249,115,22,0.03)', borderRadius: '12px', padding: '16px', marginBottom: '16px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <div>
-                  <p className="text-sm text-[#6b6b85]">Total Deposited</p>
-                  <p className="text-2xl font-bold text-[#e8e8f0]">$0.00</p>
+                  <p style={{ fontSize: '12px', color: '#8a7060' }}>Total Deposited</p>
+                  <p style={{ fontSize: '24px', fontWeight: 800, color: '#fff' }}>$0.00</p>
                 </div>
-                <div className="h-14 w-14 rounded-full bg-[rgba(0,200,150,0.1)] flex items-center justify-center">
-                  <CircleCheckBig className="h-6 w-6 text-[#00c896]" />
+                <div style={{ width: '56px', height: '56px', borderRadius: '50%', background: 'rgba(249,115,22,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <CircleCheckBig size={24} style={{ color: '#f97316' }} />
                 </div>
               </div>
             </div>
-            <div className="bg-[#0c0c16] rounded-lg p-3">
-              <div className="flex items-center justify-between">
+            <div style={{ background: 'rgba(249,115,22,0.03)', borderRadius: '12px', padding: '16px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <div>
-                  <p className="text-sm text-[#6b6b85]">Pending Deposits</p>
-                  <p className="text-2xl font-bold text-[#e8e8f0]">$0.00</p>
+                  <p style={{ fontSize: '12px', color: '#8a7060' }}>Pending Deposits</p>
+                  <p style={{ fontSize: '24px', fontWeight: 800, color: '#fff' }}>$0.00</p>
                 </div>
-                <div className="h-14 w-14 rounded-full bg-[rgba(0,200,150,0.1)] flex items-center justify-center">
-                  <History className="h-6 w-6 text-[#00c896]" />
+                <div style={{ width: '56px', height: '56px', borderRadius: '50%', background: 'rgba(249,115,22,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <History size={24} style={{ color: '#f97316' }} />
                 </div>
               </div>
             </div>
-            <div className="mt-6">
-              <Link to="/dashboard/transactions" className="flex items-center justify-center py-2 px-4 bg-[#0c0c16] rounded-lg hover:bg-[#1a1a28] transition-colors text-[#9898b0]">
-                <History className="h-4 w-4 mr-2" />
+            <div style={{ marginTop: '24px' }}>
+              <Link to="/dashboard/transactions" style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: '8px 16px',
+                background: 'rgba(249,115,22,0.05)',
+                borderRadius: '12px',
+                textDecoration: 'none',
+                color: '#8a7060',
+                fontSize: '13px',
+                transition: 'background 0.2s'
+              }}
+              onMouseEnter={e => e.currentTarget.style.background = 'rgba(249,115,22,0.1)'}
+              onMouseLeave={e => e.currentTarget.style.background = 'rgba(249,115,22,0.05)'}>
+                <History size={14} style={{ marginRight: '8px' }} />
                 <span>View Deposit History</span>
               </Link>
             </div>

@@ -8,14 +8,12 @@ import {
 const Sidebar = ({ isOpen, onClose }) => {
   const sidebarRef = useRef(null);
 
-  // Click outside handler (only on mobile when open)
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (isOpen && sidebarRef.current && !sidebarRef.current.contains(event.target)) {
         onClose();
       }
     };
-
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [isOpen, onClose]);
@@ -41,58 +39,87 @@ const Sidebar = ({ isOpen, onClose }) => {
       {/* Overlay (only on mobile) */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[10000] md:hidden"
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(13,6,0,0.8)',
+            backdropFilter: 'blur(8px)',
+            zIndex: 10000
+          }}
           onClick={onClose}
         />
       )}
 
       <aside
         ref={sidebarRef}
-        className={`fixed inset-y-0 left-0 z-[10010] w-72 bg-[#0c0c16] border-r border-[#1a1a28] overflow-y-auto transition-transform duration-300 ${
-          isOpen ? 'translate-x-0' : '-translate-x-full'
-        } md:relative md:translate-x-0`}
-        style={{ fontFamily: "'Syne', sans-serif" }}
+        style={{
+          position: 'fixed',
+          top: 0,
+          bottom: 0,
+          left: 0,
+          zIndex: 10010,
+          width: '288px',
+          background: '#0a0400',
+          borderRight: '1px solid rgba(249,115,22,0.12)',
+          overflowY: 'auto',
+          transition: 'transform 0.3s ease',
+          transform: isOpen ? 'translateX(0)' : 'translateX(-100%)',
+          fontFamily: "'Syne', sans-serif"
+        }}
       >
-        <div className="flex flex-col h-full">
-          {/* Logo – text version matching Home */}
-      
-<div className="p-6 border-b border-[#1a1a28]">
-  <Link to="/" className="flex items-center gap-2.5 text-[17px] font-extrabold tracking-tight no-underline">
-    <div className="w-2 h-2 rounded-full bg-[#00c896] glow-dot" />
-    <span className="text-[#e8e8f0]">Wix</span>
-    <span className="bg-gradient-to-r from-[#00c896] to-[#00a8ff] bg-clip-text text-transparent glow-text">
-      Capital
-    </span>
-  </Link>
-  <style>{`
-    .glow-dot {
-      box-shadow: 0 0 8px #00c896;
-      animation: glowPulse 2s ease-in-out infinite;
-    }
-    @keyframes glowPulse {
-      0%, 100% { opacity: 1; box-shadow: 0 0 8px #00c896; }
-      50% { opacity: 0.5; box-shadow: 0 0 20px #00c896; }
-    }
-    .glow-text {
-      text-shadow: 0 0 12px rgba(0,200,150,0.6), 0 0 24px rgba(0,168,255,0.4);
-    }
-  `}</style>
-</div>
-          <div className="flex-1 overflow-y-auto py-4 px-3">
+        <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+          {/* Logo */}
+          <div style={{ padding: '24px', borderBottom: '1px solid rgba(249,115,22,0.1)' }}>
+            <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '10px', textDecoration: 'none' }}>
+              <div style={{ width: '28px', height: '28px', position: 'relative' }}>
+                <svg viewBox="0 0 40 40" width="28" height="28">
+                  <polygon points="20,2 38,12 38,28 20,38 2,28 2,12" fill="none" stroke="#f97316" strokeWidth="2.5"/>
+                  <polygon points="20,14 26,18 26,22 20,26 14,22 14,18" fill="#f97316"/>
+                </svg>
+              </div>
+              <span style={{ fontSize: '16px', fontWeight: 800 }}>
+                <span style={{ color: '#fff' }}>AWix</span><span style={{ color: '#f97316' }}>Capital</span>
+              </span>
+            </Link>
+          </div>
+
+          <div style={{ flex: 1, overflowY: 'auto', padding: '16px 12px' }}>
             {navItems.map(item => (
               <NavLink
                 key={item.to}
                 to={item.to}
                 onClick={onClose}
-                className={({ isActive }) =>
-                  `flex items-center gap-3 px-4 py-2.5 rounded-lg text-[15px] font-medium transition-colors ${
-                    isActive
-                      ? 'bg-[rgba(0,200,150,0.08)] text-[#00c896]'
-                      : 'text-[#6b6b85] hover:bg-[#1a1a28] hover:text-[#e8e8f0]'
-                  }`
-                }
+                style={({ isActive }) => ({
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px',
+                  padding: '10px 16px',
+                  borderRadius: '12px',
+                  fontSize: '14px',
+                  fontWeight: 500,
+                  textDecoration: 'none',
+                  transition: 'all 0.2s',
+                  marginBottom: '4px',
+                  background: isActive ? 'rgba(249,115,22,0.08)' : 'transparent',
+                  color: isActive ? '#f97316' : '#8a7060'
+                })}
+                onMouseEnter={e => {
+                  if (!e.currentTarget.style.background.includes('rgba(249,115,22,0.08)')) {
+                    e.currentTarget.style.background = 'rgba(249,115,22,0.05)';
+                    e.currentTarget.style.color = '#fff';
+                  }
+                }}
+                onMouseLeave={e => {
+                  if (!e.currentTarget.classList?.contains('active')) {
+                    const isActive = e.currentTarget.style.background === 'rgba(249,115,22,0.08)';
+                    if (!isActive) {
+                      e.currentTarget.style.background = 'transparent';
+                      e.currentTarget.style.color = '#8a7060';
+                    }
+                  }
+                }}
               >
-                <item.icon className="h-4 w-4" />
+                <item.icon size={18} />
                 <span>{item.label}</span>
               </NavLink>
             ))}

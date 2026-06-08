@@ -12,13 +12,11 @@ const Overview = () => {
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
   
-  // Update clock every second
   useEffect(() => {
     const timer = setInterval(() => setCurrentDateTime(new Date()), 1000);
     return () => clearInterval(timer);
   }, []);
 
-  // Fetch real user data – runs every 10 seconds
   useEffect(() => {
     const fetchDashboard = async () => {
       try {
@@ -62,176 +60,319 @@ const Overview = () => {
       label: 'AVAILABLE BALANCE',
       value: userData ? `$${userData.balance.toFixed(2)}` : '$0',
       sub: userData && userData.balance > 0 ? 'Available funds' : 'Add funds to start',
-      subColor: userData && userData.balance > 0 ? 'text-[#00c896]' : 'text-[#ff5b6e]',
+      subColor: userData && userData.balance > 0 ? '#f97316' : '#ff5b6e',
       icon: Wallet,
-      iconBg: 'bg-[#1a1a28]',
     },
     {
       label: 'TOTAL INVESTED',
       value: userData ? `$${userData.totalDeposited?.toFixed(2) || '0.00'}` : '$0',
       sub: '—',
-      subColor: 'text-[#6b6b85]',
+      subColor: '#6a4a30',
       icon: DollarSign,
-      iconBg: 'bg-[#1a1a28]',
     },
     {
       label: 'ACTIVE INVESTMENTS',
       value: '0',
       sub: '0 confirmed',
-      subColor: 'text-[#00c896]',
+      subColor: '#f97316',
       icon: TrendingUp,
-      iconBg: 'bg-[#1a1a28]',
     },
     {
       label: 'REFERRAL EARNINGS',
       value: userData ? `$${userData.referralEarnings?.toFixed(2) || '0.00'}` : '$0',
       sub: `${userData?.totalReferrals || 0} referrals`,
-      subColor: 'text-[#00c896]',
+      subColor: '#f97316',
       icon: Users,
-      iconBg: 'bg-[#1a1a28]',
     },
   ];
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen" style={{ fontFamily: "'Syne', sans-serif" }}>
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        minHeight: '100vh',
+        background: '#0d0600',
+        fontFamily: "'Syne', sans-serif"
+      }}>
         <style>{`@import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;500;600;700;800&display=swap');`}</style>
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#00c896]"></div>
+        <div style={{
+          width: '48px',
+          height: '48px',
+          border: '3px solid rgba(249,115,22,0.2)',
+          borderTopColor: '#f97316',
+          borderRadius: '50%',
+          animation: 'spin 1s linear infinite'
+        }} />
+        <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
       </div>
     );
   }
 
   return (
-    <div className="p-4 md:p-6 pb-20 md:pb-8 overflow-x-hidden flex-grow space-y-6" style={{ fontFamily: "'Syne', sans-serif" }}>
+    <div style={{
+      padding: '24px',
+      overflowX: 'hidden',
+      flexGrow: 1,
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '24px',
+      fontFamily: "'Syne', sans-serif",
+      background: '#0d0600',
+      minHeight: '100vh'
+    }}>
       <style>{`@import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;500;600;700;800&display=swap');`}</style>
 
-      {/* Top Header Section */}
-      <div className="bg-[#0c0c18] border border-[#1a1a28] rounded-xl p-6 md:p-8 relative overflow-hidden">
-        <div className="relative z-10">
-          <div className="flex items-center gap-4 mb-2 text-[#6b6b85] text-sm">
-            <div className="flex items-center gap-1">
-              <Calendar className="w-4 h-4" />
+      {/* Header */}
+      <div style={{
+        background: '#0a0400',
+        border: '1px solid rgba(249,115,22,0.09)',
+        borderRadius: '16px',
+        padding: '24px 32px',
+        position: 'relative',
+        overflow: 'hidden'
+      }}>
+        <div style={{ position: 'relative', zIndex: 2 }}>
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '16px',
+            marginBottom: '8px',
+            color: '#8a7060',
+            fontSize: '13px'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+              <Calendar size={14} />
               <span>{formattedDate}</span>
             </div>
-            <div className="flex items-center gap-1">
-              <Clock className="w-4 h-4" />
+            <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+              <Clock size={14} />
               <span>{formattedTime}</span>
             </div>
           </div>
-          <h1 className="text-3xl font-bold text-[#e8e8f0] mb-2">
+          <h1 style={{
+            fontSize: 'clamp(24px, 5vw, 32px)',
+            fontWeight: 800,
+            color: '#fff',
+            marginBottom: '8px'
+          }}>
             Welcome back, {userData?.name || 'User'}!
           </h1>
-          <p className="text-[#9898b0] mb-6 max-w-lg">
+          <p style={{ color: '#8a7060', marginBottom: '24px', maxWidth: '500px', fontSize: '14px' }}>
             Start building your investment portfolio with exciting IPO opportunities.
           </p>
-          <button className="bg-[#00c896] text-black font-semibold py-3 px-6 rounded-lg hover:bg-[#00dea8] transition-colors flex items-center gap-2">
+          <button style={{
+            background: '#f97316',
+            color: '#fff',
+            fontWeight: 700,
+            padding: '12px 24px',
+            borderRadius: '999px',
+            border: 'none',
+            cursor: 'pointer',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '8px',
+            transition: 'all 0.25s',
+            fontSize: '14px'
+          }}
+          onMouseEnter={e => e.currentTarget.style.background = '#fb923c'}
+          onMouseLeave={e => e.currentTarget.style.background = '#f97316'}>
             <span>Explore Revenue Engines</span>
-            <ArrowUpRight className="w-4 h-4" />
+            <ArrowUpRight size={16} />
           </button>
         </div>
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+        gap: '16px'
+      }}>
         {stats.map((stat, index) => (
-          <div key={index} className="bg-[#0c0c18] border border-[#1a1a28] rounded-lg p-5 relative">
-            <div className="flex justify-between items-start mb-3">
-              <span className="text-xs font-semibold text-[#6b6b85] uppercase tracking-wider">
+          <div key={index} style={{
+            background: '#0a0400',
+            border: '1px solid rgba(249,115,22,0.09)',
+            borderRadius: '16px',
+            padding: '20px'
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
+              <span style={{ fontSize: '10px', fontWeight: 700, color: '#8a7060', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
                 {stat.label}
               </span>
-              <div className={`p-2 rounded-lg ${stat.iconBg}`}>
-                <stat.icon className="w-4 h-4 text-[#9898b0]" />
+              <div style={{ padding: '8px', background: 'rgba(249,115,22,0.08)', borderRadius: '10px' }}>
+                <stat.icon size={16} color="#f97316" />
               </div>
             </div>
-            <div className="text-2xl font-bold text-[#e8e8f0] mb-2">{stat.value}</div>
-            <div className="flex items-center gap-1 text-xs">
-              <span className={stat.subColor}>{stat.sub}</span>
-            </div>
+            <div style={{ fontSize: '28px', fontWeight: 800, color: '#fff', marginBottom: '8px' }}>{stat.value}</div>
+            <div style={{ fontSize: '12px', color: stat.subColor }}>{stat.sub}</div>
           </div>
         ))}
       </div>
 
       {/* Charts Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+        gap: '24px'
+      }}>
         {/* Portfolio Value */}
-        <div className="lg:col-span-2 bg-[#0c0c18] border border-[#1a1a28] rounded-lg p-6">
-          <div className="flex justify-between items-center mb-6">
-            <h3 className="font-semibold text-[#e8e8f0]">Portfolio Value</h3>
-            <span className="text-xs text-[#00c896] flex items-center gap-1">
-              <ArrowUpRight className="w-3 h-3" /> +0% this period
+        <div style={{
+          background: '#0a0400',
+          border: '1px solid rgba(249,115,22,0.09)',
+          borderRadius: '16px',
+          padding: '24px'
+        }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+            <h3 style={{ fontWeight: 700, color: '#fff' }}>Portfolio Value</h3>
+            <span style={{ fontSize: '11px', color: '#f97316', display: 'flex', alignItems: 'center', gap: '4px' }}>
+              <ArrowUpRight size={12} /> +0% this period
             </span>
           </div>
-          <div className="h-48 w-full relative">
-            <svg viewBox="0 0 500 150" className="w-full h-full text-[#2a2a3e] stroke-current">
+          <div style={{ height: '180px', width: '100%', position: 'relative' }}>
+            <svg viewBox="0 0 500 150" style={{ width: '100%', height: '100%' }}>
               <path
                 d="M0,100 L50,80 L100,90 L150,50 L200,60 L250,30 L300,70 L350,40 L400,80 L450,60 L500,90"
                 fill="none"
-                stroke="#00c896"
+                stroke="#f97316"
                 strokeWidth="2"
-                className="opacity-80"
+                opacity="0.8"
               />
             </svg>
-            <div className="absolute bottom-0 w-full flex justify-between text-xs text-[#4a4a64]">
+            <div style={{
+              position: 'absolute',
+              bottom: 0,
+              width: '100%',
+              display: 'flex',
+              justifyContent: 'space-between',
+              fontSize: '10px',
+              color: '#6a4a30'
+            }}>
               <span>Jul</span><span>Aug</span><span>Sep</span><span>Oct</span><span>Nov</span><span>Dec</span>
             </div>
-            <div className="absolute top-0 left-0 h-full flex flex-col justify-between text-xs text-[#4a4a64]">
+            <div style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              height: '100%',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-between',
+              fontSize: '10px',
+              color: '#6a4a30'
+            }}>
               <span>$0k</span><span>$0k</span><span>$0k</span><span>$0k</span>
             </div>
           </div>
         </div>
 
         {/* Sector Allocation */}
-        <div className="bg-[#0c0c18] border border-[#1a1a28] rounded-lg p-6 flex flex-col">
-          <h3 className="font-semibold text-[#e8e8f0] mb-4 flex items-center gap-2">
-            <PieChart className="w-5 h-5 text-[#9898b0]" />
+        <div style={{
+          background: '#0a0400',
+          border: '1px solid rgba(249,115,22,0.09)',
+          borderRadius: '16px',
+          padding: '24px',
+          display: 'flex',
+          flexDirection: 'column'
+        }}>
+          <h3 style={{ fontWeight: 700, color: '#fff', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <PieChart size={20} color="#f97316" />
             Sector Allocation
           </h3>
-          <div className="flex-1 flex flex-col items-center justify-center text-center">
-            <div className="w-20 h-20 rounded-full border-4 border-[#1a1a28] flex items-center justify-center mb-3">
-              <PieChart className="w-10 h-10 text-[#4a4a64]" />
+          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center' }}>
+            <div style={{
+              width: '80px',
+              height: '80px',
+              borderRadius: '50%',
+              border: '2px solid rgba(249,115,22,0.2)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginBottom: '12px'
+            }}>
+              <PieChart size={32} color="#6a4a30" />
             </div>
-            <p className="text-[#6b6b85] text-sm">No investments yet</p>
+            <p style={{ color: '#8a7060', fontSize: '13px' }}>No investments yet</p>
           </div>
         </div>
       </div>
 
       {/* Recent Activity & Promo */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+        gap: '24px'
+      }}>
         {/* Recent Activity */}
-        <div className="bg-[#0c0c18] border border-[#1a1a28] rounded-lg p-6">
-          <h3 className="font-semibold text-[#e8e8f0] mb-6 flex items-center gap-2">
-            <Activity className="w-5 h-5 text-[#9898b0]" />
+        <div style={{
+          background: '#0a0400',
+          border: '1px solid rgba(249,115,22,0.09)',
+          borderRadius: '16px',
+          padding: '24px'
+        }}>
+          <h3 style={{ fontWeight: 700, color: '#fff', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <Activity size={20} color="#f97316" />
             Recent Activity
           </h3>
-          <div className="flex flex-col items-center justify-center py-8 text-center">
-            <div className="w-12 h-12 rounded-full border border-[#1a1a28] flex items-center justify-center mb-3">
-              <Activity className="w-6 h-6 text-[#4a4a64]" />
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '32px 0', textAlign: 'center' }}>
+            <div style={{
+              width: '48px',
+              height: '48px',
+              borderRadius: '50%',
+              border: '1px solid rgba(249,115,22,0.2)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginBottom: '12px'
+            }}>
+              <Activity size={24} color="#6a4a30" />
             </div>
-            <p className="text-[#6b6b85] font-medium mb-1">No activity yet</p>
-            <p className="text-[#4a4a64] text-sm">Start by exploring the marketplace</p>
+            <p style={{ color: '#8a7060', fontWeight: 500, marginBottom: '4px' }}>No activity yet</p>
+            <p style={{ color: '#6a4a30', fontSize: '12px' }}>Start by exploring the marketplace</p>
           </div>
         </div>
 
-        {/* Orbital Alpha Promo – adjusted to a dark teal gradient */}
-        <div className="relative overflow-hidden rounded-lg p-6 bg-gradient-to-br from-[#0d1f1a] via-[#0c0c18] to-[#07070e] border border-[#1a1a28]">
-          <div className="absolute inset-0 opacity-20">
-            <div className="absolute top-10 left-10 w-1 h-1 bg-white rounded-full"></div>
-            <div className="absolute top-20 right-20 w-0.5 h-0.5 bg-white rounded-full"></div>
-            <div className="absolute bottom-10 left-1/4 w-1 h-1 bg-white rounded-full"></div>
-            <div className="absolute top-1/3 right-1/4 w-0.5 h-0.5 bg-white rounded-full"></div>
-            <div className="absolute bottom-1/3 left-2/3 w-1 h-1 bg-white rounded-full"></div>
+        {/* Orbital Alpha Promo */}
+        <div style={{
+          position: 'relative',
+          overflow: 'hidden',
+          borderRadius: '16px',
+          padding: '24px',
+          background: 'linear-gradient(135deg, #1a0e00, #0d0600)',
+          border: '1px solid rgba(249,115,22,0.2)'
+        }}>
+          <div style={{ position: 'absolute', inset: 0, opacity: 0.2 }}>
+            <div style={{ position: 'absolute', top: '10%', left: '10%', width: '4px', height: '4px', background: '#f97316', borderRadius: '50%' }} />
+            <div style={{ position: 'absolute', top: '20%', right: '20%', width: '2px', height: '2px', background: '#f97316', borderRadius: '50%' }} />
+            <div style={{ position: 'absolute', bottom: '15%', left: '25%', width: '3px', height: '3px', background: '#f97316', borderRadius: '50%' }} />
           </div>
-          <div className="relative z-10">
-            <div className="flex justify-end mb-4">
-              <div className="text-5xl font-bold italic text-[#e8e8f0]/10">X</div>
+          <div style={{ position: 'relative', zIndex: 2 }}>
+            <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '16px' }}>
+              <div style={{ fontSize: '48px', fontWeight: 800, opacity: 0.1, color: '#fff' }}>X</div>
             </div>
-            <h3 className="text-xl font-bold text-[#e8e8f0] mb-2">Orbital Alpha</h3>
-            <p className="text-[#9898b0] text-sm mb-6 leading-relaxed max-w-md">
+            <h3 style={{ fontSize: '20px', fontWeight: 800, color: '#fff', marginBottom: '8px' }}>Orbital Alpha</h3>
+            <p style={{ color: '#8a7060', fontSize: '13px', marginBottom: '24px', maxWidth: '400px', lineHeight: 1.6 }}>
               Revolutionary satellite constellation management platform providing real-time orbital tracking and collision avoidance systems for the growing space economy.
             </p>
-            <button className="bg-[#00c896] text-black font-medium py-2 px-4 rounded-lg hover:bg-[#00dea8] transition-colors flex items-center gap-2 text-sm">
+            <button style={{
+              background: '#f97316',
+              color: '#fff',
+              fontWeight: 600,
+              padding: '8px 16px',
+              borderRadius: '999px',
+              border: 'none',
+              cursor: 'pointer',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '8px',
+              fontSize: '12px',
+              transition: 'all 0.2s'
+            }}
+            onMouseEnter={e => e.currentTarget.style.background = '#fb923c'}
+            onMouseLeave={e => e.currentTarget.style.background = '#f97316'}>
               <span>View Details</span>
-              <ArrowUpRight className="w-4 h-4" />
+              <ArrowUpRight size={14} />
             </button>
           </div>
         </div>

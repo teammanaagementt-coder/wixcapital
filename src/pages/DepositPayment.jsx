@@ -91,128 +91,207 @@ const DepositPayment = () => {
   };
 
   return (
-    <div className="p-4 md:p-6 pb-20 md:pb-8 overflow-x-hidden flex-grow space-y-6" style={{ fontFamily: "'Syne', sans-serif" }}>
+    <div style={{
+      padding: '24px',
+      overflowX: 'hidden',
+      flexGrow: 1,
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '24px',
+      fontFamily: "'Syne', sans-serif",
+      background: '#0d0600',
+      minHeight: '100vh'
+    }}>
       <style>{`@import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;500;600;700;800&display=swap');`}</style>
 
       {/* Header */}
-      <div className="bg-[#0c0c18] border border-[#1a1a28] rounded-xl p-6 md:p-8 relative overflow-hidden">
-        <div className="relative z-10">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4 mb-2 text-[#6b6b85] text-sm">
-              <div className="flex items-center gap-1">
-                <Calendar className="w-4 h-4" />
-                <span>Confirm Payment</span>
-              </div>
+      <div style={{
+        background: '#0a0400',
+        border: '1px solid rgba(249,115,22,0.09)',
+        borderRadius: '16px',
+        padding: '24px 32px'
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px', color: '#8a7060', fontSize: '13px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+              <Calendar size={14} />
+              <span>Confirm Payment</span>
             </div>
-            <button
-              onClick={() => navigate('/dashboard/deposit')}
-              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#0c0c16] border border-[#1a1a28] text-[#9898b0] hover:text-[#e8e8f0] transition-colors"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              <span>Back</span>
-            </button>
           </div>
-          <h1 className="text-3xl font-bold text-[#e8e8f0] mb-2">Complete Payment</h1>
-          <p className="text-[#6b6b85] mb-2">
-            Send exactly <span className="font-semibold text-[#e8e8f0]">${amount}</span> using {methodName}
-          </p>
+          <button
+            onClick={() => navigate('/dashboard/deposit')}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              padding: '8px 16px',
+              borderRadius: '999px',
+              background: 'rgba(249,115,22,0.05)',
+              border: '1px solid rgba(249,115,22,0.2)',
+              color: '#8a7060',
+              cursor: 'pointer',
+              transition: 'all 0.2s',
+              fontSize: '13px'
+            }}
+            onMouseEnter={e => { e.currentTarget.style.color = '#fff'; e.currentTarget.style.borderColor = '#f97316'; }}
+            onMouseLeave={e => { e.currentTarget.style.color = '#8a7060'; e.currentTarget.style.borderColor = 'rgba(249,115,22,0.2)'; }}
+          >
+            <ArrowLeft size={14} />
+            <span>Back</span>
+          </button>
         </div>
+        <h1 style={{ fontSize: 'clamp(24px, 5vw, 32px)', fontWeight: 800, color: '#fff', marginBottom: '8px' }}>
+          Complete Payment
+        </h1>
+        <p style={{ color: '#8a7060', fontSize: '14px' }}>
+          Send exactly <span style={{ fontWeight: 700, color: '#fff' }}>${amount}</span> using {methodName}
+        </p>
       </div>
 
-      <div className="max-w-4xl mx-auto">
-        <div className="bg-[#0c0c18] border border-[#1a1a28] rounded-xl overflow-hidden">
+      <div style={{ maxWidth: '800px', margin: '0 auto', width: '100%' }}>
+        <div style={{
+          background: '#0a0400',
+          border: '1px solid rgba(249,115,22,0.09)',
+          borderRadius: '16px',
+          overflow: 'hidden'
+        }}>
           {/* Payment Method Header */}
-          <div className="p-6 border-b border-[#1a1a28]">
-            <div className="flex items-center gap-3">
-              <div className="flex-shrink-0 w-10 h-10 rounded-full bg-[#0c0c16] flex items-center justify-center">
-                {methodIcon && <img src={methodIcon} className="w-6 h-6 object-contain" alt="" />}
+          <div style={{ padding: '24px', borderBottom: '1px solid rgba(249,115,22,0.08)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <div style={{
+                width: '40px',
+                height: '40px',
+                borderRadius: '50%',
+                background: 'rgba(249,115,22,0.08)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}>
+                {methodIcon && <img src={methodIcon} style={{ width: '24px', height: '24px', objectFit: 'contain' }} alt="" />}
               </div>
               <div>
-                <p className="text-sm text-[#6b6b85]">Selected payment method</p>
-                <p className="text-lg font-semibold text-[#e8e8f0]">{methodName}</p>
+                <p style={{ fontSize: '12px', color: '#8a7060' }}>Selected payment method</p>
+                <p style={{ fontSize: '16px', fontWeight: 700, color: '#fff' }}>{methodName}</p>
               </div>
             </div>
           </div>
 
-          <div className="p-6">
-            <div className="mb-8">
-              <div className="mb-4 text-center p-4 rounded-xl bg-[#0c0c16] border border-[#1a1a28]">
-                <p className="text-[#9898b0]">
-                  You are to make a payment of <span className="font-bold text-[#e8e8f0]">${amount}</span> using {methodName}.
+          <div style={{ padding: '24px' }}>
+            <div style={{ marginBottom: '32px' }}>
+              <div style={{ marginBottom: '16px', textAlign: 'center', padding: '16px', borderRadius: '16px', background: 'rgba(249,115,22,0.03)', border: '1px solid rgba(249,115,22,0.08)' }}>
+                <p style={{ color: '#8a7060' }}>
+                  You are to make a payment of <span style={{ fontWeight: 800, color: '#fff' }}>${amount}</span> using {methodName}.
                 </p>
               </div>
-              <div className="my-6 flex justify-center">
-                <div className="p-4 rounded-xl bg-[#0c0c16] border border-[#1a1a28] shadow-md inline-block">
-                  <img src={methodIcon || '/images/usdt.png'} alt={methodName} className="h-16 object-contain" />
+              <div style={{ margin: '24px 0', display: 'flex', justifyContent: 'center' }}>
+                <div style={{ padding: '16px', borderRadius: '16px', background: 'rgba(30,12,0,0.6)', border: '1px solid rgba(249,115,22,0.2)', display: 'inline-block' }}>
+                  <img src={methodIcon || '/images/usdt.png'} alt={methodName} style={{ height: '64px', objectFit: 'contain' }} />
                 </div>
               </div>
             </div>
 
-            <div className="space-y-6">
-              <div className="space-y-2 mb-6">
-                <h3 className="text-lg font-semibold text-[#e8e8f0]">
-                  {methodName} Address:
-                </h3>
-                <div className="relative">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '24px' }}>
+                <h3 style={{ fontSize: '16px', fontWeight: 700, color: '#fff' }}>{methodName} Address:</h3>
+                <div style={{ position: 'relative' }}>
                   <input
                     type="text"
                     readOnly
                     value={walletInfo.address}
-                    className="w-full py-3 pl-4 pr-12 rounded-xl bg-[#0c0c16] border border-[#1a1a28] text-[#e8e8f0] focus:ring-2 focus:ring-[#00c896] font-mono text-sm"
+                    style={{
+                      width: '100%',
+                      padding: '12px 48px 12px 16px',
+                      borderRadius: '16px',
+                      background: 'rgba(255,255,255,0.03)',
+                      border: '1px solid rgba(249,115,22,0.2)',
+                      color: '#fff',
+                      fontFamily: "'Space Mono', monospace",
+                      fontSize: '13px'
+                    }}
                   />
                   <button
                     onClick={() => copyToClipboard(walletInfo.address)}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 w-8 h-8 flex items-center justify-center rounded-full bg-[rgba(0,200,150,0.1)] text-[#00c896] hover:bg-[rgba(0,200,150,0.2)] transition-all"
+                    style={{
+                      position: 'absolute',
+                      right: '12px',
+                      top: '50%',
+                      transform: 'translateY(-50%)',
+                      width: '32px',
+                      height: '32px',
+                      borderRadius: '50%',
+                      background: 'rgba(249,115,22,0.1)',
+                      border: 'none',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      cursor: 'pointer',
+                      transition: 'background 0.2s'
+                    }}
+                    onMouseEnter={e => e.currentTarget.style.background = 'rgba(249,115,22,0.2)'}
+                    onMouseLeave={e => e.currentTarget.style.background = 'rgba(249,115,22,0.1)'}
                   >
-                    {copied ? <CheckCircle className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                    {copied ? <CheckCircle size={14} style={{ color: '#f97316' }} /> : <Copy size={14} style={{ color: '#f97316' }} />}
                   </button>
                 </div>
-                <p className="text-sm text-[#6b6b85]">
-                  <span className="font-semibold">Network:</span> {walletInfo.network}
+                <p style={{ fontSize: '12px', color: '#8a7060' }}>
+                  <span style={{ fontWeight: 700 }}>Network:</span> {walletInfo.network}
                 </p>
               </div>
             </div>
 
             {/* File Upload Section */}
-            <div className="mt-8 border-t border-[#1a1a28] pt-6">
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="space-y-2">
-                  <label className="block text-sm font-medium text-[#9898b0]">
-                    Upload payment proof after sending
-                  </label>
-                  <div className="relative">
-                    <input
-                      type="file"
-                      name="proof"
-                      onChange={handleFileChange}
-                      accept="image/jpeg,image/png,application/pdf"
-                      className="block w-full text-sm text-[#9898b0]
-                        file:mr-4 file:py-2 file:px-4
-                        file:rounded-full file:border-0
-                        file:text-sm file:font-semibold
-                        file:bg-[#0c0c16] file:text-[#00c896]
-                        hover:file:bg-[#1a1a28]
-                        cursor-pointer focus:outline-none"
-                      required
-                    />
-                  </div>
-                  <p className="text-xs text-[#4a4a64]">Accepted formats: JPG, PNG, PDF (Max 5MB)</p>
+            <div style={{ marginTop: '32px', paddingTop: '24px', borderTop: '1px solid rgba(249,115,22,0.08)' }}>
+              <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  <label style={{ fontSize: '13px', fontWeight: 500, color: '#8a7060' }}>Upload payment proof after sending</label>
+                  <input
+                    type="file"
+                    name="proof"
+                    onChange={handleFileChange}
+                    accept="image/jpeg,image/png,application/pdf"
+                    style={{
+                      display: 'block',
+                      width: '100%',
+                      fontSize: '13px',
+                      color: '#8a7060',
+                      cursor: 'pointer'
+                    }}
+                    required
+                  />
+                  <p style={{ fontSize: '10px', color: '#6a4a30' }}>Accepted formats: JPG, PNG, PDF (Max 5MB)</p>
                 </div>
 
                 <div>
                   <button
                     type="submit"
                     disabled={submitting}
-                    className="w-full py-3 px-4 rounded-xl bg-[#00c896] hover:bg-[#00dea8] text-black font-medium flex items-center justify-center gap-2 transition-all duration-300 hover:scale-105 shadow-lg disabled:opacity-50"
+                    style={{
+                      width: '100%',
+                      padding: '12px 16px',
+                      borderRadius: '999px',
+                      background: '#f97316',
+                      color: '#fff',
+                      fontWeight: 600,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '8px',
+                      border: 'none',
+                      cursor: 'pointer',
+                      transition: 'all 0.3s',
+                      opacity: submitting ? 0.7 : 1
+                    }}
+                    onMouseEnter={e => { if (!submitting) e.currentTarget.style.background = '#fb923c'; }}
+                    onMouseLeave={e => { if (!submitting) e.currentTarget.style.background = '#f97316'; }}
                   >
                     {submitting ? (
                       <>
-                        <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-black"></div>
+                        <div style={{ width: '16px', height: '16px', border: '2px solid #fff', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
                         Submitting...
                       </>
                     ) : (
                       <>
-                        <Upload className="h-5 w-5" />
+                        <Upload size={16} />
                         Submit Payment
                       </>
                     )}
@@ -223,6 +302,9 @@ const DepositPayment = () => {
           </div>
         </div>
       </div>
+      <style>{`
+        @keyframes spin { to { transform: rotate(360deg); } }
+      `}</style>
     </div>
   );
 };

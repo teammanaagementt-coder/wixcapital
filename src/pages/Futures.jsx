@@ -17,7 +17,6 @@ const Futures = () => {
   const [priceChange, setPriceChange] = useState(2.4);
   const [loading, setLoading] = useState(false);
 
-  // Simulate price updates
   useEffect(() => {
     const interval = setInterval(() => {
       const change = (Math.random() - 0.5) * 100;
@@ -27,103 +26,146 @@ const Futures = () => {
     return () => clearInterval(interval);
   }, []);
 
-const handleOpenPosition = async () => {
-  if (!amount || parseFloat(amount) <= 0) {
-    toast.error('Please enter a valid amount');
-    return;
-  }
-
-  const marginRequired = parseFloat(amount) / leverage;
-  if (marginRequired > balance) {
-    toast.error(`Insufficient balance. Required margin: $${marginRequired.toFixed(2)}`);
-    return;
-  }
-
-  const token = localStorage.getItem('token');
-  try {
-    const res = await fetch(`${import.meta.env.VITE_API_URL}/futures`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({
-        pair,
-        position,
-        leverage,
-        margin: marginRequired,
-        size: parseFloat(amount),
-        entryPrice: currentPrice,
-      }),
-    });
-
-    const data = await res.json();
-    if (res.ok) {
-      toast.success(`${position === 'long' ? 'Long' : 'Short'} position opened`);
-      setBalance(data.user?.balance ?? balance - marginRequired);
-      setAmount('');
-    } else {
-      toast.error(data.message || 'Failed to open position');
+  const handleOpenPosition = async () => {
+    if (!amount || parseFloat(amount) <= 0) {
+      toast.error('Please enter a valid amount');
+      return;
     }
-  } catch (err) {
-    toast.error('Network error');
-  }
-};
+
+    const marginRequired = parseFloat(amount) / leverage;
+    if (marginRequired > balance) {
+      toast.error(`Insufficient balance. Required margin: $${marginRequired.toFixed(2)}`);
+      return;
+    }
+
+    const token = localStorage.getItem('token');
+    try {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/futures`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          pair,
+          position,
+          leverage,
+          margin: marginRequired,
+          size: parseFloat(amount),
+          entryPrice: currentPrice,
+        }),
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        toast.success(`${position === 'long' ? 'Long' : 'Short'} position opened`);
+        setBalance(data.user?.balance ?? balance - marginRequired);
+        setAmount('');
+      } else {
+        toast.error(data.message || 'Failed to open position');
+      }
+    } catch (err) {
+      toast.error('Network error');
+    }
+  };
 
   const handleClosePosition = () => {
     toast.success('Position closed successfully!');
   };
 
   return (
-    <div className="p-4 md:p-6 pb-20 md:pb-8 overflow-x-hidden flex-grow space-y-6" style={{ fontFamily: "'Syne', sans-serif" }}>
+    <div style={{
+      padding: '24px',
+      overflowX: 'hidden',
+      flexGrow: 1,
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '24px',
+      fontFamily: "'Syne', sans-serif",
+      background: '#0d0600',
+      minHeight: '100vh'
+    }}>
       <style>{`@import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;500;600;700;800&display=swap');`}</style>
 
       {/* Header */}
-      <div className="bg-[#0c0c18] border border-[#1a1a28] rounded-xl p-6 md:p-8 relative overflow-hidden">
-        <div className="relative z-10">
-          <div className="flex items-center gap-4 mb-2 text-[#6b6b85] text-sm">
-            <div className="flex items-center gap-1">
-              <Calendar className="w-4 h-4" />
+      <div style={{
+        background: '#0a0400',
+        border: '1px solid rgba(249,115,22,0.09)',
+        borderRadius: '16px',
+        padding: '24px 32px'
+      }}>
+        <div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '8px', color: '#8a7060', fontSize: '13px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+              <Calendar size={14} />
               <span>Futures Trading</span>
             </div>
           </div>
-          <h1 className="text-3xl font-bold text-[#e8e8f0] mb-2">Futures Market</h1>
-          <p className="text-[#6b6b85] mb-6 max-w-lg">
+          <h1 style={{ fontSize: 'clamp(24px, 5vw, 32px)', fontWeight: 800, color: '#fff', marginBottom: '8px' }}>
+            Futures Market
+          </h1>
+          <p style={{ color: '#8a7060', marginBottom: '0', maxWidth: '500px', fontSize: '14px' }}>
             Trade futures contracts with leverage. Manage your risk and maximize your potential.
           </p>
         </div>
       </div>
 
       {/* Trading Interface */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Chart & Price (Left) */}
-        <div className="lg:col-span-2 bg-[#0c0c18] border border-[#1a1a28] rounded-xl overflow-hidden">
-          <div className="p-4 border-b border-[#1a1a28] flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <h3 className="text-[#e8e8f0] font-medium">{pair}</h3>
-              <div className="text-lg font-bold text-[#e8e8f0]">
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+        gap: '24px'
+      }}>
+        {/* Chart & Price */}
+        <div style={{
+          background: '#0a0400',
+          border: '1px solid rgba(249,115,22,0.09)',
+          borderRadius: '16px',
+          overflow: 'hidden'
+        }}>
+          <div style={{
+            padding: '16px',
+            borderBottom: '1px solid rgba(249,115,22,0.08)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            flexWrap: 'wrap',
+            gap: '12px'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
+              <h3 style={{ color: '#fff', fontWeight: 500 }}>{pair}</h3>
+              <div style={{ fontSize: '20px', fontWeight: 800, color: '#fff' }}>
                 ${currentPrice.toLocaleString()}
               </div>
-              <div className={`text-sm font-medium ${priceChange >= 0 ? 'text-[#00c896]' : 'text-[#ff5b6e]'}`}>
-                {priceChange >= 0 ? <ArrowUp className="inline w-4 h-4" /> : <ArrowDown className="inline w-4 h-4" />}
-                {Math.abs(priceChange).toFixed(2)}%
+              <div style={{
+                fontSize: '13px',
+                fontWeight: 500,
+                color: priceChange >= 0 ? '#22c55e' : '#ef4444'
+              }}>
+                {priceChange >= 0 ? <ArrowUp size={16} style={{ display: 'inline' }} /> : <ArrowDown size={16} style={{ display: 'inline' }} />}
+                {' '}{Math.abs(priceChange).toFixed(2)}%
               </div>
             </div>
-            <div className="flex items-center gap-2">
-              <select
-                value={pair}
-                onChange={(e) => setPair(e.target.value)}
-                className="bg-[#0c0c16] border border-[#1a1a28] text-[#e8e8f0] rounded-lg px-3 py-1.5 text-sm"
-              >
-                <option value="BTC-USDT">BTC-USDT</option>
-                <option value="ETH-USDT">ETH-USDT</option>
-                <option value="SOL-USDT">SOL-USDT</option>
-                <option value="BNB-USDT">BNB-USDT</option>
-              </select>
-            </div>
+            <select
+              value={pair}
+              onChange={(e) => setPair(e.target.value)}
+              style={{
+                background: 'rgba(249,115,22,0.05)',
+                border: '1px solid rgba(249,115,22,0.2)',
+                color: '#fff',
+                borderRadius: '12px',
+                padding: '6px 12px',
+                fontSize: '13px'
+              }}
+            >
+              <option value="BTC-USDT">BTC-USDT</option>
+              <option value="ETH-USDT">ETH-USDT</option>
+              <option value="SOL-USDT">SOL-USDT</option>
+              <option value="BNB-USDT">BNB-USDT</option>
+            </select>
           </div>
-          <div className="p-4 h-96">
-            <div className="w-full h-full rounded-lg overflow-hidden">
+          <div style={{ padding: '16px', height: '384px' }}>
+            <div style={{ width: '100%', height: '100%', borderRadius: '12px', overflow: 'hidden' }}>
               <iframe
                 src={`https://s.tradingview.com/widgetembed/?frameElementId=tradingview_${pair.replace('-', '')}&symbol=${pair.replace('-', '')}&interval=1&hidesidetoolbar=1&theme=dark&style=1&timezone=Etc/UTC&studies=[]`}
                 style={{ height: '100%', width: '100%', border: 'none' }}
@@ -133,40 +175,61 @@ const handleOpenPosition = async () => {
           </div>
         </div>
 
-        {/* Order Form (Right) */}
-        <div className="bg-[#0c0c18] border border-[#1a1a28] rounded-xl overflow-hidden">
-          <div className="p-4 border-b border-[#1a1a28] flex items-center justify-between">
-            <h3 className="text-[#e8e8f0] font-medium">Order</h3>
-            <div className="flex items-center gap-3">
+        {/* Order Form */}
+        <div style={{
+          background: '#0a0400',
+          border: '1px solid rgba(249,115,22,0.09)',
+          borderRadius: '16px',
+          overflow: 'hidden'
+        }}>
+          <div style={{
+            padding: '16px',
+            borderBottom: '1px solid rgba(249,115,22,0.08)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between'
+          }}>
+            <h3 style={{ color: '#fff', fontWeight: 500 }}>Order</h3>
+            <div style={{ display: 'flex', gap: '8px' }}>
               <button
                 onClick={() => setPosition('long')}
-                className={`px-4 py-1.5 text-sm rounded-lg transition-colors ${
-                  position === 'long'
-                    ? 'bg-[#00c896] text-black'
-                    : 'bg-[#0c0c16] text-[#6b6b85] hover:text-[#e8e8f0]'
-                }`}
+                style={{
+                  padding: '6px 16px',
+                  fontSize: '13px',
+                  borderRadius: '999px',
+                  background: position === 'long' ? '#f97316' : 'rgba(249,115,22,0.08)',
+                  color: position === 'long' ? '#fff' : '#8a7060',
+                  border: 'none',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s'
+                }}
               >
                 Long
               </button>
               <button
                 onClick={() => setPosition('short')}
-                className={`px-4 py-1.5 text-sm rounded-lg transition-colors ${
-                  position === 'short'
-                    ? 'bg-[#ff5b6e] text-white'
-                    : 'bg-[#0c0c16] text-[#6b6b85] hover:text-[#e8e8f0]'
-                }`}
+                style={{
+                  padding: '6px 16px',
+                  fontSize: '13px',
+                  borderRadius: '999px',
+                  background: position === 'short' ? '#ef4444' : 'rgba(249,115,22,0.08)',
+                  color: position === 'short' ? '#fff' : '#8a7060',
+                  border: 'none',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s'
+                }}
               >
                 Short
               </button>
             </div>
           </div>
 
-          <div className="p-6 space-y-4">
+          <div style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
             {/* Leverage */}
             <div>
-              <div className="flex justify-between text-sm">
-                <span className="text-[#6b6b85]">Leverage</span>
-                <span className="text-[#e8e8f0]">{leverage}x</span>
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px' }}>
+                <span style={{ color: '#8a7060' }}>Leverage</span>
+                <span style={{ color: '#fff' }}>{leverage}x</span>
               </div>
               <input
                 type="range"
@@ -174,63 +237,92 @@ const handleOpenPosition = async () => {
                 max="100"
                 value={leverage}
                 onChange={(e) => setLeverage(parseInt(e.target.value))}
-                className="w-full mt-2 accent-[#00c896]"
+                style={{ width: '100%', marginTop: '8px' }}
+                className="accent-orange"
               />
+              <style>{`.accent-orange { accent-color: #f97316; }`}</style>
             </div>
 
             {/* Amount */}
             <div>
-              <label className="text-sm text-[#6b6b85]">Position Size (USDT)</label>
+              <label style={{ fontSize: '13px', color: '#8a7060' }}>Position Size (USDT)</label>
               <input
                 type="number"
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
-                className="w-full mt-1 p-3 rounded-xl bg-[#0c0c16] border border-[#1a1a28] text-[#e8e8f0] focus:ring-2 focus:ring-[#00c896] focus:border-transparent"
+                style={{
+                  width: '100%',
+                  marginTop: '4px',
+                  padding: '12px',
+                  borderRadius: '16px',
+                  background: 'rgba(255,255,255,0.03)',
+                  border: '1px solid rgba(249,115,22,0.2)',
+                  color: '#fff',
+                  outline: 'none'
+                }}
                 placeholder="0.00"
               />
             </div>
 
             {/* Margin Info */}
-            <div className="space-y-2 text-sm">
-              <div className="flex justify-between">
-                <span className="text-[#6b6b85]">Required Margin</span>
-                <span className="text-[#e8e8f0]">
-                  ${((parseFloat(amount) || 0) / leverage).toFixed(2)}
-                </span>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '13px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <span style={{ color: '#8a7060' }}>Required Margin</span>
+                <span style={{ color: '#fff' }}>${((parseFloat(amount) || 0) / leverage).toFixed(2)}</span>
               </div>
-              <div className="flex justify-between">
-                <span className="text-[#6b6b85]">Available Balance</span>
-                <span className="text-[#e8e8f0]">${balance.toFixed(2)}</span>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <span style={{ color: '#8a7060' }}>Available Balance</span>
+                <span style={{ color: '#fff' }}>${balance.toFixed(2)}</span>
               </div>
-              <div className="flex justify-between">
-                <span className="text-[#6b6b85]">Liquidation Price</span>
-                <span className="text-[#ff5b6e]">
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <span style={{ color: '#8a7060' }}>Liquidation Price</span>
+                <span style={{ color: '#ef4444' }}>
                   ${(currentPrice * (1 - 1 / leverage * (position === 'long' ? 1 : -1))).toFixed(2)}
                 </span>
               </div>
             </div>
 
             {/* Buttons */}
-            <div className="space-y-3 pt-2">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', paddingTop: '8px' }}>
               <button
                 onClick={handleOpenPosition}
-                className={`w-full py-3 rounded-xl font-medium transition-colors ${
-                  position === 'long'
-                    ? 'bg-[#00c896] text-black hover:bg-[#00dea8]'
-                    : 'bg-[#ff5b6e] text-white hover:bg-[#ff7b8b]'
-                }`}
+                style={{
+                  width: '100%',
+                  padding: '12px',
+                  borderRadius: '999px',
+                  fontWeight: 600,
+                  transition: 'all 0.3s',
+                  background: position === 'long' ? '#f97316' : '#ef4444',
+                  color: '#fff',
+                  border: 'none',
+                  cursor: 'pointer'
+                }}
+                onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-2px)'}
+                onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0)'}
               >
                 Open {position === 'long' ? 'Long' : 'Short'} Position
               </button>
               <button
                 onClick={handleClosePosition}
-                className="w-full py-3 rounded-xl bg-[#0c0c16] hover:bg-[#1a1a28] text-[#e8e8f0] font-medium"
+                style={{
+                  width: '100%',
+                  padding: '12px',
+                  borderRadius: '999px',
+                  fontWeight: 600,
+                  background: 'rgba(249,115,22,0.08)',
+                  color: '#fff',
+                  border: 'none',
+                  cursor: 'pointer',
+                  transition: 'background 0.2s'
+                }}
+                onMouseEnter={e => e.currentTarget.style.background = 'rgba(249,115,22,0.15)'}
+                onMouseLeave={e => e.currentTarget.style.background = 'rgba(249,115,22,0.08)'}
               >
                 Close Position
               </button>
             </div>
 
-            <p className="text-xs text-center text-[#4a4a64]">
+            <p style={{ fontSize: '10px', textAlign: 'center', color: '#6a4a30' }}>
               Trading futures involves significant risk. Please manage your risk carefully.
             </p>
           </div>
@@ -238,24 +330,33 @@ const handleOpenPosition = async () => {
       </div>
 
       {/* Market Info */}
-      <div className="bg-[#0c0c18] border border-[#1a1a28] rounded-xl p-6">
-        <h3 className="text-[#e8e8f0] font-medium mb-4">Market Information</h3>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+      <div style={{
+        background: '#0a0400',
+        border: '1px solid rgba(249,115,22,0.09)',
+        borderRadius: '16px',
+        padding: '24px'
+      }}>
+        <h3 style={{ color: '#fff', fontWeight: 500, marginBottom: '16px' }}>Market Information</h3>
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
+          gap: '24px'
+        }}>
           <div>
-            <p className="text-xs text-[#6b6b85]">Funding Rate</p>
-            <p className="text-[#e8e8f0] font-medium">0.01%</p>
+            <p style={{ fontSize: '11px', color: '#8a7060' }}>Funding Rate</p>
+            <p style={{ color: '#fff', fontWeight: 500 }}>0.01%</p>
           </div>
           <div>
-            <p className="text-xs text-[#6b6b85]">Open Interest</p>
-            <p className="text-[#e8e8f0] font-medium">$1.2B</p>
+            <p style={{ fontSize: '11px', color: '#8a7060' }}>Open Interest</p>
+            <p style={{ color: '#fff', fontWeight: 500 }}>$1.2B</p>
           </div>
           <div>
-            <p className="text-xs text-[#6b6b85]">24h Volume</p>
-            <p className="text-[#e8e8f0] font-medium">$5.6B</p>
+            <p style={{ fontSize: '11px', color: '#8a7060' }}>24h Volume</p>
+            <p style={{ color: '#fff', fontWeight: 500 }}>$5.6B</p>
           </div>
           <div>
-            <p className="text-xs text-[#6b6b85]">Mark Price</p>
-            <p className="text-[#e8e8f0] font-medium">${currentPrice.toLocaleString()}</p>
+            <p style={{ fontSize: '11px', color: '#8a7060' }}>Mark Price</p>
+            <p style={{ color: '#fff', fontWeight: 500 }}>${currentPrice.toLocaleString()}</p>
           </div>
         </div>
       </div>

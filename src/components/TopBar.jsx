@@ -7,37 +7,18 @@ const TopBar = ({ onMenuClick }) => {
   const { dark, toggleDark } = useTheme();
   const [userMenuOpen, setUserMenuOpen] = useState(false);
 
-  // ─── Ticker data & live updates (mirroring Home.jsx) ─────────────
+  // Ticker data & live updates (mirroring Home.jsx)
   const initialCoins = [
-    {
-      sym: 'BTC', price: 67420, chg: 2.34,
-      color: '#f7931a', bg: 'rgba(247,147,26,.1)',
-    },
-    {
-      sym: 'ETH', price: 3842, chg: -1.12,
-      color: '#627eea', bg: 'rgba(98,126,234,.1)',
-    },
-    {
-      sym: 'SOL', price: 178.4, chg: 5.67,
-      color: '#9945ff', bg: 'rgba(153,69,255,.1)',
-    },
-    {
-      sym: 'BNB', price: 612.3, chg: 0.89,
-      color: '#f3ba2f', bg: 'rgba(243,186,47,.1)',
-    },
-    {
-      sym: 'ADA', price: 0.614, chg: -2.45,
-      color: '#4a9dff', bg: 'rgba(74,157,255,.1)',
-    },
-    {
-      sym: 'AVAX', price: 42.18, chg: 3.21,
-      color: '#e84142', bg: 'rgba(232,65,66,.1)',
-    },
+    { sym: 'BTC', price: 67420, chg: 2.34, color: '#f7931a' },
+    { sym: 'ETH', price: 3842, chg: -1.12, color: '#627eea' },
+    { sym: 'SOL', price: 178.4, chg: 5.67, color: '#9945ff' },
+    { sym: 'BNB', price: 612.3, chg: 0.89, color: '#f3ba2f' },
+    { sym: 'ADA', price: 0.614, chg: -2.45, color: '#4a9dff' },
+    { sym: 'AVAX', price: 42.18, chg: 3.21, color: '#e84142' },
   ];
 
   const [coins, setCoins] = useState(initialCoins);
 
-  // Simulate live price changes
   useEffect(() => {
     const iv = setInterval(() => {
       setCoins(prev =>
@@ -54,31 +35,15 @@ const TopBar = ({ onMenuClick }) => {
     return () => clearInterval(iv);
   }, []);
 
-  // ─── Logout ──────────────────────────────────────────────────────
   const handleLogout = () => {
     localStorage.removeItem('token');
     window.location.replace('/login');
   };
 
   return (
-    <div className="sticky top-0 z-[9999]">
-      {/* ─── CSS animations ──────────────────────────────────────── */}
+    <div style={{ position: 'sticky', top: 0, zIndex: 9999 }}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;500;600;700;800&display=swap');
-
-        .glow-dot {
-          box-shadow: 0 0 8px #00c896;
-          animation: glowPulse 2s ease-in-out infinite;
-        }
-        @keyframes glowPulse {
-          0%, 100% { opacity: 1; box-shadow: 0 0 8px #00c896; }
-          50% { opacity: 0.5; box-shadow: 0 0 20px #00c896; }
-        }
-        .glow-text {
-          text-shadow: 0 0 12px rgba(0,200,150,0.6), 0 0 24px rgba(0,168,255,0.4);
-        }
-
-        /* Ticker animation */
         @keyframes tickerRoll {
           0% { transform: translateX(0); }
           100% { transform: translateX(-50%); }
@@ -91,133 +56,237 @@ const TopBar = ({ onMenuClick }) => {
         }
       `}</style>
 
-      {/* ─── Live Crypto Ticker (fixed at the very top) ──────────── */}
-      <div className="bg-[#060610] border-b border-[#1a1a28] overflow-hidden h-9 flex items-center relative z-50">
-        <div className="flex animate-ticker whitespace-nowrap">
+      {/* Live Crypto Ticker */}
+      <div style={{
+        background: '#080300',
+        borderBottom: '1px solid rgba(249,115,22,0.1)',
+        overflow: 'hidden',
+        height: '36px',
+        display: 'flex',
+        alignItems: 'center',
+        position: 'relative',
+        zIndex: 50
+      }}>
+        <div className="animate-ticker" style={{ whiteSpace: 'nowrap' }}>
           {[...coins, ...coins, ...coins].map((c, i) => (
             <div
               key={i}
-              className="inline-flex items-center gap-2.5 px-6 border-r border-[#1a1a28]"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '10px',
+                padding: '0 24px',
+                borderRight: '1px solid rgba(249,115,22,0.08)'
+              }}
             >
-              <span className="text-[10px] font-bold font-mono text-[#9898b0]">
+              <span style={{ fontSize: '10px', fontWeight: 700, fontFamily: "'Space Mono', monospace", color: '#a89070' }}>
                 {c.sym}
               </span>
-              <span className="text-[10px] font-mono text-[#e8e8f0]">
+              <span style={{ fontSize: '10px', fontFamily: "'Space Mono', monospace", color: '#fff' }}>
                 ${c.price.toLocaleString()}
               </span>
-              <span
-                className={`text-[10px] font-mono font-bold ${
-                  c.chg >= 0 ? 'text-[#00c896]' : 'text-[#ff5b6e]'
-                }`}
-              >
-                {c.chg >= 0 ? (
-                  <ArrowUp className="w-3 h-3 inline" />
-                ) : (
-                  <ArrowDown className="w-3 h-3 inline" />
-                )}{' '}
-                {Math.abs(c.chg)}%
+              <span style={{
+                fontSize: '10px',
+                fontFamily: "'Space Mono', monospace",
+                fontWeight: 700,
+                color: c.chg >= 0 ? '#22c55e' : '#ef4444'
+              }}>
+                {c.chg >= 0 ? <ArrowUp size={12} style={{ display: 'inline' }} /> : <ArrowDown size={12} style={{ display: 'inline' }} />}
+                {' '}{Math.abs(c.chg)}%
               </span>
             </div>
           ))}
         </div>
       </div>
 
-      {/* ─── Main TopBar (logo, menu, user) ──────────────────────── */}
-      <header
-        className="flex h-16 items-center justify-between px-4 sm:px-6 border-b border-[#1a1a28] bg-[#0c0c16] shadow-md"
-        style={{ fontFamily: "'Syne', sans-serif" }}
-      >
-        <div className="flex items-center gap-4">
-          {/* Mobile menu toggle */}
+      {/* Main TopBar */}
+      <header style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        height: '64px',
+        padding: '0 6px',
+        borderBottom: '1px solid rgba(249,115,22,0.08)',
+        background: '#0d0600',
+        fontFamily: "'Syne', sans-serif"
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
           <button
             onClick={onMenuClick}
-            className="md:hidden p-1.5 rounded-lg hover:bg-[#1a1a28] transition-colors"
+            style={{
+              display: 'block',
+              padding: '6px',
+              borderRadius: '10px',
+              background: 'transparent',
+              border: 'none',
+              cursor: 'pointer'
+            }}
+            onMouseEnter={e => e.currentTarget.style.background = 'rgba(249,115,22,0.08)'}
+            onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
           >
-            <Menu className="h-5 w-5 text-[#9898b0]" />
+            <Menu size={20} style={{ color: '#a89070' }} />
           </button>
 
-          {/* Glowing Logo */}
-          <Link
-            to="/dashboard/overview"
-            className="flex items-center gap-2.5 text-[17px] font-extrabold tracking-tight no-underline"
-          >
-            <div className="w-2 h-2 rounded-full bg-[#00c896] glow-dot" />
-            <span className="text-[#e8e8f0]">Wix</span>
-            <span className="bg-gradient-to-r from-[#00c896] to-[#00a8ff] bg-clip-text text-transparent glow-text">
-              Capital
+          <Link to="/dashboard/overview" style={{ display: 'flex', alignItems: 'center', gap: '10px', textDecoration: 'none' }}>
+            <div style={{ width: '28px', height: '28px', position: 'relative' }}>
+              <svg viewBox="0 0 40 40" width="28" height="28">
+                <polygon points="20,2 38,12 38,28 20,38 2,28 2,12" fill="none" stroke="#f97316" strokeWidth="2.5"/>
+                <polygon points="20,14 26,18 26,22 20,26 14,22 14,18" fill="#f97316"/>
+              </svg>
+            </div>
+            <span style={{ fontSize: '16px', fontWeight: 800 }}>
+              <span style={{ color: '#fff' }}>AWix</span><span style={{ color: '#f97316' }}>Capital</span>
             </span>
           </Link>
         </div>
 
-        <div className="flex items-center gap-1.5 sm:gap-3">
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           {/* Theme toggle */}
           <button
             onClick={toggleDark}
-            className="p-1.5 rounded-lg bg-[#1a1a28] hover:bg-[#2a2a3e] transition-colors"
+            style={{
+              padding: '6px',
+              borderRadius: '10px',
+              background: 'rgba(249,115,22,0.08)',
+              border: 'none',
+              cursor: 'pointer',
+              transition: 'background 0.2s'
+            }}
+            onMouseEnter={e => e.currentTarget.style.background = 'rgba(249,115,22,0.15)'}
+            onMouseLeave={e => e.currentTarget.style.background = 'rgba(249,115,22,0.08)'}
           >
-            {dark ? (
-              <Sun className="h-4 w-4 text-[#e8e8f0]" />
-            ) : (
-              <Moon className="h-4 w-4 text-[#e8e8f0]" />
-            )}
+            {dark ? <Sun size={16} style={{ color: '#fff' }} /> : <Moon size={16} style={{ color: '#fff' }} />}
           </button>
 
           {/* KYC Button */}
-          <div className="relative">
-            <button className="flex items-center px-2 py-1 rounded-lg text-xs border border-[#1a1a28] bg-[#1a1a28] hover:bg-[#2a2a3e] text-[#9898b0]">
-              <Shield className="h-3.5 w-3.5 mr-1" />
-              <span className="hidden sm:inline-block">KYC</span>
-            </button>
-          </div>
+          <button style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '6px',
+            padding: '6px 12px',
+            borderRadius: '999px',
+            fontSize: '11px',
+            fontWeight: 600,
+            background: 'rgba(249,115,22,0.08)',
+            border: '1px solid rgba(249,115,22,0.2)',
+            color: '#f97316',
+            cursor: 'pointer'
+          }}>
+            <Shield size={14} />
+            <span style={{ display: 'none', '@media (min-width: 640px)': { display: 'inline' } }}>KYC</span>
+          </button>
 
           {/* User dropdown */}
-          <div className="relative">
+          <div style={{ position: 'relative' }}>
             <button
               onClick={() => setUserMenuOpen(!userMenuOpen)}
-              className="flex items-center gap-2 p-1 rounded-lg hover:bg-[#1a1a28] transition-colors"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                padding: '4px',
+                borderRadius: '12px',
+                background: 'transparent',
+                border: 'none',
+                cursor: 'pointer'
+              }}
+              onMouseEnter={e => e.currentTarget.style.background = 'rgba(249,115,22,0.05)'}
+              onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
             >
-              <div className="relative">
-                <div className="absolute inset-0 bg-gradient-to-r from-[#00c896] to-[#4a9dff] rounded-full opacity-80" />
-                <div className="relative h-7 w-7 sm:h-8 sm:w-8 bg-[#00c896] rounded-full flex items-center justify-center text-sm font-medium border-2 border-[#1a1a28]">
+              <div style={{ position: 'relative' }}>
+                <div style={{ position: 'absolute', inset: 0, background: '#f97316', borderRadius: '50%', opacity: 0.8 }} />
+                <div style={{
+                  position: 'relative',
+                  width: '32px',
+                  height: '32px',
+                  background: '#f97316',
+                  borderRadius: '50%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '12px',
+                  fontWeight: 700,
+                  color: '#0d0600',
+                  border: '2px solid #0d0600'
+                }}>
                   Lo
                 </div>
               </div>
-              <span className="hidden md:block text-sm font-medium text-[#e8e8f0]">
+              <span style={{ display: 'none', '@media (min-width: 768px)': { display: 'block' }, fontSize: '13px', fontWeight: 500, color: '#fff' }}>
                 Lowincomehomes47@gmail.com
               </span>
-              <ChevronDown className="h-4 w-4 text-[#6b6b85] hidden md:block" />
+              <ChevronDown size={16} style={{ color: '#8a7060', display: 'none', '@media (min-width: 768px)': { display: 'block' } }} />
             </button>
 
             {userMenuOpen && (
-              <div className="absolute right-0 mt-2 w-56 bg-[#0c0c16] border border-[#1a1a28] rounded-lg shadow-lg z-[10000]">
-                <div className="px-4 py-3 border-b border-[#1a1a28]">
-                  <h6 className="text-sm font-medium text-[#e8e8f0]">Low Income</h6>
-                  <p className="text-xs text-[#9898b0] mt-0.5">
-                    Lowincomehomes47@gmail.com
-                  </p>
+              <div style={{
+                position: 'absolute',
+                right: 0,
+                marginTop: '8px',
+                width: '224px',
+                background: '#0a0400',
+                border: '1px solid rgba(249,115,22,0.15)',
+                borderRadius: '16px',
+                boxShadow: '0 10px 25px -5px rgba(0,0,0,0.5)',
+                zIndex: 10000
+              }}>
+                <div style={{ padding: '12px 16px', borderBottom: '1px solid rgba(249,115,22,0.08)' }}>
+                  <h6 style={{ fontSize: '13px', fontWeight: 600, color: '#fff' }}>Low Income</h6>
+                  <p style={{ fontSize: '11px', color: '#8a7060', marginTop: '2px' }}>Lowincomehomes47@gmail.com</p>
                 </div>
-                <div className="py-2">
-                  <Link
-                    to="/dashboard/settings"
-                    className="flex items-center gap-2 px-4 py-2 text-sm text-[#9898b0] hover:bg-[#1a1a28] hover:text-[#e8e8f0] transition-colors"
-                  >
-                    <User className="h-4 w-4" />
+                <div style={{ padding: '8px 0' }}>
+                  <Link to="/dashboard/settings" style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    padding: '8px 16px',
+                    fontSize: '13px',
+                    color: '#8a7060',
+                    textDecoration: 'none',
+                    transition: 'all 0.2s'
+                  }}
+                  onMouseEnter={e => { e.currentTarget.style.background = 'rgba(249,115,22,0.08)'; e.currentTarget.style.color = '#fff'; }}
+                  onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#8a7060'; }}>
+                    <User size={14} />
                     <span>My Profile</span>
                   </Link>
-                  <Link
-                    to="/dashboard/transactions"
-                    className="flex items-center gap-2 px-4 py-2 text-sm text-[#9898b0] hover:bg-[#1a1a28] hover:text-[#e8e8f0] transition-colors"
-                  >
-                    <Bell className="h-4 w-4" />
+                  <Link to="/dashboard/transactions" style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    padding: '8px 16px',
+                    fontSize: '13px',
+                    color: '#8a7060',
+                    textDecoration: 'none',
+                    transition: 'all 0.2s'
+                  }}
+                  onMouseEnter={e => { e.currentTarget.style.background = 'rgba(249,115,22,0.08)'; e.currentTarget.style.color = '#fff'; }}
+                  onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#8a7060'; }}>
+                    <Bell size={14} />
                     <span>Transaction History</span>
                   </Link>
                 </div>
-                <div className="py-2 border-t border-[#1a1a28]">
+                <div style={{ padding: '8px 0', borderTop: '1px solid rgba(249,115,22,0.08)' }}>
                   <button
                     onClick={handleLogout}
-                    className="flex items-center gap-2 px-4 py-2 text-sm text-[#ff5b6e] w-full text-left hover:bg-[#1a1a28] transition-colors"
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      padding: '8px 16px',
+                      fontSize: '13px',
+                      color: '#ff5b6e',
+                      width: '100%',
+                      textAlign: 'left',
+                      background: 'transparent',
+                      border: 'none',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s'
+                    }}
+                    onMouseEnter={e => e.currentTarget.style.background = 'rgba(249,115,22,0.08)'}
+                    onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
                   >
-                    <LogOut className="h-4 w-4" />
+                    <LogOut size={14} />
                     <span>Logout</span>
                   </button>
                 </div>

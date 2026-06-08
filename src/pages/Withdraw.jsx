@@ -21,62 +21,106 @@ const Withdraw = () => {
   };
 
   return (
-    <div className="p-4 md:p-6 pb-20 md:pb-8 overflow-x-hidden flex-grow space-y-6" style={{ fontFamily: "'Syne', sans-serif" }}>
+    <div style={{
+      padding: '24px',
+      overflowX: 'hidden',
+      flexGrow: 1,
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '24px',
+      fontFamily: "'Syne', sans-serif",
+      background: '#0d0600',
+      minHeight: '100vh'
+    }}>
       <style>{`@import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;500;600;700;800&display=swap');`}</style>
 
       {/* Header */}
-      <div className="bg-[#0c0c18] border border-[#1a1a28] rounded-xl p-6 md:p-8 relative overflow-hidden">
-        <div className="relative z-10">
-          <div className="flex items-center gap-4 mb-2 text-[#6b6b85] text-sm">
-            <div className="flex items-center gap-1">
-              <Calendar className="w-4 h-4" />
+      <div style={{
+        background: '#0a0400',
+        border: '1px solid rgba(249,115,22,0.09)',
+        borderRadius: '16px',
+        padding: '24px 32px'
+      }}>
+        <div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '8px', color: '#8a7060', fontSize: '13px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+              <Calendar size={14} />
               <span>Withdraw Funds</span>
             </div>
-            <div className="flex items-center gap-1 text-xs text-[#4a4a64]">
-              <Wallet className="w-4 h-4" />
+            <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px', color: '#6a4a30' }}>
+              <Wallet size={14} />
               <span>Balance: $0.00</span>
             </div>
           </div>
-          <h1 className="text-3xl font-bold text-[#e8e8f0] mb-2">Place Withdrawal</h1>
-          <p className="text-[#6b6b85] mb-6 max-w-lg">
+          <h1 style={{ fontSize: 'clamp(24px, 5vw, 32px)', fontWeight: 800, color: '#fff', marginBottom: '8px' }}>
+            Place Withdrawal
+          </h1>
+          <p style={{ color: '#8a7060', marginBottom: '0', maxWidth: '500px', fontSize: '14px' }}>
             Withdraw funds to your external wallet or bank account.
           </p>
         </div>
       </div>
 
       {/* Withdrawal Methods Table */}
-      <div className="bg-[#0c0c18] border border-[#1a1a28] rounded-xl overflow-hidden">
-        <div className="p-5 border-b border-[#1a1a28]">
-          <h2 className="text-base font-semibold text-[#e8e8f0]">Select Withdrawal Method</h2>
+      <div style={{
+        background: '#0a0400',
+        border: '1px solid rgba(249,115,22,0.09)',
+        borderRadius: '16px',
+        overflow: 'hidden'
+      }}>
+        <div style={{ padding: '20px', borderBottom: '1px solid rgba(249,115,22,0.08)' }}>
+          <h2 style={{ fontSize: '16px', fontWeight: 700, color: '#fff' }}>Select Withdrawal Method</h2>
         </div>
-        <div className="overflow-x-auto">
-          <table className="w-full">
+        <div style={{ overflowX: 'auto' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
-              <tr className="bg-[#0c0c16] text-[#6b6b85] text-xs uppercase">
-                <th className="px-6 py-3 text-left font-medium">Method</th>
-                <th className="px-6 py-3 text-right font-medium">Action</th>
+              <tr style={{ background: 'rgba(249,115,22,0.03)', color: '#8a7060', fontSize: '11px', textTransform: 'uppercase' }}>
+                <th style={{ padding: '12px 24px', textAlign: 'left', fontWeight: 500 }}>Method</th>
+                <th style={{ padding: '12px 24px', textAlign: 'right', fontWeight: 500 }}>Action</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#1a1a28]">
+            <tbody>
               {withdrawalsMethods.map((method) => (
-                <tr key={method.id} className="hover:bg-[#1a1a28]/50 transition-colors text-sm">
-                  <td className="px-6 py-4">
-                    <div className="flex items-center">
-                      <div className="w-8 h-8 rounded-lg bg-[#0c0c16] p-1.5 mr-3 flex items-center justify-center">
-                        <img src={method.icon} alt={method.name} className="h-full w-full object-contain" />
+                <tr key={method.id} style={{ borderTop: '1px solid rgba(249,115,22,0.05)' }}>
+                  <td style={{ padding: '16px 24px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                      <div style={{
+                        width: '32px',
+                        height: '32px',
+                        background: 'rgba(249,115,22,0.08)',
+                        borderRadius: '8px',
+                        padding: '6px',
+                        marginRight: '12px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                      }}>
+                        <img src={method.icon} alt={method.name} style={{ height: '100%', width: '100%', objectFit: 'contain' }} />
                       </div>
-                      <p className="font-medium text-[#e8e8f0]">{method.name}</p>
+                      <p style={{ fontWeight: 500, color: '#fff' }}>{method.name}</p>
                     </div>
-                  </td>
-                  <td className="px-6 py-4 text-right">
+                   </td>
+                  <td style={{ padding: '16px 24px', textAlign: 'right' }}>
                     <button
                       onClick={() => handleWithdraw(method)}
-                      className="px-3 py-1.5 text-xs font-medium rounded-md bg-[#00c896] text-black hover:bg-[#00dea8] transition-colors"
+                      style={{
+                        padding: '6px 12px',
+                        fontSize: '11px',
+                        fontWeight: 600,
+                        borderRadius: '999px',
+                        background: '#f97316',
+                        color: '#fff',
+                        border: 'none',
+                        cursor: 'pointer',
+                        transition: 'background 0.2s'
+                      }}
+                      onMouseEnter={e => e.currentTarget.style.background = '#fb923c'}
+                      onMouseLeave={e => e.currentTarget.style.background = '#f97316'}
                     >
                       Withdraw
                     </button>
-                  </td>
-                </tr>
+                    </td>
+                  </tr>
               ))}
             </tbody>
           </table>
@@ -84,22 +128,46 @@ const Withdraw = () => {
       </div>
 
       {/* Info Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
+        gap: '24px'
+      }}>
         {/* Withdrawal Process */}
-        <div className="bg-[#0c0c18] border border-[#1a1a28] rounded-xl overflow-hidden">
-          <div className="p-4 border-b border-[#1a1a28] flex items-center">
-            <CheckCircle className="w-5 h-5 text-[#00c896] mr-2" />
-            <h3 className="text-base font-medium text-[#e8e8f0]">Withdrawal Process</h3>
+        <div style={{
+          background: '#0a0400',
+          border: '1px solid rgba(249,115,22,0.09)',
+          borderRadius: '16px',
+          overflow: 'hidden'
+        }}>
+          <div style={{ padding: '16px', borderBottom: '1px solid rgba(249,115,22,0.08)', display: 'flex', alignItems: 'center' }}>
+            <CheckCircle size={20} style={{ color: '#f97316', marginRight: '8px' }} />
+            <h3 style={{ fontSize: '14px', fontWeight: 600, color: '#fff' }}>Withdrawal Process</h3>
           </div>
-          <div className="p-5">
-            <ol className="relative border-l border-[#1a1a28] ml-3 space-y-6">
+          <div style={{ padding: '20px' }}>
+            <ol style={{ position: 'relative', borderLeft: '1px solid rgba(249,115,22,0.2)', marginLeft: '12px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
               {['Select Method', 'Enter Details', 'Confirmation', 'Processing'].map((step, idx) => (
-                <li key={step} className="ml-6">
-                  <span className="absolute flex items-center justify-center w-6 h-6 bg-[#1a1a28] rounded-full -left-3 ring-4 ring-[#0c0c18]">
-                    <span className="text-xs font-bold text-[#00c896]">{idx + 1}</span>
+                <li key={step} style={{ marginLeft: '24px', position: 'relative' }}>
+                  <span style={{
+                    position: 'absolute',
+                    left: '-30px',
+                    top: '0',
+                    width: '24px',
+                    height: '24px',
+                    background: '#0a0400',
+                    border: '1px solid rgba(249,115,22,0.2)',
+                    borderRadius: '50%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '10px',
+                    fontWeight: 'bold',
+                    color: '#f97316'
+                  }}>
+                    {idx + 1}
                   </span>
-                  <h3 className="font-medium text-[#e8e8f0]">{step}</h3>
-                  <p className="text-xs text-[#6b6b85] mt-1">
+                  <h3 style={{ fontWeight: 600, color: '#fff', marginBottom: '4px' }}>{step}</h3>
+                  <p style={{ fontSize: '11px', color: '#8a7060' }}>
                     {idx === 0 && 'Choose your preferred withdrawal method.'}
                     {idx === 1 && 'Provide your withdrawal amount and destination details.'}
                     {idx === 2 && 'Review and confirm your withdrawal request.'}
@@ -112,70 +180,94 @@ const Withdraw = () => {
         </div>
 
         {/* Security Tips */}
-        <div className="bg-[#0c0c18] border border-[#1a1a28] rounded-xl overflow-hidden">
-          <div className="p-4 border-b border-[#1a1a28] flex items-center">
-            <Shield className="w-5 h-5 text-[#00c896] mr-2" />
-            <h3 className="text-base font-medium text-[#e8e8f0]">Security Tips</h3>
+        <div style={{
+          background: '#0a0400',
+          border: '1px solid rgba(249,115,22,0.09)',
+          borderRadius: '16px',
+          overflow: 'hidden'
+        }}>
+          <div style={{ padding: '16px', borderBottom: '1px solid rgba(249,115,22,0.08)', display: 'flex', alignItems: 'center' }}>
+            <Shield size={20} style={{ color: '#f97316', marginRight: '8px' }} />
+            <h3 style={{ fontSize: '14px', fontWeight: 600, color: '#fff' }}>Security Tips</h3>
           </div>
-          <div className="p-5">
-            <ul className="space-y-3">
+          <div style={{ padding: '20px' }}>
+            <ul style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
               {[
                 'Always verify withdrawal addresses before confirming.',
                 'For crypto, confirm network type to avoid loss.',
                 'Never share your account credentials.',
                 'Be cautious of phishing attempts.',
               ].map((tip, i) => (
-                <li key={i} className="flex">
-                  <div className="flex-shrink-0 w-5 h-5 rounded-full bg-[#1a1a28] flex items-center justify-center mr-3 mt-0.5">
-                    <CheckCircle className="w-3 h-3 text-[#00c896]" />
+                <li key={i} style={{ display: 'flex' }}>
+                  <div style={{ flexShrink: 0, width: '20px', height: '20px', background: 'rgba(249,115,22,0.15)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', marginRight: '12px', marginTop: '2px' }}>
+                    <CheckCircle size={12} style={{ color: '#f97316' }} />
                   </div>
-                  <p className="text-xs text-[#6b6b85]">{tip}</p>
+                  <p style={{ fontSize: '11px', color: '#8a7060' }}>{tip}</p>
                 </li>
               ))}
             </ul>
-            <div className="mt-5 pt-4 border-t border-[#1a1a28]">
-              <div className="flex items-center p-3 rounded-lg bg-[#0c0c16] border border-[#1a1a28]">
-                <Info className="w-5 h-5 text-[#00c896] mr-3 flex-shrink-0" />
-                <p className="text-xs text-[#00c896]">
-                  Need help? Contact support via the help center.
-                </p>
+            <div style={{ marginTop: '20px', paddingTop: '16px', borderTop: '1px solid rgba(249,115,22,0.08)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', padding: '12px', borderRadius: '12px', background: 'rgba(30,12,0,0.6)', border: '1px solid rgba(249,115,22,0.1)' }}>
+                <Info size={20} style={{ color: '#f97316', marginRight: '12px', flexShrink: 0 }} />
+                <p style={{ fontSize: '11px', color: '#f97316' }}>Need help? Contact support via the help center.</p>
               </div>
             </div>
           </div>
         </div>
 
         {/* Withdrawal Summary */}
-        <div className="bg-[#0c0c18] border border-[#1a1a28] rounded-xl overflow-hidden">
-          <div className="p-6">
-            <h3 className="text-lg font-medium text-[#e8e8f0] mb-4">Withdrawal Summary</h3>
-            <div className="bg-[#0c0c16] rounded-lg p-4 mb-4">
-              <div className="flex items-center justify-between">
+        <div style={{
+          background: '#0a0400',
+          border: '1px solid rgba(249,115,22,0.09)',
+          borderRadius: '16px',
+          overflow: 'hidden'
+        }}>
+          <div style={{ padding: '24px' }}>
+            <h3 style={{ fontSize: '16px', fontWeight: 600, color: '#fff', marginBottom: '16px' }}>Withdrawal Summary</h3>
+            <div style={{ background: 'rgba(249,115,22,0.03)', borderRadius: '12px', padding: '16px', marginBottom: '16px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <div>
-                  <p className="text-sm text-[#6b6b85]">Total Withdrawals</p>
-                  <p className="text-2xl font-bold text-[#e8e8f0]">$0.00</p>
+                  <p style={{ fontSize: '12px', color: '#8a7060' }}>Total Withdrawals</p>
+                  <p style={{ fontSize: '24px', fontWeight: 800, color: '#fff' }}>$0.00</p>
                 </div>
-                <div className="h-14 w-14 rounded-full bg-[rgba(0,200,150,0.1)] flex items-center justify-center">
-                  <CircleCheckBig className="h-6 w-6 text-[#00c896]" />
+                <div style={{ width: '56px', height: '56px', borderRadius: '50%', background: 'rgba(249,115,22,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <CircleCheckBig size={24} style={{ color: '#f97316' }} />
                 </div>
               </div>
             </div>
-            <div className="bg-[#0c0c16] rounded-lg p-3">
-              <div className="flex items-center justify-between">
+            <div style={{ background: 'rgba(249,115,22,0.03)', borderRadius: '12px', padding: '16px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <div>
-                  <p className="text-sm text-[#6b6b85]">Pending Withdrawals</p>
-                  <p className="text-2xl font-bold text-[#e8e8f0]">$0.00</p>
+                  <p style={{ fontSize: '12px', color: '#8a7060' }}>Pending Withdrawals</p>
+                  <p style={{ fontSize: '24px', fontWeight: 800, color: '#fff' }}>$0.00</p>
                 </div>
-                <div className="h-14 w-14 rounded-full bg-[rgba(0,200,150,0.1)] flex items-center justify-center">
-                  <ClockArrowDown className="h-6 w-6 text-[#00c896]" />
+                <div style={{ width: '56px', height: '56px', borderRadius: '50%', background: 'rgba(249,115,22,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <ClockArrowDown size={24} style={{ color: '#f97316' }} />
                 </div>
               </div>
             </div>
-            <div className="mt-6">
+            <div style={{ marginTop: '24px' }}>
               <button
                 onClick={() => navigate('/dashboard/transactions')}
-                className="flex items-center justify-center w-full py-2 px-4 bg-[#0c0c16] rounded-lg hover:bg-[#1a1a28] transition-colors text-[#9898b0]"
+                style={{
+                  width: '100%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  padding: '8px 16px',
+                  background: 'rgba(249,115,22,0.05)',
+                  borderRadius: '12px',
+                  textDecoration: 'none',
+                  color: '#8a7060',
+                  fontSize: '13px',
+                  transition: 'background 0.2s',
+                  border: 'none',
+                  cursor: 'pointer'
+                }}
+                onMouseEnter={e => e.currentTarget.style.background = 'rgba(249,115,22,0.1)'}
+                onMouseLeave={e => e.currentTarget.style.background = 'rgba(249,115,22,0.05)'}
               >
-                <History className="h-4 w-4 mr-2" />
+                <History size={14} style={{ marginRight: '8px' }} />
                 <span>View Withdrawal History</span>
               </button>
             </div>

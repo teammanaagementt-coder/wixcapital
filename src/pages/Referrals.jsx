@@ -20,7 +20,6 @@ const Referrals = () => {
             referralCode: data.user.referralCode,
             totalReferrals: data.user.totalReferrals,
             referralEarnings: data.user.referralEarnings,
-            // If the backend provides referral list, use it; otherwise fake empty array
             referrals: data.referrals || [],
           });
         } else {
@@ -47,145 +46,249 @@ const Referrals = () => {
   const formatDate = (date) => (date ? new Date(date).toLocaleDateString() : 'N/A');
 
   return (
-    <div className="p-4 md:p-6 pb-20 md:pb-8 overflow-x-hidden flex-grow space-y-6" style={{ fontFamily: "'Syne', sans-serif" }}>
+    <div style={{
+      padding: '24px',
+      overflowX: 'hidden',
+      flexGrow: 1,
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '24px',
+      fontFamily: "'Syne', sans-serif",
+      background: '#0d0600',
+      minHeight: '100vh'
+    }}>
       <style>{`@import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;500;600;700;800&display=swap');`}</style>
 
-      {/* Header */}
-      <div className="bg-[#0c0c18] border border-[#1a1a28] rounded-xl p-6 md:p-8 relative overflow-hidden">
-        <div className="relative z-10">
-          <div className="flex items-center gap-4 mb-2 text-[#6b6b85] text-sm">
-            <div className="flex items-center gap-1">
-              <Calendar className="w-4 h-4" />
+      <div style={{
+        background: '#0a0400',
+        border: '1px solid rgba(249,115,22,0.09)',
+        borderRadius: '16px',
+        padding: '24px 32px'
+      }}>
+        <div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '8px', color: '#8a7060', fontSize: '13px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+              <Calendar size={14} />
               <span>Referral Program</span>
             </div>
           </div>
-          <h1 className="text-3xl font-bold text-[#e8e8f0] mb-2">Invite Friends & Earn</h1>
-          <p className="text-[#6b6b85] mb-6 max-w-lg">
+          <h1 style={{ fontSize: 'clamp(24px, 5vw, 32px)', fontWeight: 800, color: '#fff', marginBottom: '8px' }}>
+            Invite Friends & Earn
+          </h1>
+          <p style={{ color: '#8a7060', marginBottom: '0', maxWidth: '500px', fontSize: '14px' }}>
             Share your referral link and earn 5% commission on every friend’s investment.
           </p>
         </div>
       </div>
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-[#0c0c18] border border-[#1a1a28] rounded-xl p-5">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-full bg-[rgba(0,200,150,0.1)] flex items-center justify-center">
-              <UserPlus className="w-6 h-6 text-[#00c896]" />
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+        gap: '24px'
+      }}>
+        <div style={{
+          background: '#0a0400',
+          border: '1px solid rgba(249,115,22,0.09)',
+          borderRadius: '16px',
+          padding: '20px'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+            <div style={{
+              width: '48px',
+              height: '48px',
+              borderRadius: '50%',
+              background: 'rgba(249,115,22,0.1)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}>
+              <UserPlus size={24} style={{ color: '#f97316' }} />
             </div>
             <div>
-              <p className="text-xs text-[#6b6b85] uppercase font-medium">Total Referrals</p>
-              <p className="text-2xl font-bold text-[#e8e8f0]">
-                {loading ? '...' : referralData?.totalReferrals || 0}
-              </p>
+              <p style={{ fontSize: '10px', color: '#8a7060', textTransform: 'uppercase' }}>Total Referrals</p>
+              <p style={{ fontSize: '28px', fontWeight: 800, color: '#fff' }}>{loading ? '...' : referralData?.totalReferrals || 0}</p>
             </div>
           </div>
         </div>
-        <div className="bg-[#0c0c18] border border-[#1a1a28] rounded-xl p-5">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-full bg-[rgba(0,200,150,0.1)] flex items-center justify-center">
-              <DollarSign className="w-6 h-6 text-[#00c896]" />
+        <div style={{
+          background: '#0a0400',
+          border: '1px solid rgba(249,115,22,0.09)',
+          borderRadius: '16px',
+          padding: '20px'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+            <div style={{
+              width: '48px',
+              height: '48px',
+              borderRadius: '50%',
+              background: 'rgba(249,115,22,0.1)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}>
+              <DollarSign size={24} style={{ color: '#f97316' }} />
             </div>
             <div>
-              <p className="text-xs text-[#6b6b85] uppercase font-medium">Referral Earnings</p>
-              <p className="text-2xl font-bold text-[#e8e8f0]">
-                ${loading ? '...' : (referralData?.referralEarnings || 0).toFixed(2)}
-              </p>
+              <p style={{ fontSize: '10px', color: '#8a7060', textTransform: 'uppercase' }}>Referral Earnings</p>
+              <p style={{ fontSize: '28px', fontWeight: 800, color: '#fff' }}>${loading ? '...' : (referralData?.referralEarnings || 0).toFixed(2)}</p>
             </div>
           </div>
         </div>
-        <div className="bg-[#0c0c18] border border-[#1a1a28] rounded-xl p-5">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-full bg-[rgba(0,200,150,0.1)] flex items-center justify-center">
-              <Gift className="w-6 h-6 text-[#00c896]" />
+        <div style={{
+          background: '#0a0400',
+          border: '1px solid rgba(249,115,22,0.09)',
+          borderRadius: '16px',
+          padding: '20px'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+            <div style={{
+              width: '48px',
+              height: '48px',
+              borderRadius: '50%',
+              background: 'rgba(249,115,22,0.1)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}>
+              <Gift size={24} style={{ color: '#f97316' }} />
             </div>
             <div>
-              <p className="text-xs text-[#6b6b85] uppercase font-medium">Commission Rate</p>
-              <p className="text-2xl font-bold text-[#e8e8f0]">5%</p>
+              <p style={{ fontSize: '10px', color: '#8a7060', textTransform: 'uppercase' }}>Commission Rate</p>
+              <p style={{ fontSize: '28px', fontWeight: 800, color: '#fff' }}>5%</p>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Referral Link */}
-      <div className="bg-[#0c0c18] border border-[#1a1a28] rounded-xl p-6">
-        <h2 className="text-lg font-semibold text-[#e8e8f0] mb-4">Your Referral Link</h2>
-        <div className="flex flex-col md:flex-row gap-3">
-          <div className="flex-1 relative">
+      <div style={{
+        background: '#0a0400',
+        border: '1px solid rgba(249,115,22,0.09)',
+        borderRadius: '16px',
+        padding: '24px'
+      }}>
+        <h2 style={{ fontSize: '18px', fontWeight: 700, color: '#fff', marginBottom: '16px' }}>Your Referral Link</h2>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          <div style={{ position: 'relative', flex: 1 }}>
             <input
               type="text"
               readOnly
               value={referralLink}
-              className="w-full py-3 pl-4 pr-12 rounded-xl bg-[#0c0c16] border border-[#1a1a28] text-[#e8e8f0] focus:ring-2 focus:ring-[#00c896] text-sm"
+              style={{
+                width: '100%',
+                padding: '12px 48px 12px 16px',
+                borderRadius: '16px',
+                background: 'rgba(255,255,255,0.03)',
+                border: '1px solid rgba(249,115,22,0.2)',
+                color: '#fff',
+                fontSize: '13px'
+              }}
             />
             <button
               onClick={() => copyToClipboard(referralLink)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center rounded-full bg-[rgba(0,200,150,0.1)] text-[#00c896] hover:bg-[rgba(0,200,150,0.2)] transition-all"
+              style={{
+                position: 'absolute',
+                right: '12px',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                width: '32px',
+                height: '32px',
+                borderRadius: '50%',
+                background: 'rgba(249,115,22,0.1)',
+                border: 'none',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer'
+              }}
             >
-              {copied ? <CheckCircle className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+              {copied ? <CheckCircle size={14} style={{ color: '#f97316' }} /> : <Copy size={14} style={{ color: '#f97316' }} />}
             </button>
           </div>
-          <div className="flex-shrink-0 relative">
+          <div style={{ position: 'relative' }}>
             <input
               type="text"
               readOnly
               value={referralData?.referralCode || ''}
-              className="w-full py-3 pl-4 pr-12 rounded-xl bg-[#0c0c16] border border-[#1a1a28] text-[#e8e8f0] focus:ring-2 focus:ring-[#00c896] text-sm"
+              style={{
+                width: '100%',
+                padding: '12px 48px 12px 16px',
+                borderRadius: '16px',
+                background: 'rgba(255,255,255,0.03)',
+                border: '1px solid rgba(249,115,22,0.2)',
+                color: '#fff',
+                fontSize: '13px'
+              }}
             />
             <button
-              onClick={() => copyToClipboard(referralData?.referralCode)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center rounded-full bg-[rgba(0,200,150,0.1)] text-[#00c896] hover:bg-[rgba(0,200,150,0.2)] transition-all"
+              onClick={() => copyToClipboard(referralData?.referralCode || '')}
+              style={{
+                position: 'absolute',
+                right: '12px',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                width: '32px',
+                height: '32px',
+                borderRadius: '50%',
+                background: 'rgba(249,115,22,0.1)',
+                border: 'none',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer'
+              }}
             >
-              {copied ? <CheckCircle className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+              {copied ? <CheckCircle size={14} style={{ color: '#f97316' }} /> : <Copy size={14} style={{ color: '#f97316' }} />}
             </button>
           </div>
         </div>
-        <p className="mt-3 text-xs text-[#6b6b85]">Share this link or code with friends.</p>
+        <p style={{ marginTop: '12px', fontSize: '11px', color: '#8a7060' }}>Share this link or code with friends.</p>
       </div>
 
-      {/* Referral Table */}
-      <div className="bg-[#0c0c18] border border-[#1a1a28] rounded-xl overflow-hidden">
-        <div className="p-4 border-b border-[#1a1a28] flex items-center gap-2">
-          <Users className="w-5 h-5 text-[#00c896]" />
-          <h2 className="text-base font-semibold text-[#e8e8f0]">Referred Users</h2>
+      <div style={{
+        background: '#0a0400',
+        border: '1px solid rgba(249,115,22,0.09)',
+        borderRadius: '16px',
+        overflow: 'hidden'
+      }}>
+        <div style={{ padding: '16px', borderBottom: '1px solid rgba(249,115,22,0.08)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <Users size={20} style={{ color: '#f97316' }} />
+          <h2 style={{ fontSize: '16px', fontWeight: 700, color: '#fff' }}>Referred Users</h2>
         </div>
-        <div className="p-4">
+        <div style={{ padding: '16px' }}>
           {loading ? (
-            <div className="flex justify-center py-8">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#00c896]"></div>
+            <div style={{ display: 'flex', justifyContent: 'center', padding: '32px' }}>
+              <div style={{ width: '32px', height: '32px', border: '2px solid rgba(249,115,22,0.2)', borderTopColor: '#f97316', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
             </div>
           ) : (referralData?.referrals || []).length === 0 ? (
-            <div className="text-center py-8 text-[#6b6b85]">
-              <div className="w-12 h-12 mx-auto mb-3 rounded-full bg-[#1a1a28] flex items-center justify-center">
-                <Users className="w-6 h-6 text-[#4a4a64]" />
+            <div style={{ textAlign: 'center', padding: '32px', color: '#8a7060' }}>
+              <div style={{ width: '48px', height: '48px', margin: '0 auto 12px', borderRadius: '50%', background: 'rgba(249,115,22,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Users size={24} style={{ color: '#6a4a30' }} />
               </div>
-              <p className="text-sm">No referrals yet.</p>
-              <p className="text-xs mt-1">Share your link to start earning.</p>
+              <p style={{ fontSize: '13px' }}>No referrals yet.</p>
+              <p style={{ fontSize: '11px', marginTop: '4px' }}>Share your link to start earning.</p>
             </div>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full">
+            <div style={{ overflowX: 'auto' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                 <thead>
-                  <tr className="text-xs text-[#6b6b85] uppercase tracking-wider">
-                    <th className="px-4 py-3 text-left font-medium">User</th>
-                    <th className="px-4 py-3 text-left font-medium">Joined</th>
-                    <th className="px-4 py-3 text-left font-medium">Status</th>
-                    <th className="px-4 py-3 text-right font-medium">Earnings</th>
+                  <tr style={{ color: '#8a7060', fontSize: '11px', textTransform: 'uppercase' }}>
+                    <th style={{ padding: '12px 16px', textAlign: 'left' }}>User</th>
+                    <th style={{ padding: '12px 16px', textAlign: 'left' }}>Joined</th>
+                    <th style={{ padding: '12px 16px', textAlign: 'left' }}>Status</th>
+                    <th style={{ padding: '12px 16px', textAlign: 'right' }}>Earnings</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#1a1a28]">
+                <tbody>
                   {referralData.referrals.map((ref, idx) => (
-                    <tr key={idx} className="text-sm text-[#9898b0] hover:bg-[#1a1a28]/30 transition-colors">
-                      <td className="px-4 py-3">{ref.name || 'Unknown'}</td>
-                      <td className="px-4 py-3">{formatDate(ref.createdAt)}</td>
-                      <td className="px-4 py-3">
-                        <span className="px-2 py-1 rounded-full text-xs bg-[rgba(0,200,150,0.1)] text-[#00c896]">
+                    <tr key={idx} style={{ borderTop: '1px solid rgba(249,115,22,0.05)' }}>
+                      <td style={{ padding: '12px 16px', color: '#a89070' }}>{ref.name || 'Unknown'}</td>
+                      <td style={{ padding: '12px 16px', color: '#a89070' }}>{formatDate(ref.createdAt)}</td>
+                      <td style={{ padding: '12px 16px' }}>
+                        <span style={{ padding: '4px 8px', borderRadius: '999px', fontSize: '10px', fontWeight: 600, background: 'rgba(249,115,22,0.15)', color: '#f97316' }}>
                           {ref.status || 'Active'}
                         </span>
                       </td>
-                      <td className="px-4 py-3 text-right font-mono text-[#e8e8f0]">
-                        ${(ref.earnings || 0).toFixed(2)}
-                      </td>
+                      <td style={{ padding: '12px 16px', textAlign: 'right', color: '#fff', fontFamily: "'Space Mono', monospace" }}>${(ref.earnings || 0).toFixed(2)}</td>
                     </tr>
                   ))}
                 </tbody>

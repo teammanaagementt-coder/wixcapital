@@ -62,48 +62,47 @@ const TransactionHistory = () => {
   const formatAmount = (amount) => `$${parseFloat(amount).toFixed(2)}`;
 
   const EmptyState = ({ type }) => (
-    <div className="flex flex-col items-center justify-center py-6 sm:py-8">
-      <div className="h-12 w-12 rounded-full bg-[#1a1a28] flex items-center justify-center mb-3">
-        <Inbox className="h-6 w-6 text-[#4a4a64]" />
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '32px 0' }}>
+      <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: 'rgba(249,115,22,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '12px' }}>
+        <Inbox size={24} style={{ color: '#6a4a30' }} />
       </div>
-      <p className="text-sm font-medium text-[#9898b0] mb-1">No {type} found</p>
-      <p className="text-xs text-[#4a4a64]">Your {type} history will appear here</p>
+      <p style={{ fontSize: '13px', fontWeight: 500, color: '#8a7060', marginBottom: '4px' }}>No {type} found</p>
+      <p style={{ fontSize: '11px', color: '#6a4a30' }}>Your {type} history will appear here</p>
     </div>
   );
 
   const DepositTable = () => (
-    <div className="overflow-x-auto sm:mx-0">
-      <table className="min-w-full divide-y divide-[#1a1a28]">
+    <div style={{ overflowX: 'auto' }}>
+      <table style={{ width: '100%', borderCollapse: 'collapse' }}>
         <thead>
-          <tr>
-            <th className="px-6 py-3 text-left text-xs font-medium text-[#6b6b85] uppercase tracking-wider">Amount</th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-[#6b6b85] uppercase tracking-wider">Payment Mode</th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-[#6b6b85] uppercase tracking-wider">Status</th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-[#6b6b85] uppercase tracking-wider">Date</th>
+          <tr style={{ color: '#8a7060', fontSize: '11px', textTransform: 'uppercase' }}>
+            <th style={{ padding: '12px 16px', textAlign: 'left' }}>Amount</th>
+            <th style={{ padding: '12px 16px', textAlign: 'left' }}>Payment Mode</th>
+            <th style={{ padding: '12px 16px', textAlign: 'left' }}>Status</th>
+            <th style={{ padding: '12px 16px', textAlign: 'left' }}>Date</th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-[#1a1a28]">
+        <tbody>
           {deposits.length === 0 ? (
-            <tr>
-              <td colSpan="4" className="px-6 py-8 text-center">
-                <EmptyState type="deposits" />
-              </td>
-            </tr>
+            <tr><td colSpan="4" style={{ padding: '24px', textAlign: 'center' }}><EmptyState type="deposits" /></td></tr>
           ) : (
             deposits.map((deposit) => (
-              <tr key={deposit._id}>
-                <td className="px-6 py-4 text-sm font-medium text-[#e8e8f0] whitespace-nowrap">{formatAmount(deposit.amount)}</td>
-                <td className="px-6 py-4 text-sm text-[#9898b0] whitespace-nowrap">{deposit.paymentMethod || 'N/A'}</td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <span className={`px-2 py-1 text-xs rounded-full ${
-                    deposit.status === 'completed' ? 'bg-[rgba(0,200,150,0.1)] text-[#00c896]' :
-                    deposit.status === 'pending' ? 'bg-[rgba(243,186,47,0.1)] text-[#f3ba2f]' :
-                    'bg-[rgba(255,91,110,0.1)] text-[#ff5b6e]'
-                  }`}>
+              <tr key={deposit._id} style={{ borderTop: '1px solid rgba(249,115,22,0.05)' }}>
+                <td style={{ padding: '12px 16px', color: '#fff', fontWeight: 500 }}>{formatAmount(deposit.amount)}</td>
+                <td style={{ padding: '12px 16px', color: '#8a7060' }}>{deposit.paymentMethod || 'N/A'}</td>
+                <td style={{ padding: '12px 16px' }}>
+                  <span style={{
+                    padding: '4px 8px',
+                    borderRadius: '999px',
+                    fontSize: '10px',
+                    fontWeight: 600,
+                    background: deposit.status === 'completed' ? 'rgba(249,115,22,0.15)' : deposit.status === 'pending' ? 'rgba(243,186,47,0.15)' : 'rgba(239,68,68,0.15)',
+                    color: deposit.status === 'completed' ? '#f97316' : deposit.status === 'pending' ? '#f3ba2f' : '#ef4444'
+                  }}>
                     {deposit.status}
                   </span>
                 </td>
-                <td className="px-6 py-4 text-sm text-[#9898b0] whitespace-nowrap">{formatDate(deposit.createdAt)}</td>
+                <td style={{ padding: '12px 16px', color: '#8a7060' }}>{formatDate(deposit.createdAt)}</td>
               </tr>
             ))
           )}
@@ -113,38 +112,37 @@ const TransactionHistory = () => {
   );
 
   const WithdrawalTable = () => (
-    <div className="overflow-x-auto sm:mx-0">
-      <table className="min-w-full divide-y divide-[#1a1a28]">
+    <div style={{ overflowX: 'auto' }}>
+      <table style={{ width: '100%', borderCollapse: 'collapse' }}>
         <thead>
-          <tr>
-            <th className="px-6 py-3 text-left text-xs font-medium text-[#6b6b85] uppercase tracking-wider">Amount</th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-[#6b6b85] uppercase tracking-wider">Method</th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-[#6b6b85] uppercase tracking-wider">Status</th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-[#6b6b85] uppercase tracking-wider">Date</th>
+          <tr style={{ color: '#8a7060', fontSize: '11px', textTransform: 'uppercase' }}>
+            <th style={{ padding: '12px 16px', textAlign: 'left' }}>Amount</th>
+            <th style={{ padding: '12px 16px', textAlign: 'left' }}>Method</th>
+            <th style={{ padding: '12px 16px', textAlign: 'left' }}>Status</th>
+            <th style={{ padding: '12px 16px', textAlign: 'left' }}>Date</th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-[#1a1a28]">
+        <tbody>
           {withdrawals.length === 0 ? (
-            <tr>
-              <td colSpan="4" className="px-6 py-8 text-center">
-                <EmptyState type="withdrawals" />
-              </td>
-            </tr>
+            <tr><td colSpan="4" style={{ padding: '24px', textAlign: 'center' }}><EmptyState type="withdrawals" /></td></tr>
           ) : (
             withdrawals.map((withdrawal) => (
-              <tr key={withdrawal._id}>
-                <td className="px-6 py-4 text-sm font-medium text-[#e8e8f0] whitespace-nowrap">{formatAmount(withdrawal.amount)}</td>
-                <td className="px-6 py-4 text-sm text-[#9898b0] whitespace-nowrap">{withdrawal.method}</td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <span className={`px-2 py-1 text-xs rounded-full ${
-                    withdrawal.status === 'completed' ? 'bg-[rgba(0,200,150,0.1)] text-[#00c896]' :
-                    withdrawal.status === 'pending' ? 'bg-[rgba(243,186,47,0.1)] text-[#f3ba2f]' :
-                    'bg-[rgba(255,91,110,0.1)] text-[#ff5b6e]'
-                  }`}>
+              <tr key={withdrawal._id} style={{ borderTop: '1px solid rgba(249,115,22,0.05)' }}>
+                <td style={{ padding: '12px 16px', color: '#fff', fontWeight: 500 }}>{formatAmount(withdrawal.amount)}</td>
+                <td style={{ padding: '12px 16px', color: '#8a7060' }}>{withdrawal.method}</td>
+                <td style={{ padding: '12px 16px' }}>
+                  <span style={{
+                    padding: '4px 8px',
+                    borderRadius: '999px',
+                    fontSize: '10px',
+                    fontWeight: 600,
+                    background: withdrawal.status === 'completed' ? 'rgba(249,115,22,0.15)' : withdrawal.status === 'pending' ? 'rgba(243,186,47,0.15)' : 'rgba(239,68,68,0.15)',
+                    color: withdrawal.status === 'completed' ? '#f97316' : withdrawal.status === 'pending' ? '#f3ba2f' : '#ef4444'
+                  }}>
                     {withdrawal.status}
                   </span>
                 </td>
-                <td className="px-6 py-4 text-sm text-[#9898b0] whitespace-nowrap">{formatDate(withdrawal.createdAt)}</td>
+                <td style={{ padding: '12px 16px', color: '#8a7060' }}>{formatDate(withdrawal.createdAt)}</td>
               </tr>
             ))
           )}
@@ -154,30 +152,26 @@ const TransactionHistory = () => {
   );
 
   const OtherTable = () => (
-    <div className="overflow-x-auto sm:mx-0">
-      <table className="min-w-full divide-y divide-[#1a1a28]">
+    <div style={{ overflowX: 'auto' }}>
+      <table style={{ width: '100%', borderCollapse: 'collapse' }}>
         <thead>
-          <tr>
-            <th className="px-6 py-3 text-left text-xs font-medium text-[#6b6b85] uppercase tracking-wider">Amount</th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-[#6b6b85] uppercase tracking-wider">Type</th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-[#6b6b85] uppercase tracking-wider">Description</th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-[#6b6b85] uppercase tracking-wider">Date</th>
+          <tr style={{ color: '#8a7060', fontSize: '11px', textTransform: 'uppercase' }}>
+            <th style={{ padding: '12px 16px', textAlign: 'left' }}>Amount</th>
+            <th style={{ padding: '12px 16px', textAlign: 'left' }}>Type</th>
+            <th style={{ padding: '12px 16px', textAlign: 'left' }}>Description</th>
+            <th style={{ padding: '12px 16px', textAlign: 'left' }}>Date</th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-[#1a1a28]">
+        <tbody>
           {others.length === 0 ? (
-            <tr>
-              <td colSpan="4" className="px-6 py-8 text-center">
-                <EmptyState type="transactions" />
-              </td>
-            </tr>
+            <tr><td colSpan="4" style={{ padding: '24px', textAlign: 'center' }}><EmptyState type="transactions" /></td></tr>
           ) : (
             others.map((tx, idx) => (
-              <tr key={idx}>
-                <td className="px-6 py-4 text-sm font-medium text-[#e8e8f0] whitespace-nowrap">{formatAmount(tx.amount)}</td>
-                <td className="px-6 py-4 text-sm text-[#9898b0] whitespace-nowrap">{tx.type || 'N/A'}</td>
-                <td className="px-6 py-4 text-sm text-[#9898b0]">{tx.description || tx.plan || 'N/A'}</td>
-                <td className="px-6 py-4 text-sm text-[#9898b0] whitespace-nowrap">{formatDate(tx.date || tx.createdAt)}</td>
+              <tr key={idx} style={{ borderTop: '1px solid rgba(249,115,22,0.05)' }}>
+                <td style={{ padding: '12px 16px', color: '#fff', fontWeight: 500 }}>{formatAmount(tx.amount)}</td>
+                <td style={{ padding: '12px 16px', color: '#8a7060' }}>{tx.type || 'N/A'}</td>
+                <td style={{ padding: '12px 16px', color: '#8a7060' }}>{tx.description || tx.plan || 'N/A'}</td>
+                <td style={{ padding: '12px 16px', color: '#8a7060' }}>{formatDate(tx.date || tx.createdAt)}</td>
               </tr>
             ))
           )}
@@ -195,42 +189,41 @@ const TransactionHistory = () => {
 
     if (data.length === 0) {
       return (
-        <div className="sm:hidden">
-          <ul className="divide-y divide-[#1a1a28]">
-            <li className="p-6 text-center">
-              <EmptyState type={typeLabel} />
-            </li>
-          </ul>
+        <div style={{ display: 'block', '@media (min-width: 640px)': { display: 'none' } }}>
+          <div style={{ padding: '16px', textAlign: 'center' }}>
+            <EmptyState type={typeLabel} />
+          </div>
         </div>
       );
     }
 
     return (
-      <div className="sm:hidden space-y-4 p-4">
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', padding: '16px' }} className="sm:hidden">
         {data.map((item, idx) => (
-          <div key={idx} className="bg-[#0c0c16] rounded-lg p-4">
-            <div className="flex justify-between items-start">
+          <div key={idx} style={{ background: 'rgba(249,115,22,0.03)', borderRadius: '16px', padding: '16px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
               <div>
-                <p className="text-xs text-[#6b6b85]">Amount</p>
-                <p className="text-lg font-semibold text-[#e8e8f0]">{formatAmount(item.amount)}</p>
+                <p style={{ fontSize: '10px', color: '#8a7060' }}>Amount</p>
+                <p style={{ fontSize: '16px', fontWeight: 700, color: '#fff' }}>{formatAmount(item.amount)}</p>
               </div>
-              <span className={`px-2 py-1 text-xs rounded-full ${
-                item.status === 'completed' ? 'bg-[rgba(0,200,150,0.1)] text-[#00c896]' :
-                item.status === 'pending' ? 'bg-[rgba(243,186,47,0.1)] text-[#f3ba2f]' :
-                'bg-[#1a1a28] text-[#9898b0]'
-              }`}>
+              <span style={{
+                padding: '4px 8px',
+                borderRadius: '999px',
+                fontSize: '10px',
+                fontWeight: 600,
+                background: item.status === 'completed' ? 'rgba(249,115,22,0.15)' : item.status === 'pending' ? 'rgba(243,186,47,0.15)' : 'rgba(239,68,68,0.15)',
+                color: item.status === 'completed' ? '#f97316' : item.status === 'pending' ? '#f3ba2f' : '#ef4444'
+              }}>
                 {item.status || 'completed'}
               </span>
             </div>
-            <div className="mt-2">
-              <p className="text-xs text-[#6b6b85]">{activeTab === 'deposit' ? 'Payment Mode' : activeTab === 'withdrawal' ? 'Method' : 'Type'}</p>
-              <p className="text-sm text-[#9898b0]">
-                {activeTab === 'deposit' ? (item.paymentMethod || 'N/A') : activeTab === 'withdrawal' ? (item.method || 'N/A') : (item.type || 'N/A')}
-              </p>
+            <div style={{ marginTop: '12px' }}>
+              <p style={{ fontSize: '10px', color: '#8a7060' }}>{activeTab === 'deposit' ? 'Payment Mode' : activeTab === 'withdrawal' ? 'Method' : 'Type'}</p>
+              <p style={{ fontSize: '13px', color: '#a89070' }}>{activeTab === 'deposit' ? (item.paymentMethod || 'N/A') : activeTab === 'withdrawal' ? (item.method || 'N/A') : (item.type || 'N/A')}</p>
             </div>
-            <div className="mt-2">
-              <p className="text-xs text-[#6b6b85]">Date</p>
-              <p className="text-sm text-[#9898b0]">{formatDate(item.createdAt || item.date)}</p>
+            <div style={{ marginTop: '8px' }}>
+              <p style={{ fontSize: '10px', color: '#8a7060' }}>Date</p>
+              <p style={{ fontSize: '12px', color: '#a89070' }}>{formatDate(item.createdAt || item.date)}</p>
             </div>
           </div>
         ))}
@@ -240,40 +233,75 @@ const TransactionHistory = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen" style={{ fontFamily: "'Syne', sans-serif" }}>
-        <style>{`@import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;500;600;700;800&display=swap');`}</style>
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#00c896] mx-auto"></div>
-          <p className="mt-4 text-[#6b6b85]">Loading transactions...</p>
-        </div>
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        minHeight: '100vh',
+        background: '#0d0600',
+        fontFamily: "'Syne', sans-serif"
+      }}>
+        <div style={{
+          width: '48px',
+          height: '48px',
+          border: '3px solid rgba(249,115,22,0.2)',
+          borderTopColor: '#f97316',
+          borderRadius: '50%',
+          animation: 'spin 1s linear infinite'
+        }} />
+        <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
       </div>
     );
   }
 
   return (
-    <div className="p-4 md:p-6 pb-20 md:pb-8 overflow-x-hidden flex-grow space-y-6" style={{ fontFamily: "'Syne', sans-serif" }}>
+    <div style={{
+      padding: '24px',
+      overflowX: 'hidden',
+      flexGrow: 1,
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '24px',
+      fontFamily: "'Syne', sans-serif",
+      background: '#0d0600',
+      minHeight: '100vh'
+    }}>
       <style>{`@import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;500;600;700;800&display=swap');`}</style>
 
-      <div className="bg-[#0c0c18] border border-[#1a1a28] rounded-xl p-6 md:p-8 relative overflow-hidden">
-        <div className="relative z-10">
-          <div className="flex items-center gap-4 mb-2 text-[#6b6b85] text-sm">
-            <div className="flex items-center gap-1">
-              <Calendar className="w-4 h-4" />
+      <div style={{
+        background: '#0a0400',
+        border: '1px solid rgba(249,115,22,0.09)',
+        borderRadius: '16px',
+        padding: '24px 32px'
+      }}>
+        <div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '8px', color: '#8a7060', fontSize: '13px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+              <Calendar size={14} />
               <span>Transaction Records</span>
             </div>
-            <div className="flex items-center gap-1 text-xs text-[#4a4a64]">
-              <Wallet className="w-4 h-4" />
+            <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px', color: '#6a4a30' }}>
+              <Wallet size={14} />
               <span>Balance: ${currentBalance.toFixed(2)}</span>
             </div>
           </div>
-          <h1 className="text-3xl font-bold text-[#e8e8f0] mb-2">Transaction Records</h1>
-          <p className="text-[#6b6b85] mb-6 max-w-lg">View all your financial activities in one place.</p>
+          <h1 style={{ fontSize: 'clamp(24px, 5vw, 32px)', fontWeight: 800, color: '#fff', marginBottom: '8px' }}>
+            Transaction Records
+          </h1>
+          <p style={{ color: '#8a7060', marginBottom: '0', maxWidth: '500px', fontSize: '14px' }}>
+            View all your financial activities in one place.
+          </p>
         </div>
       </div>
 
-      <div className="bg-[#0c0c18] border border-[#1a1a28] rounded-xl overflow-hidden">
-        <div className="px-2 sm:px-6 border-b border-[#1a1a28]">
-          <div className="flex overflow-x-auto py-3 sm:py-4 no-scrollbar" role="tablist">
+      <div style={{
+        background: '#0a0400',
+        border: '1px solid rgba(249,115,22,0.09)',
+        borderRadius: '16px',
+        overflow: 'hidden'
+      }}>
+        <div style={{ padding: '0 16px', borderBottom: '1px solid rgba(249,115,22,0.08)' }}>
+          <div style={{ display: 'flex', overflowX: 'auto', gap: '8px', padding: '12px 0' }} role="tablist">
             {tabs.map((tab) => {
               const Icon = tab.icon;
               const isActive = activeTab === tab.id;
@@ -281,45 +309,60 @@ const TransactionHistory = () => {
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`mr-3 pb-3 px-1 inline-flex flex-col items-center text-sm font-medium border-b-2 focus:outline-none whitespace-nowrap transition-colors ${
-                    isActive
-                      ? 'border-[#00c896] text-[#00c896]'
-                      : 'border-transparent text-[#6b6b85] hover:text-[#9898b0]'
-                  }`}
-                  role="tab"
+                  style={{
+                    display: 'inline-flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    padding: '8px 12px',
+                    borderBottom: `2px solid ${isActive ? '#f97316' : 'transparent'}`,
+                    color: isActive ? '#f97316' : '#8a7060',
+                    background: 'transparent',
+                    border: 'none',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s',
+                    whiteSpace: 'nowrap'
+                  }}
                 >
-                  <div className={`flex items-center justify-center h-8 w-8 rounded-full mb-1 sm:mb-2 transition-colors ${
-                    isActive ? 'bg-[rgba(0,200,150,0.1)]' : 'bg-[#0c0c16]'
-                  }`}>
-                    <Icon className={`h-4 w-4 ${isActive ? 'text-[#00c896]' : 'text-[#6b6b85]'}`} />
+                  <div style={{
+                    width: '32px',
+                    height: '32px',
+                    borderRadius: '50%',
+                    background: isActive ? 'rgba(249,115,22,0.1)' : 'transparent',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    marginBottom: '4px'
+                  }}>
+                    <Icon size={16} />
                   </div>
-                  <span className="text-xs sm:text-sm">{tab.label}</span>
+                  <span style={{ fontSize: '11px', fontWeight: 500 }}>{tab.label}</span>
                 </button>
               );
             })}
           </div>
         </div>
 
-        <div className="p-0 sm:p-6">
-          <div className={activeTab === 'deposit' ? 'block' : 'hidden'}>
+        <div style={{ padding: '0' }}>
+          <div style={{ display: activeTab === 'deposit' ? 'block' : 'none' }}>
             <MobileCard />
-            <div className="hidden sm:block overflow-hidden"><DepositTable /></div>
+            <div style={{ display: 'none', '@media (min-width: 640px)': { display: 'block' } }} className="hidden sm:block">
+              <DepositTable />
+            </div>
           </div>
-          <div className={activeTab === 'withdrawal' ? 'block' : 'hidden'}>
+          <div style={{ display: activeTab === 'withdrawal' ? 'block' : 'none' }}>
             <MobileCard />
-            <div className="hidden sm:block overflow-hidden"><WithdrawalTable /></div>
+            <div style={{ display: 'none', '@media (min-width: 640px)': { display: 'block' } }} className="hidden sm:block">
+              <WithdrawalTable />
+            </div>
           </div>
-          <div className={activeTab === 'other' ? 'block' : 'hidden'}>
+          <div style={{ display: activeTab === 'other' ? 'block' : 'none' }}>
             <MobileCard />
-            <div className="hidden sm:block overflow-hidden"><OtherTable /></div>
+            <div style={{ display: 'none', '@media (min-width: 640px)': { display: 'block' } }} className="hidden sm:block">
+              <OtherTable />
+            </div>
           </div>
         </div>
       </div>
-
-      <style>{`
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-      `}</style>
     </div>
   );
 };

@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import {
-  User, UserCheck, Mail, Phone, Lock, Sun, MapPin, Users, UserPlus, Shield, Eye, EyeOff, Calendar
+  User, UserCheck, Mail, Phone, Lock, Sun, MapPin, Users, UserPlus, Shield, Eye, EyeOff
 } from 'lucide-react';
-import toast from 'react-hot-toast';
+import toast, { Toaster } from 'react-hot-toast';
 import { useTheme } from '../context/ThemeContext';
 
 const countries = [
@@ -43,273 +43,270 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-screen bg-dark transition-colors duration-200 flex flex-col lg:flex-row">
-      {/* Left illustration panel */}
-      <div className="hidden lg:flex lg:w-1/2 bg-dark-50 relative overflow-hidden items-center justify-center border-r border-gray-800">
-        <div className="absolute inset-0 bg-dot-pattern opacity-30" />
-        <div className="absolute top-8 left-8 z-10">
-          <img src="/logo.png" alt="Logo" className="dark:brightness-0 dark:invert w-32" />
-        </div>
-        <div className="text-center max-w-md z-10">
-          <h1 className="text-3xl font-bold text-white mb-4">Invest with Confidence</h1>
-          <p className="text-gray-400">
-            Take control of your financial future with our transparent and secure investment platform.
-          </p>
-        </div>
-        <div className="absolute bottom-20 right-10 w-40 h-40 bg-primary/10 rounded-full blur-3xl" />
-        <div className="absolute top-20 left-20 w-40 h-40 bg-secondary/10 rounded-full blur-3xl" />
+    <div style={{
+      minHeight: '100vh',
+      background: '#0d0600',
+      fontFamily: "'Syne', sans-serif",
+      display: 'flex',
+      overflowX: 'hidden',
+      position: 'relative'
+    }}>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap');
+        * { box-sizing: border-box; }
+        .glass-card {
+          background: rgba(13, 6, 0, 0.7);
+          backdrop-filter: blur(12px);
+          border: 1px solid rgba(249, 115, 22, 0.15);
+          border-radius: 24px;
+        }
+        .input-dark {
+          background: rgba(255, 255, 255, 0.03);
+          border: 1px solid rgba(249, 115, 22, 0.2);
+          border-radius: 16px;
+          color: #fff;
+          transition: all 0.2s ease;
+        }
+        .input-dark:focus {
+          outline: none;
+          border-color: #f97316;
+          box-shadow: 0 0 0 2px rgba(249, 115, 22, 0.2);
+        }
+        .btn-orange {
+          background: #f97316;
+          color: #fff;
+          border: none;
+          border-radius: 999px;
+          font-weight: 700;
+          cursor: pointer;
+          transition: all 0.25s;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
+        }
+        .btn-orange:hover {
+          background: #fb923c;
+          box-shadow: 0 0 20px rgba(249, 115, 22, 0.4);
+        }
+        .bg-dot-pattern {
+          background-image: radial-gradient(circle, rgba(249, 115, 22, 0.08) 1px, transparent 1px);
+          background-size: 24px 24px;
+        }
+      `}</style>
+
+      <Toaster position="top-right" toastOptions={{
+        style: {
+          background: '#1a0e00',
+          color: '#fff',
+          border: '1px solid rgba(249,115,22,0.3)',
+          fontFamily: "'Syne', sans-serif"
+        },
+      }} />
+
+      {/* Theme toggle – kept for logic */}
+      <div style={{ position: 'fixed', top: 20, right: 20, zIndex: 60 }}>
+        <button
+          onClick={toggleDark}
+          style={{
+            background: 'rgba(13,6,0,0.8)',
+            border: '1px solid rgba(249,115,22,0.3)',
+            borderRadius: '50%',
+            width: 44,
+            height: 44,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            cursor: 'pointer',
+            color: '#f97316',
+            backdropFilter: 'blur(8px)'
+          }}
+        >
+          <Sun size={20} />
+        </button>
       </div>
 
-      {/* Right form panel */}
-      <div className="flex-1 flex flex-col items-center justify-center p-4 sm:p-6 lg:p-8">
-        <div className="fixed top-4 right-4 z-50">
-          <button
-            onClick={toggleDark}
-            className="p-2 rounded-full bg-dark-100 border border-gray-800 text-gray-400 hover:text-white transition-colors"
-          >
-            {dark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-          </button>
+      <div style={{ display: 'flex', flex: 1, flexDirection: 'row', minHeight: '100vh' }}>
+        {/* Left panel – illustration */}
+        <div style={{
+          display: 'none',
+          position: 'relative',
+          overflow: 'hidden',
+          background: '#080300',
+          borderRight: '1px solid rgba(249,115,22,0.1)',
+          '@media (min-width: 1024px)': { display: 'flex', width: '50%' }
+        }} className="lg:flex lg:w-1/2 bg-dot-pattern items-center justify-center">
+          <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse 70% 60% at 30% 40%, rgba(249,115,22,0.12) 0%, transparent 70%)' }} />
+          <div style={{ textAlign: 'center', maxWidth: 380, zIndex: 2, padding: '2rem' }}>
+            <div style={{ marginBottom: 24 }}>
+              <svg viewBox="0 0 40 40" width="48" height="48" style={{ margin: '0 auto' }}>
+                <polygon points="20,2 38,12 38,28 20,38 2,28 2,12" fill="none" stroke="#f97316" strokeWidth="2.5"/>
+                <polygon points="20,8 33,15 33,25 20,32 7,25 7,15" fill="rgba(249,115,22,0.15)" stroke="#f97316" strokeWidth="1.5"/>
+                <polygon points="20,14 26,18 26,22 20,26 14,22 14,18" fill="#f97316"/>
+              </svg>
+            </div>
+            <h1 style={{ fontSize: '2.5rem', fontWeight: 800, color: '#fff', marginBottom: 16, letterSpacing: '-0.02em' }}>
+              Start your <span style={{ color: '#f97316' }}>journey</span>
+            </h1>
+            <p style={{ color: '#a89070', lineHeight: 1.6 }}>
+              Join thousands of investors building wealth with transparent, secure tools.
+            </p>
+            <div style={{ marginTop: 48, display: 'flex', gap: 12, justifyContent: 'center' }}>
+              <div className="glow-dot" style={{ width: 6, height: 6, background: '#f97316', borderRadius: '50%', animation: 'glowPulse 2s infinite' }} />
+              <span style={{ fontSize: 11, color: '#f97316', fontFamily: "'Space Mono', monospace" }}>SECURE & REGULATED</span>
+            </div>
+          </div>
         </div>
 
-        <div className="w-full max-w-md">
-          <div className="bg-dark-50/90 border border-gray-800 rounded-xl shadow-lg overflow-hidden">
-            <div className="p-6 border-b border-gray-800">
-              <h2 className="text-xl font-bold text-white text-center">Create an Account</h2>
-              <p className="mt-1 text-sm text-gray-400 text-center">Fill in your details to get started</p>
-            </div>
+        {/* Right panel – registration form */}
+        <div style={{
+          flex: 1,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: '20px'
+        }}>
+          <div style={{ maxWidth: 540, width: '100%' }}>
+            <div className="glass-card" style={{ padding: '28px 24px' }}>
+              <div style={{ textAlign: 'center', marginBottom: 28 }}>
+                <h2 style={{ fontSize: '1.8rem', fontWeight: 800, color: '#fff', marginBottom: 8 }}>Create Account</h2>
+                <p style={{ color: '#8a7060', fontSize: 14 }}>Start investing in minutes</p>
+              </div>
 
-            <div className="p-6 md:p-8">
-              <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-                <div className="grid grid-cols-1 gap-5">
+              <form onSubmit={handleSubmit(onSubmit)} style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
+                <div style={{ display: 'grid', gap: 18 }}>
                   {/* Username */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">
-                      Username <span className="text-red-400">*</span>
-                    </label>
-                    <div className="relative">
-                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <User className="h-5 w-5 text-gray-500" />
-                      </div>
-                      <input
-                        type="text"
-                        {...register('username', { required: 'Username is required' })}
-                        className="block w-full pl-10 pr-3 py-3 bg-dark-100 border border-gray-800 rounded-lg shadow-sm text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-colors placeholder-gray-500"
-                        placeholder="Enter unique username"
-                      />
+                    <label style={{ fontSize: 13, fontWeight: 600, color: '#e0c9a0', marginBottom: 6, display: 'block' }}>Username *</label>
+                    <div style={{ position: 'relative' }}>
+                      <User size={18} style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: '#f97316', opacity: 0.7 }} />
+                      <input type="text" {...register('username', { required: 'Username is required' })} className="input-dark" style={{ width: '100%', padding: '12px 12px 12px 44px', fontSize: 14 }} placeholder="unique_username" />
                     </div>
-                    {errors.username && <p className="mt-1 text-sm text-red-400">{errors.username.message}</p>}
+                    {errors.username && <p style={{ color: '#ef4444', fontSize: 11, marginTop: 4 }}>{errors.username.message}</p>}
                   </div>
 
                   {/* Full Name */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">
-                      Full Name <span className="text-red-400">*</span>
-                    </label>
-                    <div className="relative">
-                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <UserCheck className="h-5 w-5 text-gray-500" />
-                      </div>
-                      <input
-                        type="text"
-                        {...register('name', { required: 'Full name is required' })}
-                        className="block w-full pl-10 pr-3 py-3 bg-dark-100 border border-gray-800 rounded-lg shadow-sm text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-colors placeholder-gray-500"
-                        placeholder="Enter your full name"
-                      />
+                    <label style={{ fontSize: 13, fontWeight: 600, color: '#e0c9a0', marginBottom: 6, display: 'block' }}>Full Name *</label>
+                    <div style={{ position: 'relative' }}>
+                      <UserCheck size={18} style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: '#f97316', opacity: 0.7 }} />
+                      <input type="text" {...register('name', { required: 'Full name is required' })} className="input-dark" style={{ width: '100%', padding: '12px 12px 12px 44px', fontSize: 14 }} placeholder="John Doe" />
                     </div>
-                    {errors.name && <p className="mt-1 text-sm text-red-400">{errors.name.message}</p>}
+                    {errors.name && <p style={{ color: '#ef4444', fontSize: 11, marginTop: 4 }}>{errors.name.message}</p>}
                   </div>
 
                   {/* Email */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">
-                      Email Address <span className="text-red-400">*</span>
-                    </label>
-                    <div className="relative">
-                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <Mail className="h-5 w-5 text-gray-500" />
-                      </div>
-                      <input
-                        type="email"
-                        {...register('email', {
-                          required: 'Email is required',
-                          pattern: { value: /^\S+@\S+$/i, message: 'Invalid email address' }
-                        })}
-                        className="block w-full pl-10 pr-3 py-3 bg-dark-100 border border-gray-800 rounded-lg shadow-sm text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-colors placeholder-gray-500"
-                        placeholder="name@example.com"
-                      />
+                    <label style={{ fontSize: 13, fontWeight: 600, color: '#e0c9a0', marginBottom: 6, display: 'block' }}>Email Address *</label>
+                    <div style={{ position: 'relative' }}>
+                      <Mail size={18} style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: '#f97316', opacity: 0.7 }} />
+                      <input type="email" {...register('email', { required: 'Email is required', pattern: { value: /^\S+@\S+$/i, message: 'Invalid email' } })} className="input-dark" style={{ width: '100%', padding: '12px 12px 12px 44px', fontSize: 14 }} placeholder="hello@example.com" />
                     </div>
-                    {errors.email && <p className="mt-1 text-sm text-red-400">{errors.email.message}</p>}
+                    {errors.email && <p style={{ color: '#ef4444', fontSize: 11, marginTop: 4 }}>{errors.email.message}</p>}
                   </div>
 
                   {/* Phone */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">
-                      Phone Number <span className="text-red-400">*</span>
-                    </label>
-                    <div className="relative">
-                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <Phone className="h-5 w-5 text-gray-500" />
-                      </div>
-                      <input
-                        type="tel"
-                        {...register('phone', { required: 'Phone number is required' })}
-                        className="block w-full pl-10 pr-3 py-3 bg-dark-100 border border-gray-800 rounded-lg shadow-sm text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-colors placeholder-gray-500"
-                        placeholder="Enter your phone number"
-                      />
+                    <label style={{ fontSize: 13, fontWeight: 600, color: '#e0c9a0', marginBottom: 6, display: 'block' }}>Phone Number *</label>
+                    <div style={{ position: 'relative' }}>
+                      <Phone size={18} style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: '#f97316', opacity: 0.7 }} />
+                      <input type="tel" {...register('phone', { required: 'Phone number is required' })} className="input-dark" style={{ width: '100%', padding: '12px 12px 12px 44px', fontSize: 14 }} placeholder="+1 234 567 890" />
                     </div>
-                    {errors.phone && <p className="mt-1 text-sm text-red-400">{errors.phone.message}</p>}
+                    {errors.phone && <p style={{ color: '#ef4444', fontSize: 11, marginTop: 4 }}>{errors.phone.message}</p>}
                   </div>
 
                   {/* Password */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">
-                      Password <span className="text-red-400">*</span>
-                    </label>
-                    <div className="relative">
-                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <Lock className="h-5 w-5 text-gray-500" />
-                      </div>
-                      <input
-                        type={showPassword ? 'text' : 'password'}
-                        {...register('password', {
-                          required: 'Password is required',
-                          minLength: { value: 8, message: 'Password must be at least 8 characters' }
-                        })}
-                        className="block w-full pl-10 pr-10 py-3 bg-dark-100 border border-gray-800 rounded-lg shadow-sm text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-colors placeholder-gray-500"
-                        placeholder="Create password"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setShowPassword(!showPassword)}
-                        className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 hover:text-primary transition-colors"
-                      >
-                        {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                    <label style={{ fontSize: 13, fontWeight: 600, color: '#e0c9a0', marginBottom: 6, display: 'block' }}>Password *</label>
+                    <div style={{ position: 'relative' }}>
+                      <Lock size={18} style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: '#f97316', opacity: 0.7 }} />
+                      <input type={showPassword ? 'text' : 'password'} {...register('password', { required: 'Password required', minLength: { value: 8, message: 'At least 8 characters' } })} className="input-dark" style={{ width: '100%', padding: '12px 44px 12px 44px', fontSize: 14 }} placeholder="••••••••" />
+                      <button type="button" onClick={() => setShowPassword(!showPassword)} style={{ position: 'absolute', right: 14, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', color: '#a89070', cursor: 'pointer' }}>
+                        {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                       </button>
                     </div>
-                    {errors.password && <p className="mt-1 text-sm text-red-400">{errors.password.message}</p>}
+                    {errors.password && <p style={{ color: '#ef4444', fontSize: 11, marginTop: 4 }}>{errors.password.message}</p>}
                   </div>
 
                   {/* Confirm Password */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">
-                      Confirm Password <span className="text-red-400">*</span>
-                    </label>
-                    <div className="relative">
-                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <Lock className="h-5 w-5 text-gray-500" />
-                      </div>
-                      <input
-                        type={showConfirmPassword ? 'text' : 'password'}
-                        {...register('password_confirmation', {
-                          required: 'Please confirm your password',
-                          validate: value => value === password || 'Passwords do not match'
-                        })}
-                        className="block w-full pl-10 pr-10 py-3 bg-dark-100 border border-gray-800 rounded-lg shadow-sm text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-colors placeholder-gray-500"
-                        placeholder="Confirm password"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                        className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 hover:text-primary transition-colors"
-                      >
-                        {showConfirmPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                    <label style={{ fontSize: 13, fontWeight: 600, color: '#e0c9a0', marginBottom: 6, display: 'block' }}>Confirm Password *</label>
+                    <div style={{ position: 'relative' }}>
+                      <Lock size={18} style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: '#f97316', opacity: 0.7 }} />
+                      <input type={showConfirmPassword ? 'text' : 'password'} {...register('password_confirmation', { required: 'Please confirm', validate: value => value === password || 'Passwords do not match' })} className="input-dark" style={{ width: '100%', padding: '12px 44px 12px 44px', fontSize: 14 }} placeholder="••••••••" />
+                      <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)} style={{ position: 'absolute', right: 14, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', color: '#a89070', cursor: 'pointer' }}>
+                        {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                       </button>
                     </div>
-                    {errors.password_confirmation && <p className="mt-1 text-sm text-red-400">{errors.password_confirmation.message}</p>}
+                    {errors.password_confirmation && <p style={{ color: '#ef4444', fontSize: 11, marginTop: 4 }}>{errors.password_confirmation.message}</p>}
                   </div>
 
                   {/* Country */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">
-                      Country <span className="text-red-400">*</span>
-                    </label>
-                    <div className="relative">
-                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <MapPin className="h-5 w-5 text-gray-500" />
-                      </div>
-                      <select
-                        {...register('country', { required: 'Country is required' })}
-                        className="block w-full pl-10 pr-10 py-3 bg-dark-100 border border-gray-800 rounded-lg shadow-sm text-white appearance-none focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-                      >
-                        <option value="">Select your country</option>
-                        {countries.map(c => (
-                          <option key={c.code} value={c.name}>{c.name}</option>
-                        ))}
+                    <label style={{ fontSize: 13, fontWeight: 600, color: '#e0c9a0', marginBottom: 6, display: 'block' }}>Country *</label>
+                    <div style={{ position: 'relative' }}>
+                      <MapPin size={18} style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: '#f97316', opacity: 0.7, pointerEvents: 'none' }} />
+                      <select {...register('country', { required: 'Country is required' })} className="input-dark" style={{ width: '100%', padding: '12px 12px 12px 44px', fontSize: 14, appearance: 'none', cursor: 'pointer' }}>
+                        <option value="">Select country</option>
+                        {countries.map(c => <option key={c.code} value={c.name}>{c.name}</option>)}
                       </select>
-                      <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                        <svg className="h-5 w-5 text-gray-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                          <path d="m6 9 6 6 6-6" />
-                        </svg>
+                      <div style={{ position: 'absolute', right: 14, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }}>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#a89070" strokeWidth="2"><path d="m6 9 6 6 6-6"/></svg>
                       </div>
                     </div>
-                    {errors.country && <p className="mt-1 text-sm text-red-400">{errors.country.message}</p>}
+                    {errors.country && <p style={{ color: '#ef4444', fontSize: 11, marginTop: 4 }}>{errors.country.message}</p>}
                   </div>
 
-                  {/* Referral ID (optional) */}
+                  {/* Referral ID */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">
-                      Referral ID (Optional)
-                    </label>
-                    <div className="relative">
-                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <Users className="h-5 w-5 text-gray-500" />
-                      </div>
-                      <input
-                        type="text"
-                        {...register('ref_by')}
-                        className="block w-full pl-10 pr-3 py-3 bg-dark-100 border border-gray-800 rounded-lg shadow-sm text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-colors placeholder-gray-500"
-                        placeholder="Enter referral ID if you have one"
-                      />
+                    <label style={{ fontSize: 13, fontWeight: 600, color: '#e0c9a0', marginBottom: 6, display: 'block' }}>Referral ID (Optional)</label>
+                    <div style={{ position: 'relative' }}>
+                      <Users size={18} style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: '#f97316', opacity: 0.7 }} />
+                      <input type="text" {...register('ref_by')} className="input-dark" style={{ width: '100%', padding: '12px 12px 12px 44px', fontSize: 14 }} placeholder="Enter referral code" />
                     </div>
+                  </div>
+
+                  {/* reCAPTCHA placeholder – kept exactly */}
+                  <div>
+                    <label style={{ fontSize: 13, fontWeight: 600, color: '#e0c9a0', marginBottom: 6, display: 'block' }}>Captcha *</label>
+                    <div className="g-recaptcha" data-sitekey="YOUR_SITE_KEY"></div>
+                    <p style={{ fontSize: 10, color: '#5a3a22', marginTop: 4 }}>reCAPTCHA integration – replace with actual widget</p>
                   </div>
                 </div>
 
-                {/* reCAPTCHA placeholder */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
-                    Captcha <span className="text-red-400">*</span>
-                  </label>
-                  <div className="g-recaptcha" data-sitekey="YOUR_SITE_KEY"></div>
-                  <p className="text-xs text-gray-500 mt-1">reCAPTCHA integration – replace with actual widget</p>
-                </div>
-
-                <div>
-                  <button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="w-full flex justify-center items-center px-4 py-3 border border-transparent rounded-lg shadow-md text-white bg-primary hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    <UserPlus className="h-5 w-5 mr-2" />
-                    <span className="font-medium">Create Account</span>
-                  </button>
-                </div>
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="btn-orange"
+                  style={{ padding: '14px 24px', fontSize: 15, width: '100%', marginTop: 8 }}
+                >
+                  <UserPlus size={18} />
+                  <span>Create Account</span>
+                </button>
               </form>
 
-              <div className="mt-8 text-center">
-                <p className="text-sm text-gray-400">
-                    Already have an account?{' '}
-                    <a href="/login" className="font-medium text-primary hover:text-primary-400 transition-colors">
-                    Sign in
-                    </a>
+              <div style={{ marginTop: 28, textAlign: 'center', borderTop: '1px solid rgba(249,115,22,0.1)', paddingTop: 24 }}>
+                <p style={{ fontSize: 13, color: '#a89070' }}>
+                  Already have an account?{' '}
+                  <a href="/login" style={{ color: '#f97316', fontWeight: 600, textDecoration: 'none' }}>Sign in</a>
                 </p>
-                </div>
+              </div>
             </div>
-          </div>
 
-          <div className="mt-8 text-center">
-            <div className="inline-flex items-center text-xs text-gray-500">
-              <Shield className="h-3 w-3 mr-1" />
-              <span>Your information is secure – We respect your privacy</span>
+            <div style={{ marginTop: 24, textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+              <Shield size={14} style={{ color: '#f97316' }} />
+              <span style={{ fontSize: 11, color: '#5a3a22' }}>Your information is secure – We respect your privacy</span>
             </div>
           </div>
         </div>
       </div>
 
       <style>{`
-        .bg-dot-pattern {
-          background-image: radial-gradient(circle, rgba(255,255,255,0.05) 1px, transparent 1px);
-          background-size: 20px 20px;
+        @keyframes glowPulse {
+          0%, 100% { opacity: 0.6; }
+          50% { opacity: 1; }
         }
+        .glow-dot { animation: glowPulse 2s ease-in-out infinite; }
       `}</style>
     </div>
   );

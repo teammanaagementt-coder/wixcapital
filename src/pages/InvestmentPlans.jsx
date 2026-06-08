@@ -10,7 +10,6 @@ const InvestmentPlans = () => {
   const [myInvestments, setMyInvestments] = useState([]);
   const [loadingInvestments, setLoadingInvestments] = useState(true);
 
-  // Fetch available plans
   useEffect(() => {
     const fetchPlans = async () => {
       try {
@@ -32,7 +31,6 @@ const InvestmentPlans = () => {
     fetchPlans();
   }, []);
 
-  // Fetch user's active investments
   const fetchMyInvestments = async () => {
     try {
       const res = await fetch(`${import.meta.env.VITE_API_URL}/investments`, {
@@ -76,7 +74,6 @@ const InvestmentPlans = () => {
         toast.success(`Invested $${amount} in ${plan.name} plan!`);
         setSelectedPlan(null);
         setInvestAmount('');
-        // Refresh investments list
         fetchMyInvestments();
       } else {
         toast.error(data.message || 'Investment failed');
@@ -93,73 +90,140 @@ const InvestmentPlans = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen" style={{ fontFamily: "'Syne', sans-serif" }}>
-        <style>{`@import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;500;600;700;800&display=swap');`}</style>
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#00c896]"></div>
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        minHeight: '100vh',
+        background: '#0d0600',
+        fontFamily: "'Syne', sans-serif"
+      }}>
+        <div style={{
+          width: '48px',
+          height: '48px',
+          border: '3px solid rgba(249,115,22,0.2)',
+          borderTopColor: '#f97316',
+          borderRadius: '50%',
+          animation: 'spin 1s linear infinite'
+        }} />
+        <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
       </div>
     );
   }
 
   return (
-    <div className="p-4 md:p-6 pb-20 md:pb-8 overflow-x-hidden flex-grow space-y-6" style={{ fontFamily: "'Syne', sans-serif" }}>
+    <div style={{
+      padding: '24px',
+      overflowX: 'hidden',
+      flexGrow: 1,
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '24px',
+      fontFamily: "'Syne', sans-serif",
+      background: '#0d0600',
+      minHeight: '100vh'
+    }}>
       <style>{`@import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;500;600;700;800&display=swap');`}</style>
 
       {/* Header */}
-      <div className="bg-[#0c0c18] border border-[#1a1a28] rounded-xl p-6 md:p-8 relative overflow-hidden">
-        <div className="relative z-10">
-          <div className="flex items-center gap-4 mb-2 text-[#6b6b85] text-sm">
-            <div className="flex items-center gap-1">
-              <Calendar className="w-4 h-4" />
+      <div style={{
+        background: '#0a0400',
+        border: '1px solid rgba(249,115,22,0.09)',
+        borderRadius: '16px',
+        padding: '24px 32px'
+      }}>
+        <div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '8px', color: '#8a7060', fontSize: '13px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+              <Calendar size={14} />
               <span>Investment Plans</span>
             </div>
           </div>
-          <h1 className="text-3xl font-bold text-[#e8e8f0] mb-2">Choose Your Plan</h1>
-          <p className="text-[#6b6b85] mb-6 max-w-lg">
+          <h1 style={{ fontSize: 'clamp(24px, 5vw, 32px)', fontWeight: 800, color: '#fff', marginBottom: '8px' }}>
+            Choose Your Plan
+          </h1>
+          <p style={{ color: '#8a7060', marginBottom: '0', maxWidth: '500px', fontSize: '14px' }}>
             Select an investment plan that suits your goals and start earning daily returns.
           </p>
         </div>
       </div>
 
       {/* Plans Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
+        gap: '24px'
+      }}>
         {plans.map((plan) => (
-          <div key={plan._id} className="bg-[#0c0c18] border border-[#1a1a28] rounded-xl overflow-hidden hover:border-[#00c896]/50 transition-colors">
-            <div className={`bg-gradient-to-r ${plan.color || 'from-[#00c896] to-[#4a9dff]'} p-4 text-center`}>
-              <h3 className="text-xl font-bold text-[#e8e8f0]">{plan.name}</h3>
-              <p className="text-[#e8e8f0]/80 text-sm">{plan.daily}% Daily</p>
+          <div key={plan._id} style={{
+            background: '#0a0400',
+            border: '1px solid rgba(249,115,22,0.12)',
+            borderRadius: '16px',
+            overflow: 'hidden',
+            transition: 'all 0.3s'
+          }}
+          onMouseEnter={e => e.currentTarget.style.borderColor = 'rgba(249,115,22,0.3)'}
+          onMouseLeave={e => e.currentTarget.style.borderColor = 'rgba(249,115,22,0.12)'}>
+            <div style={{
+              background: `linear-gradient(135deg, ${plan.color || '#f97316'}, ${plan.color || '#f97316'}cc)`,
+              padding: '16px',
+              textAlign: 'center'
+            }}>
+              <h3 style={{ fontSize: '20px', fontWeight: 800, color: '#fff' }}>{plan.name}</h3>
+              <p style={{ color: '#fff', opacity: 0.9, fontSize: '13px' }}>{plan.daily}% Daily</p>
             </div>
-            <div className="p-6 space-y-4">
-              <div className="grid grid-cols-2 gap-4 text-center">
+            <div style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(2, 1fr)',
+                gap: '16px',
+                textAlign: 'center'
+              }}>
                 <div>
-                  <p className="text-xs text-[#6b6b85]">Min / Max</p>
-                  <p className="text-[#e8e8f0] font-medium">${plan.min} – ${plan.max.toLocaleString()}</p>
+                  <p style={{ fontSize: '11px', color: '#8a7060' }}>Min / Max</p>
+                  <p style={{ color: '#fff', fontWeight: 500 }}>${plan.min} – ${plan.max.toLocaleString()}</p>
                 </div>
                 <div>
-                  <p className="text-xs text-[#6b6b85]">Duration</p>
-                  <p className="text-[#e8e8f0] font-medium">{plan.duration} days</p>
+                  <p style={{ fontSize: '11px', color: '#8a7060' }}>Duration</p>
+                  <p style={{ color: '#fff', fontWeight: 500 }}>{plan.duration} days</p>
                 </div>
                 <div>
-                  <p className="text-xs text-[#6b6b85]">Bonus</p>
-                  <p className="text-[#e8e8f0] font-medium">+{plan.bonus}%</p>
+                  <p style={{ fontSize: '11px', color: '#8a7060' }}>Bonus</p>
+                  <p style={{ color: '#f97316', fontWeight: 700 }}>+{plan.bonus}%</p>
                 </div>
                 <div>
-                  <p className="text-xs text-[#6b6b85]">Total Return</p>
-                  <p className="text-[#00c896] font-medium">{plan.totalReturn}%</p>
+                  <p style={{ fontSize: '11px', color: '#8a7060' }}>Total Return</p>
+                  <p style={{ color: '#f97316', fontWeight: 700 }}>{plan.totalReturn}%</p>
                 </div>
               </div>
 
-              <div className="border-t border-[#1a1a28] pt-4">
-                <ul className="space-y-2">
+              <div style={{ borderTop: '1px solid rgba(249,115,22,0.08)', paddingTop: '16px' }}>
+                <ul style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                   {plan.features.map((feature, idx) => (
-                    <li key={idx} className="flex items-center gap-2 text-sm text-[#6b6b85]">
-                      <CheckCircle className="w-4 h-4 text-[#00c896]" />
+                    <li key={idx} style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', color: '#8a7060' }}>
+                      <CheckCircle size={14} style={{ color: '#f97316' }} />
                       <span>{feature}</span>
                     </li>
                   ))}
                 </ul>
               </div>
 
-              <button onClick={() => setSelectedPlan(plan)} className="w-full py-3 rounded-xl bg-[#00c896] hover:bg-[#00dea8] text-black font-medium transition-colors">
+              <button
+                onClick={() => setSelectedPlan(plan)}
+                style={{
+                  width: '100%',
+                  padding: '12px',
+                  borderRadius: '999px',
+                  background: '#f97316',
+                  color: '#fff',
+                  fontWeight: 600,
+                  border: 'none',
+                  cursor: 'pointer',
+                  transition: 'background 0.2s'
+                }}
+                onMouseEnter={e => e.currentTarget.style.background = '#fb923c'}
+                onMouseLeave={e => e.currentTarget.style.background = '#f97316'}
+              >
                 Invest Now
               </button>
             </div>
@@ -168,53 +232,59 @@ const InvestmentPlans = () => {
       </div>
 
       {/* My Investments Section */}
-      <div className="bg-[#0c0c18] border border-[#1a1a28] rounded-xl overflow-hidden">
-        <div className="p-4 border-b border-[#1a1a28] flex items-center gap-2">
-          <TrendingUp className="w-5 h-5 text-[#00c896]" />
-          <h2 className="text-lg font-bold text-[#e8e8f0]">My Investments</h2>
+      <div style={{
+        background: '#0a0400',
+        border: '1px solid rgba(249,115,22,0.09)',
+        borderRadius: '16px',
+        overflow: 'hidden'
+      }}>
+        <div style={{ padding: '16px', borderBottom: '1px solid rgba(249,115,22,0.08)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <TrendingUp size={20} style={{ color: '#f97316' }} />
+          <h2 style={{ fontSize: '18px', fontWeight: 800, color: '#fff' }}>My Investments</h2>
         </div>
-        <div className="p-4">
+        <div style={{ padding: '16px' }}>
           {loadingInvestments ? (
-            <div className="flex justify-center py-8">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#00c896]"></div>
+            <div style={{ display: 'flex', justifyContent: 'center', padding: '32px' }}>
+              <div style={{ width: '32px', height: '32px', border: '2px solid rgba(249,115,22,0.2)', borderTopColor: '#f97316', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
             </div>
           ) : myInvestments.length === 0 ? (
-            <div className="text-center py-8 text-[#6b6b85]">
-              <div className="w-12 h-12 mx-auto mb-3 rounded-full bg-[#1a1a28] flex items-center justify-center">
-                <XCircle className="w-6 h-6 text-[#4a4a64]" />
+            <div style={{ textAlign: 'center', padding: '32px', color: '#8a7060' }}>
+              <div style={{ width: '48px', height: '48px', margin: '0 auto 12px', borderRadius: '50%', background: 'rgba(249,115,22,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <XCircle size={24} style={{ color: '#6a4a30' }} />
               </div>
-              <p className="text-sm">No active investments yet.</p>
-              <p className="text-xs mt-1">Choose a plan above to get started.</p>
+              <p style={{ fontSize: '13px' }}>No active investments yet.</p>
+              <p style={{ fontSize: '11px', marginTop: '4px' }}>Choose a plan above to get started.</p>
             </div>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full">
+            <div style={{ overflowX: 'auto' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                 <thead>
-                  <tr className="text-xs text-[#6b6b85] uppercase tracking-wider">
-                    <th className="px-4 py-3 text-left font-medium">Plan</th>
-                    <th className="px-4 py-3 text-left font-medium">Amount</th>
-                    <th className="px-4 py-3 text-left font-medium">Daily Return</th>
-                    <th className="px-4 py-3 text-left font-medium">Duration</th>
-                    <th className="px-4 py-3 text-left font-medium">End Date</th>
-                    <th className="px-4 py-3 text-left font-medium">Status</th>
+                  <tr style={{ fontSize: '11px', color: '#8a7060', textTransform: 'uppercase' }}>
+                    <th style={{ padding: '12px 16px', textAlign: 'left' }}>Plan</th>
+                    <th style={{ padding: '12px 16px', textAlign: 'left' }}>Amount</th>
+                    <th style={{ padding: '12px 16px', textAlign: 'left' }}>Daily Return</th>
+                    <th style={{ padding: '12px 16px', textAlign: 'left' }}>Duration</th>
+                    <th style={{ padding: '12px 16px', textAlign: 'left' }}>End Date</th>
+                    <th style={{ padding: '12px 16px', textAlign: 'left' }}>Status</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#1a1a28]">
+                <tbody>
                   {myInvestments.map((inv) => (
-                    <tr key={inv._id} className="text-sm text-[#9898b0] hover:bg-[#1a1a28]/30 transition-colors">
-                      <td className="px-4 py-3">{inv.planId?.name || 'Unknown Plan'}</td>
-                      <td className="px-4 py-3 font-mono text-[#e8e8f0]">${inv.amount?.toLocaleString()}</td>
-                      <td className="px-4 py-3">{inv.dailyReturn}%</td>
-                      <td className="px-4 py-3">{inv.duration} days</td>
-                      <td className="px-4 py-3">{formatDate(inv.endDate)}</td>
-                      <td className="px-4 py-3">
-                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                          inv.status === 'active'
-                            ? 'bg-[rgba(0,200,150,0.1)] text-[#00c896]'
-                            : inv.status === 'completed'
-                            ? 'bg-[rgba(74,157,255,0.1)] text-[#4a9dff]'
-                            : 'bg-[rgba(255,91,110,0.1)] text-[#ff5b6e]'
-                        }`}>
+                    <tr key={inv._id} style={{ borderTop: '1px solid rgba(249,115,22,0.05)' }}>
+                      <td style={{ padding: '12px 16px', color: '#fff' }}>{inv.planId?.name || 'Unknown Plan'}</td>
+                      <td style={{ padding: '12px 16px', fontFamily: "'Space Mono', monospace", color: '#fff' }}>${inv.amount?.toLocaleString()}</td>
+                      <td style={{ padding: '12px 16px', color: '#8a7060' }}>{inv.dailyReturn}%</td>
+                      <td style={{ padding: '12px 16px', color: '#8a7060' }}>{inv.duration} days</td>
+                      <td style={{ padding: '12px 16px', color: '#8a7060' }}>{formatDate(inv.endDate)}</td>
+                      <td style={{ padding: '12px 16px' }}>
+                        <span style={{
+                          padding: '4px 8px',
+                          borderRadius: '999px',
+                          fontSize: '10px',
+                          fontWeight: 600,
+                          background: inv.status === 'active' ? 'rgba(249,115,22,0.15)' : inv.status === 'completed' ? 'rgba(74,157,255,0.15)' : 'rgba(239,68,68,0.15)',
+                          color: inv.status === 'active' ? '#f97316' : inv.status === 'completed' ? '#4a9dff' : '#ef4444'
+                        }}>
                           {inv.status}
                         </span>
                       </td>
@@ -229,33 +299,80 @@ const InvestmentPlans = () => {
 
       {/* Investment Modal */}
       {selectedPlan && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[99999] flex items-center justify-center p-4">
-          <div className="bg-[#0c0c18] border border-[#1a1a28] rounded-xl p-6 max-w-md w-full">
-            <h3 className="text-xl font-bold text-[#e8e8f0] mb-2">Invest in {selectedPlan.name}</h3>
-            <p className="text-[#6b6b85] text-sm mb-4">
+        <div style={{
+          position: 'fixed',
+          inset: 0,
+          background: 'rgba(13,6,0,0.9)',
+          backdropFilter: 'blur(12px)',
+          zIndex: 99999,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: '16px'
+        }}>
+          <div style={{
+            background: '#0a0400',
+            border: '1px solid rgba(249,115,22,0.2)',
+            borderRadius: '16px',
+            padding: '24px',
+            maxWidth: '448px',
+            width: '100%'
+          }}>
+            <h3 style={{ fontSize: '20px', fontWeight: 800, color: '#fff', marginBottom: '8px' }}>Invest in {selectedPlan.name}</h3>
+            <p style={{ color: '#8a7060', fontSize: '13px', marginBottom: '16px' }}>
               Min: ${selectedPlan.min} – Max: ${selectedPlan.max.toLocaleString()}
             </p>
-            <div className="space-y-4">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
               <div>
-                <label className="text-sm text-[#6b6b85]">Amount (USD)</label>
+                <label style={{ fontSize: '13px', color: '#8a7060' }}>Amount (USD)</label>
                 <input
                   type="number"
                   value={investAmount}
                   onChange={(e) => setInvestAmount(e.target.value)}
-                  className="w-full mt-1 p-3 rounded-xl bg-[#0c0c16] border border-[#1a1a28] text-[#e8e8f0] focus:ring-2 focus:ring-[#00c896] focus:border-transparent"
+                  style={{
+                    width: '100%',
+                    marginTop: '4px',
+                    padding: '12px',
+                    borderRadius: '16px',
+                    background: 'rgba(255,255,255,0.03)',
+                    border: '1px solid rgba(249,115,22,0.2)',
+                    color: '#fff',
+                    outline: 'none'
+                  }}
                   placeholder={`Enter amount ($${selectedPlan.min} - $${selectedPlan.max.toLocaleString()})`}
                 />
               </div>
-              <div className="flex gap-3">
+              <div style={{ display: 'flex', gap: '12px' }}>
                 <button
                   onClick={() => handleInvest(selectedPlan)}
-                  className="flex-1 py-3 rounded-xl bg-[#00c896] hover:bg-[#00dea8] text-black font-medium"
+                  style={{
+                    flex: 1,
+                    padding: '12px',
+                    borderRadius: '999px',
+                    background: '#f97316',
+                    color: '#fff',
+                    fontWeight: 600,
+                    border: 'none',
+                    cursor: 'pointer'
+                  }}
+                  onMouseEnter={e => e.currentTarget.style.background = '#fb923c'}
+                  onMouseLeave={e => e.currentTarget.style.background = '#f97316'}
                 >
                   Confirm Investment
                 </button>
                 <button
                   onClick={() => setSelectedPlan(null)}
-                  className="px-4 py-3 rounded-xl bg-[#0c0c16] hover:bg-[#1a1a28] text-[#e8e8f0] font-medium"
+                  style={{
+                    padding: '12px 16px',
+                    borderRadius: '999px',
+                    background: 'rgba(249,115,22,0.08)',
+                    color: '#fff',
+                    fontWeight: 600,
+                    border: 'none',
+                    cursor: 'pointer'
+                  }}
+                  onMouseEnter={e => e.currentTarget.style.background = 'rgba(249,115,22,0.15)'}
+                  onMouseLeave={e => e.currentTarget.style.background = 'rgba(249,115,22,0.08)'}
                 >
                   Cancel
                 </button>

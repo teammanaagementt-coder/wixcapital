@@ -144,55 +144,93 @@ const WithdrawFunds = () => {
   const { label, placeholder, example } = getDetailsConfig(method.name);
 
   return (
-    <div className="p-4 md:p-6 pb-20 md:pb-8 overflow-x-hidden flex-grow space-y-6" style={{ fontFamily: "'Syne', sans-serif" }}>
+    <div style={{
+      padding: '24px',
+      overflowX: 'hidden',
+      flexGrow: 1,
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '24px',
+      fontFamily: "'Syne', sans-serif",
+      background: '#0d0600',
+      minHeight: '100vh'
+    }}>
       <style>{`@import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;500;600;700;800&display=swap');`}</style>
 
       {/* Header */}
-      <div className="bg-[#0c0c18] border border-[#1a1a28] rounded-xl p-6 md:p-8 relative overflow-hidden">
-        <div className="relative z-10">
-          <div className="flex items-center gap-4 mb-2 text-[#6b6b85] text-sm">
-            <div className="flex items-center gap-1">
-              <Calendar className="w-4 h-4" />
+      <div style={{
+        background: '#0a0400',
+        border: '1px solid rgba(249,115,22,0.09)',
+        borderRadius: '16px',
+        padding: '24px 32px'
+      }}>
+        <div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '8px', color: '#8a7060', fontSize: '13px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+              <Calendar size={14} />
               <span>Withdrawal Details</span>
             </div>
-            <div className="flex items-center gap-1 text-xs text-[#4a4a64]">
-              <Wallet className="w-4 h-4" />
-              <span>
-                Balance: {loadingBalance ? '...' : `$${balance.toFixed(2)}`}
-              </span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px', color: '#6a4a30' }}>
+              <Wallet size={14} />
+              <span>Balance: {loadingBalance ? '...' : `$${balance.toFixed(2)}`}</span>
             </div>
           </div>
-          <h1 className="text-3xl font-bold text-[#e8e8f0] mb-2">Withdrawal Details</h1>
-          <p className="text-[#6b6b85] mb-2">Complete your withdrawal request</p>
+          <h1 style={{ fontSize: 'clamp(24px, 5vw, 32px)', fontWeight: 800, color: '#fff', marginBottom: '8px' }}>
+            Withdrawal Details
+          </h1>
+          <p style={{ color: '#8a7060', marginBottom: '0', fontSize: '14px' }}>
+            Complete your withdrawal request
+          </p>
         </div>
       </div>
 
-      <div className="max-w-4xl mx-auto">
-        <div className="bg-[#0c0c18] border border-[#1a1a28] rounded-xl overflow-hidden">
+      <div style={{ maxWidth: '800px', margin: '0 auto', width: '100%' }}>
+        <div style={{
+          background: '#0a0400',
+          border: '1px solid rgba(249,115,22,0.09)',
+          borderRadius: '16px',
+          overflow: 'hidden'
+        }}>
           {/* Method Header */}
-          <div className="border-b border-[#1a1a28]">
-            <div className="flex items-center px-6 py-4">
-              <div className="flex items-center px-4 py-2 bg-[#0c0c16] rounded-full border border-[#1a1a28]">
-                <div className="w-6 h-6 rounded-full bg-[#1a1a28] flex items-center justify-center mr-2">
+          <div style={{ borderBottom: '1px solid rgba(249,115,22,0.08)' }}>
+            <div style={{ padding: '16px 24px' }}>
+              <div style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                padding: '8px 16px',
+                background: 'rgba(249,115,22,0.05)',
+                borderRadius: '999px',
+                border: '1px solid rgba(249,115,22,0.2)'
+              }}>
+                <div style={{
+                  width: '24px',
+                  height: '24px',
+                  borderRadius: '50%',
+                  background: '#0a0400',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  marginRight: '8px'
+                }}>
                   {method.icon ? (
-                    <img src={method.icon} alt={method.name} className="w-4 h-4 object-contain" />
+                    <img src={method.icon} alt={method.name} style={{ width: '16px', height: '16px', objectFit: 'contain' }} />
                   ) : (
-                    <ArrowUpRight className="w-4 h-4 text-[#00c896]" />
+                    <ArrowUpRight size={14} style={{ color: '#f97316' }} />
                   )}
                 </div>
-                <span className="text-sm font-medium text-[#e8e8f0]">{method.name}</span>
+                <span style={{ fontSize: '13px', fontWeight: 500, color: '#fff' }}>{method.name}</span>
               </div>
             </div>
           </div>
 
-          <div className="p-6">
-            <form onSubmit={handleSubmit} className="space-y-6">
+          <div style={{ padding: '24px' }}>
+            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
               {/* Amount */}
-              <div className="space-y-2">
-                <label htmlFor="amount" className="text-sm font-medium text-[#9898b0]">Amount to withdraw</label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                    <span className="text-[#6b6b85]">$</span>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <label htmlFor="amount" style={{ fontSize: '13px', fontWeight: 500, color: '#8a7060' }}>Amount to withdraw</label>
+                <div style={{ position: 'relative' }}>
+                  <div style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }}>
+                    <span style={{ color: '#6a4a30' }}>$</span>
                   </div>
                   <input
                     id="amount"
@@ -201,90 +239,162 @@ const WithdrawFunds = () => {
                     min="0"
                     value={amount}
                     onChange={(e) => setAmount(e.target.value)}
-                    className="block w-full pl-10 pr-20 py-3 text-lg rounded-xl bg-[#0c0c16] border border-[#1a1a28] focus:ring-2 focus:ring-[#00c896] focus:border-transparent text-[#e8e8f0] transition-all placeholder-[#4a4a64]"
+                    style={{
+                      width: '100%',
+                      padding: '12px 12px 12px 40px',
+                      fontSize: '18px',
+                      borderRadius: '16px',
+                      background: 'rgba(255,255,255,0.03)',
+                      border: '1px solid rgba(249,115,22,0.2)',
+                      color: '#fff',
+                      transition: 'all 0.2s',
+                      outline: 'none'
+                    }}
                     placeholder="0.00"
                     required
+                    onFocus={e => e.currentTarget.style.borderColor = '#f97316'}
+                    onBlur={e => e.currentTarget.style.borderColor = 'rgba(249,115,22,0.2)'}
                   />
                 </div>
                 {amount && (
-                  <div className="text-xs text-[#6b6b85] space-y-1">
-                    <div className="flex justify-between">
+                  <div style={{ fontSize: '11px', color: '#8a7060', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                       <span>Fee ({feePercentage}%):</span>
                       <span>${fee.toFixed(2)}</span>
                     </div>
-                    <div className="flex justify-between font-medium">
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 500 }}>
                       <span>Total cost:</span>
-                      <span className={isExceedingBalance ? 'text-[#ff5b6e]' : ''}>${totalCost.toFixed(2)}</span>
+                      <span style={{ color: isExceedingBalance ? '#ff5b6e' : '#f97316' }}>${totalCost.toFixed(2)}</span>
                     </div>
-                    {isExceedingBalance && <p className="text-[#ff5b6e]">Amount + fee exceeds your available balance</p>}
+                    {isExceedingBalance && <p style={{ color: '#ff5b6e', fontSize: '10px', marginTop: '4px' }}>Amount + fee exceeds your available balance</p>}
                   </div>
                 )}
               </div>
 
               {/* Dynamic Details */}
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-[#9898b0]">{label}</label>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <label style={{ fontSize: '13px', fontWeight: 500, color: '#8a7060' }}>{label}</label>
                 <textarea
                   rows={4}
                   value={details}
                   onChange={(e) => setDetails(e.target.value)}
-                  className="block w-full p-4 text-md rounded-xl bg-[#0c0c16] border border-[#1a1a28] focus:ring-2 focus:ring-[#00c896] focus:border-transparent text-[#e8e8f0] transition-all placeholder-[#4a4a64]"
+                  style={{
+                    width: '100%',
+                    padding: '16px',
+                    fontSize: '14px',
+                    borderRadius: '16px',
+                    background: 'rgba(255,255,255,0.03)',
+                    border: '1px solid rgba(249,115,22,0.2)',
+                    color: '#fff',
+                    transition: 'all 0.2s',
+                    outline: 'none',
+                    resize: 'vertical'
+                  }}
                   placeholder={placeholder}
                   required
+                  onFocus={e => e.currentTarget.style.borderColor = '#f97316'}
+                  onBlur={e => e.currentTarget.style.borderColor = 'rgba(249,115,22,0.2)'}
                 />
-                <div className="p-3 rounded-lg bg-[#0c0c16] border border-[#1a1a28]">
-                  <div className="flex gap-2">
-                    <Info className="w-5 h-5 text-[#00c896] flex-shrink-0" />
+                <div style={{ padding: '12px', borderRadius: '12px', background: 'rgba(30,12,0,0.6)', border: '1px solid rgba(249,115,22,0.1)' }}>
+                  <div style={{ display: 'flex', gap: '8px' }}>
+                    <Info size={20} style={{ color: '#f97316', flexShrink: 0 }} />
                     <div>
-                      <p className="text-xs text-[#6b6b85]">
+                      <p style={{ fontSize: '11px', color: '#8a7060' }}>
                         Please enter your necessary details required to receive your payment:
                       </p>
-                      <p className="text-xs font-medium text-[#9898b0] mt-1">{example}</p>
+                      <p style={{ fontSize: '11px', fontWeight: 500, color: '#fff', marginTop: '4px' }}>{example}</p>
                     </div>
                   </div>
                 </div>
               </div>
 
               {/* WC Code */}
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-[#9898b0]">WC Code</label>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <label style={{ fontSize: '13px', fontWeight: 500, color: '#8a7060' }}>WC Code</label>
                 <input
                   type="text"
                   value={wcCode}
                   onChange={(e) => setWcCode(e.target.value)}
-                  className="block w-full pl-4 pr-4 py-3 text-md rounded-xl bg-[#0c0c16] border border-[#1a1a28] focus:ring-2 focus:ring-[#00c896] focus:border-transparent text-[#e8e8f0] font-mono transition-all placeholder-[#4a4a64]"
+                  style={{
+                    width: '100%',
+                    padding: '12px 16px',
+                    fontSize: '14px',
+                    borderRadius: '16px',
+                    background: 'rgba(255,255,255,0.03)',
+                    border: '1px solid rgba(249,115,22,0.2)',
+                    color: '#fff',
+                    fontFamily: "'Space Mono', monospace",
+                    transition: 'all 0.2s',
+                    outline: 'none'
+                  }}
                   placeholder="Enter your withdrawal confirmation code"
                   required
+                  onFocus={e => e.currentTarget.style.borderColor = '#f97316'}
+                  onBlur={e => e.currentTarget.style.borderColor = 'rgba(249,115,22,0.2)'}
                 />
-                <p className="mt-2 text-xs text-[#4a4a64]">
+                <p style={{ fontSize: '10px', color: '#6a4a30', marginTop: '4px' }}>
                   Please input your withdrawal confirmation code or contact support to purchase a code.
                 </p>
               </div>
 
               {/* Processing time */}
-              <div className="flex items-center p-4 rounded-xl bg-[#0c0c16] border border-[#1a1a28] gap-3">
-                <div className="w-10 h-10 rounded-full bg-[#1a1a28] flex items-center justify-center flex-shrink-0">
-                  <Clock className="w-5 h-5 text-[#00c896]" />
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                padding: '16px',
+                borderRadius: '16px',
+                background: 'rgba(30,12,0,0.6)',
+                border: '1px solid rgba(249,115,22,0.1)',
+                gap: '12px'
+              }}>
+                <div style={{
+                  width: '40px',
+                  height: '40px',
+                  borderRadius: '50%',
+                  background: '#0a0400',
+                  border: '1px solid rgba(249,115,22,0.2)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexShrink: 0
+                }}>
+                  <Clock size={20} style={{ color: '#f97316' }} />
                 </div>
                 <div>
-                  <h3 className="text-sm font-medium text-[#e8e8f0]">Estimated processing time</h3>
-                  <p className="text-xs text-[#6b6b85]">
-                    Your withdrawal will be processed within 15–30 minutes.
-                  </p>
+                  <h3 style={{ fontSize: '13px', fontWeight: 600, color: '#fff' }}>Estimated processing time</h3>
+                  <p style={{ fontSize: '11px', color: '#8a7060' }}>Your withdrawal will be processed within 15–30 minutes.</p>
                 </div>
               </div>
 
               {/* Submit */}
-              <div className="pt-4">
+              <div style={{ paddingTop: '8px' }}>
                 <button
                   type="submit"
                   disabled={submitting || isExceedingBalance || !amount}
-                  className="w-full py-4 px-4 rounded-xl bg-[#00c896] hover:bg-[#00dea8] text-black font-medium flex items-center justify-center gap-2 transition-all duration-300 hover:-translate-y-1 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                  style={{
+                    width: '100%',
+                    padding: '16px',
+                    borderRadius: '999px',
+                    background: '#f97316',
+                    color: '#fff',
+                    fontWeight: 600,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '8px',
+                    border: 'none',
+                    cursor: 'pointer',
+                    transition: 'all 0.3s',
+                    opacity: (submitting || isExceedingBalance || !amount) ? 0.5 : 1,
+                    pointerEvents: (submitting || isExceedingBalance || !amount) ? 'none' : 'auto'
+                  }}
+                  onMouseEnter={e => { if (!(submitting || isExceedingBalance || !amount)) e.currentTarget.style.background = '#fb923c'; }}
+                  onMouseLeave={e => { if (!(submitting || isExceedingBalance || !amount)) e.currentTarget.style.background = '#f97316'; }}
                 >
-                  <ArrowUpRight className="w-5 h-5" />
+                  <ArrowUpRight size={16} />
                   <span>{submitting ? 'Submitting...' : 'Complete Withdrawal Request'}</span>
                 </button>
-                <p className="mt-3 text-center text-xs text-[#4a4a64]">
+                <p style={{ marginTop: '12px', textAlign: 'center', fontSize: '11px', color: '#6a4a30' }}>
                   By proceeding, you confirm that the provided information is correct
                 </p>
               </div>

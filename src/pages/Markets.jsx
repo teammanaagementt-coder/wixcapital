@@ -40,106 +40,151 @@ const Markets = () => {
   };
 
   return (
-    <div className="p-4 md:p-6 pb-20 md:pb-8 overflow-x-hidden flex-grow space-y-6" style={{ fontFamily: "'Syne', sans-serif" }}>
+    <div style={{
+      padding: '24px',
+      overflowX: 'hidden',
+      flexGrow: 1,
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '24px',
+      fontFamily: "'Syne', sans-serif",
+      background: '#0d0600',
+      minHeight: '100vh'
+    }}>
       <style>{`@import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;500;600;700;800&display=swap');`}</style>
 
       {/* Header */}
-      <div className="bg-[#0c0c18] border border-[#1a1a28] rounded-xl p-6 md:p-8 relative overflow-hidden">
-        <div className="relative z-10">
-          <div className="flex items-center gap-4 mb-2 text-[#6b6b85] text-sm">
-            <div className="flex items-center gap-1">
-              <Calendar className="w-4 h-4" />
+      <div style={{
+        background: '#0a0400',
+        border: '1px solid rgba(249,115,22,0.09)',
+        borderRadius: '16px',
+        padding: '24px 32px'
+      }}>
+        <div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '8px', color: '#8a7060', fontSize: '13px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+              <Calendar size={14} />
               <span>Live Markets</span>
             </div>
-            <div className="text-xs text-[#4a4a64]">
-              <span>Real-time crypto prices</span>
-            </div>
+            <div style={{ fontSize: '12px', color: '#6a4a30' }}>Real-time crypto prices</div>
           </div>
-          <h1 className="text-3xl font-bold text-[#e8e8f0] mb-2">Market Overview</h1>
-          <p className="text-[#6b6b85] mb-6 max-w-lg">
+          <h1 style={{ fontSize: 'clamp(24px, 5vw, 32px)', fontWeight: 800, color: '#fff', marginBottom: '8px' }}>
+            Market Overview
+          </h1>
+          <p style={{ color: '#8a7060', marginBottom: '0', maxWidth: '500px', fontSize: '14px' }}>
             Explore top cryptocurrencies and start trading.
           </p>
         </div>
       </div>
 
       {/* Search */}
-      <div className="bg-[#0c0c18] border border-[#1a1a28] rounded-xl p-4">
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-[#4a4a64]" />
+      <div style={{
+        background: '#0a0400',
+        border: '1px solid rgba(249,115,22,0.09)',
+        borderRadius: '16px',
+        padding: '16px'
+      }}>
+        <div style={{ position: 'relative' }}>
+          <Search size={20} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#6a4a30' }} />
           <input
             type="text"
             placeholder="Search cryptocurrency..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-3 rounded-xl bg-[#0c0c16] border border-[#1a1a28] focus:ring-2 focus:ring-[#00c896] focus:border-transparent text-[#e8e8f0] placeholder-[#4a4a64] transition-all"
+            style={{
+              width: '100%',
+              padding: '12px 12px 12px 44px',
+              borderRadius: '16px',
+              background: 'rgba(255,255,255,0.03)',
+              border: '1px solid rgba(249,115,22,0.2)',
+              color: '#fff',
+              outline: 'none',
+              transition: 'all 0.2s'
+            }}
+            onFocus={e => e.currentTarget.style.borderColor = '#f97316'}
+            onBlur={e => e.currentTarget.style.borderColor = 'rgba(249,115,22,0.2)'}
           />
         </div>
       </div>
 
       {/* Crypto Table */}
-      <div className="bg-[#0c0c18] border border-[#1a1a28] rounded-xl overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full">
+      <div style={{
+        background: '#0a0400',
+        border: '1px solid rgba(249,115,22,0.09)',
+        borderRadius: '16px',
+        overflow: 'hidden'
+      }}>
+        <div style={{ overflowX: 'auto' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
-              <tr className="bg-[#0c0c16] text-[#6b6b85] text-xs uppercase">
-                <th className="px-6 py-4 text-left font-medium">#</th>
-                <th className="px-6 py-4 text-left font-medium">Name</th>
-                <th className="px-6 py-4 text-right font-medium">Price</th>
-                <th className="px-6 py-4 text-right font-medium">24h Change</th>
-                <th className="px-6 py-4 text-right font-medium">Market Cap</th>
-                <th className="px-6 py-4 text-right font-medium">Volume (24h)</th>
-                <th className="px-6 py-4 text-right font-medium">Action</th>
+              <tr style={{ background: 'rgba(249,115,22,0.03)', color: '#8a7060', fontSize: '11px', textTransform: 'uppercase' }}>
+                <th style={{ padding: '16px 24px', textAlign: 'left', fontWeight: 500 }}>#</th>
+                <th style={{ padding: '16px 24px', textAlign: 'left', fontWeight: 500 }}>Name</th>
+                <th style={{ padding: '16px 24px', textAlign: 'right', fontWeight: 500 }}>Price</th>
+                <th style={{ padding: '16px 24px', textAlign: 'right', fontWeight: 500 }}>24h Change</th>
+                <th style={{ padding: '16px 24px', textAlign: 'right', fontWeight: 500 }}>Market Cap</th>
+                <th style={{ padding: '16px 24px', textAlign: 'right', fontWeight: 500 }}>Volume (24h)</th>
+                <th style={{ padding: '16px 24px', textAlign: 'right', fontWeight: 500 }}>Action</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#1a1a28]">
+            <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan="7" className="px-6 py-8 text-center text-[#6b6b85]">
-                    Loading markets...
-                  </td>
+                  <td colSpan="7" style={{ padding: '32px 24px', textAlign: 'center', color: '#8a7060' }}>Loading markets...</td>
                 </tr>
               ) : filteredData.length === 0 ? (
                 <tr>
-                  <td colSpan="7" className="px-6 py-8 text-center text-[#6b6b85]">
-                    No cryptocurrencies found
-                  </td>
+                  <td colSpan="7" style={{ padding: '32px 24px', textAlign: 'center', color: '#8a7060' }}>No cryptocurrencies found</td>
                 </tr>
               ) : (
                 filteredData.map((coin, index) => {
                   const priceChange = coin.price_change_percentage_24h ?? 0;
                   const isPositive = priceChange >= 0;
-                  
                   return (
-                    <tr
-                      key={coin.id}
-                      className="hover:bg-[#1a1a28]/50 transition-colors"
-                    >
-                      <td className="px-6 py-4 text-[#6b6b85] text-sm">{index + 1}</td>
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-3">
-                          <img src={coin.image} alt={coin.name} className="w-8 h-8 rounded-full" />
+                    <tr key={coin.id} style={{ borderTop: '1px solid rgba(249,115,22,0.05)' }}>
+                      <td style={{ padding: '16px 24px', color: '#8a7060', fontSize: '13px' }}>{index + 1}</td>
+                      <td style={{ padding: '16px 24px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                          <img src={coin.image} alt={coin.name} style={{ width: '32px', height: '32px', borderRadius: '50%' }} />
                           <div>
-                            <p className="font-medium text-[#e8e8f0]">{coin.name}</p>
-                            <p className="text-xs text-[#6b6b85] uppercase">{coin.symbol}</p>
+                            <p style={{ fontWeight: 500, color: '#fff' }}>{coin.name}</p>
+                            <p style={{ fontSize: '11px', color: '#8a7060', textTransform: 'uppercase' }}>{coin.symbol}</p>
                           </div>
                         </div>
                       </td>
-                      <td className="px-6 py-4 text-right text-[#e8e8f0] font-medium">
+                      <td style={{ padding: '16px 24px', textAlign: 'right', color: '#fff', fontWeight: 500 }}>
                         ${coin.current_price?.toLocaleString() ?? '0.00'}
                       </td>
-                      <td className={`px-6 py-4 text-right font-medium ${isPositive ? 'text-[#00c896]' : 'text-[#ff5b6e]'}`}>
+                      <td style={{
+                        padding: '16px 24px',
+                        textAlign: 'right',
+                        fontWeight: 500,
+                        color: isPositive ? '#22c55e' : '#ef4444'
+                      }}>
                         {isPositive ? '+' : ''}{priceChange.toFixed(2)}%
                       </td>
-                      <td className="px-6 py-4 text-right text-[#9898b0] text-sm">
+                      <td style={{ padding: '16px 24px', textAlign: 'right', color: '#8a7060', fontSize: '13px' }}>
                         ${coin.market_cap?.toLocaleString() ?? '0'}
                       </td>
-                      <td className="px-6 py-4 text-right text-[#9898b0] text-sm">
+                      <td style={{ padding: '16px 24px', textAlign: 'right', color: '#8a7060', fontSize: '13px' }}>
                         ${coin.total_volume?.toLocaleString() ?? '0'}
                       </td>
-                      <td className="px-6 py-4 text-right">
+                      <td style={{ padding: '16px 24px', textAlign: 'right' }}>
                         <button
                           onClick={() => handleTrade(coin)}
-                          className="px-3 py-1.5 text-xs font-medium rounded-md bg-[#00c896] text-black hover:bg-[#00dea8] transition-colors"
+                          style={{
+                            padding: '6px 12px',
+                            fontSize: '11px',
+                            fontWeight: 600,
+                            borderRadius: '999px',
+                            background: '#f97316',
+                            color: '#fff',
+                            border: 'none',
+                            cursor: 'pointer',
+                            transition: 'background 0.2s'
+                          }}
+                          onMouseEnter={e => e.currentTarget.style.background = '#fb923c'}
+                          onMouseLeave={e => e.currentTarget.style.background = '#f97316'}
                         >
                           Trade
                         </button>

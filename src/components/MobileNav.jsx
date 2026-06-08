@@ -6,98 +6,215 @@ const MobileNav = () => {
   const [fabOpen, setFabOpen] = useState(false);
 
   const actions = [
-    { to: '/dashboard/deposit', icon: ArrowDown, label: 'Fund', color: 'tertiary' },
-    { to: '/dashboard/portfolio', icon: TrendingUp, label: 'Invest', color: 'secondary' },
-    { to: '/dashboard/withdraw', icon: Upload, label: 'Withdraw', color: 'danger' },
-    { to: '/dashboard/referrals', icon: User, label: 'Refer', color: 'accent' },
-    { to: '/dashboard/settings', icon: User, label: 'Profile', color: 'purple' },
-    { to: '/dashboard/support', icon: Headphones, label: 'Support', color: 'primary' },
+    { to: '/dashboard/deposit', icon: ArrowDown, label: 'Fund', color: '#f97316' },
+    { to: '/dashboard/portfolio', icon: TrendingUp, label: 'Invest', color: '#fb923c' },
+    { to: '/dashboard/withdraw', icon: Upload, label: 'Withdraw', color: '#ef4444' },
+    { to: '/dashboard/referrals', icon: User, label: 'Refer', color: '#f3ba2f' },
+    { to: '/dashboard/settings', icon: User, label: 'Profile', color: '#a855f7' },
+    { to: '/dashboard/support', icon: Headphones, label: 'Support', color: '#f97316' },
   ];
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-[9990] md:hidden" style={{ fontFamily: "'Syne', sans-serif" }}>
+    <div style={{
+      position: 'fixed',
+      bottom: 0,
+      left: 0,
+      right: 0,
+      zIndex: 9990,
+      fontFamily: "'Syne', sans-serif"
+    }}>
       <style>{`@import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;500;600;700;800&display=swap');`}</style>
 
-      <div className="bg-[#0c0c16] border-t border-[#1a1a28] pt-0.5">
-        <div className="flex items-center justify-around h-16 relative px-2">
-          <Link to="/dashboard/overview" className="flex flex-col items-center justify-center h-full w-full">
-            <Home className="h-5 w-5 text-[#6b6b85]" />
-            <span className="text-xs mt-1 text-[#6b6b85]">Home</span>
+      <div style={{
+        background: '#0a0400',
+        borderTop: '1px solid rgba(249,115,22,0.15)',
+        paddingTop: '2px'
+      }}>
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-around',
+          height: '64px',
+          position: 'relative',
+          padding: '0 8px'
+        }}>
+          <Link to="/dashboard/overview" style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            height: '100%',
+            width: '100%',
+            textDecoration: 'none'
+          }}>
+            <Home size={20} style={{ color: '#8a7060' }} />
+            <span style={{ fontSize: '10px', marginTop: '4px', color: '#8a7060' }}>Home</span>
           </Link>
-          <Link to="/dashboard/deposit" className="flex flex-col items-center justify-center h-full w-full">
-            <Download className="h-5 w-5 text-[#00c896]" />
-            <span className="text-xs mt-1 text-[#00c896] font-medium">Deposit</span>
+          <Link to="/dashboard/deposit" style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            height: '100%',
+            width: '100%',
+            textDecoration: 'none'
+          }}>
+            <Download size={20} style={{ color: '#f97316' }} />
+            <span style={{ fontSize: '10px', marginTop: '4px', color: '#f97316', fontWeight: 500 }}>Deposit</span>
           </Link>
 
           {/* FAB */}
-          <div className="flex flex-col items-center h-full relative px-2 -mt-8">
+          <div style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            height: '100%',
+            position: 'relative',
+            padding: '0 8px',
+            marginTop: '-32px'
+          }}>
             <button
               onClick={() => setFabOpen(!fabOpen)}
-              className="h-14 w-14 rounded-full shadow-lg flex items-center justify-center bg-[#00c896] transform hover:scale-105 transition-all duration-300"
+              style={{
+                width: '56px',
+                height: '56px',
+                borderRadius: '50%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                background: '#f97316',
+                boxShadow: '0 4px 12px rgba(249,115,22,0.4)',
+                border: 'none',
+                cursor: 'pointer',
+                transition: 'transform 0.3s'
+              }}
+              onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.05)'}
+              onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
             >
-              {fabOpen ? <X className="h-6 w-6 text-black" /> : <Zap className="h-6 w-6 text-black" />}
+              {fabOpen ? <X size={24} style={{ color: '#0d0600' }} /> : <Zap size={24} style={{ color: '#0d0600' }} />}
             </button>
-            <span className="text-xs text-[#6b6b85] absolute -bottom-2">Actions</span>
+            <span style={{ fontSize: '10px', color: '#8a7060', position: 'absolute', bottom: '-16px' }}>Actions</span>
           </div>
 
-          <Link to="/dashboard/transactions" className="flex flex-col items-center justify-center h-full w-full">
-            <History className="h-5 w-5 text-[#6b6b85]" />
-            <span className="text-xs mt-1 text-[#6b6b85]">History</span>
+          <Link to="/dashboard/transactions" style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            height: '100%',
+            width: '100%',
+            textDecoration: 'none'
+          }}>
+            <History size={20} style={{ color: '#8a7060' }} />
+            <span style={{ fontSize: '10px', marginTop: '4px', color: '#8a7060' }}>History</span>
           </Link>
-          <Link to="/dashboard/settings" className="flex flex-col items-center justify-center h-full w-full">
-            <User className="h-5 w-5 text-[#6b6b85]" />
-            <span className="text-xs mt-1 text-[#6b6b85]">Profile</span>
+          <Link to="/dashboard/settings" style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            height: '100%',
+            width: '100%',
+            textDecoration: 'none'
+          }}>
+            <User size={20} style={{ color: '#8a7060' }} />
+            <span style={{ fontSize: '10px', marginTop: '4px', color: '#8a7060' }}>Profile</span>
           </Link>
         </div>
       </div>
 
       {/* FAB Menu */}
       {fabOpen && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[9991] animate-in fade-in duration-300">
-          <div className="absolute inset-x-0 bottom-24 flex flex-col items-center">
-            <div className="flex flex-wrap justify-center gap-4 max-w-md mx-auto p-3">
-              {actions.map((action, idx) => {
-                let colorClasses = '';
-                switch (action.color) {
-                  case 'tertiary':
-                    colorClasses = 'from-[#627eea]/20 to-[#627eea]/5 border-[#627eea]/20 hover:from-[#627eea]/30';
-                    break;
-                  case 'secondary':
-                    colorClasses = 'from-[#f7931a]/20 to-[#f7931a]/5 border-[#f7931a]/20 hover:from-[#f7931a]/30';
-                    break;
-                  case 'danger':
-                    colorClasses = 'from-[#ff5b6e]/20 to-[#ff5b6e]/5 border-[#ff5b6e]/20 hover:from-[#ff5b6e]/30';
-                    break;
-                  case 'accent':
-                    colorClasses = 'from-[#f3ba2f]/20 to-[#f3ba2f]/5 border-[#f3ba2f]/20 hover:from-[#f3ba2f]/30';
-                    break;
-                  case 'purple':
-                    colorClasses = 'from-[#9945ff]/20 to-[#9945ff]/5 border-[#9945ff]/20 hover:from-[#9945ff]/30';
-                    break;
-                  case 'primary':
-                  default:
-                    colorClasses = 'from-[#00c896]/20 to-[#00c896]/5 border-[#00c896]/20 hover:from-[#00c896]/30';
-                }
-                return (
-                  <Link
-                    key={action.to}
-                    to={action.to}
-                    className={`w-[calc(33%-12px)] aspect-square flex flex-col items-center justify-center rounded-2xl bg-gradient-to-b ${colorClasses} transition-all duration-300 shadow-lg`}
-                    style={{ animationDelay: `${idx * 0.05}s` }}
-                  >
-                    <div className={`w-12 h-12 rounded-xl bg-gradient-to-br from-[${action.color === 'tertiary' ? '#627eea' : action.color === 'secondary' ? '#f7931a' : action.color === 'danger' ? '#ff5b6e' : action.color === 'accent' ? '#f3ba2f' : action.color === 'purple' ? '#9945ff' : '#00c896'}] to-[#${action.color === 'tertiary' ? '627eea' : action.color === 'secondary' ? 'f7931a' : action.color === 'danger' ? 'ff5b6e' : action.color === 'accent' ? 'f3ba2f' : action.color === 'purple' ? '9945ff' : '00c896'}]/70 flex items-center justify-center mb-2`}>
-                      <action.icon className="h-6 w-6 text-white" />
-                    </div>
-                    <span className="text-xs font-medium text-white">{action.label}</span>
-                  </Link>
-                );
-              })}
+        <div style={{
+          position: 'fixed',
+          inset: 0,
+          background: 'rgba(13,6,0,0.9)',
+          backdropFilter: 'blur(12px)',
+          zIndex: 9991,
+          animation: 'fadeIn 0.3s ease'
+        }}>
+          <style>{`
+            @keyframes fadeIn {
+              from { opacity: 0; }
+              to { opacity: 1; }
+            }
+          `}</style>
+          <div style={{
+            position: 'absolute',
+            insetX: 0,
+            bottom: '96px',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center'
+          }}>
+            <div style={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              justifyContent: 'center',
+              gap: '16px',
+              maxWidth: '400px',
+              margin: '0 auto',
+              padding: '12px'
+            }}>
+              {actions.map((action, idx) => (
+                <Link
+                  key={action.to}
+                  to={action.to}
+                  style={{
+                    width: 'calc(33% - 12px)',
+                    aspectRatio: '1',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    borderRadius: '16px',
+                    background: `linear-gradient(135deg, ${action.color}20, ${action.color}05)`,
+                    border: `1px solid ${action.color}30`,
+                    transition: 'all 0.3s',
+                    textDecoration: 'none',
+                    animation: `fadeInUp 0.3s ${idx * 0.05}s both`
+                  }}
+                  onMouseEnter={e => {
+                    e.currentTarget.style.background = `linear-gradient(135deg, ${action.color}30, ${action.color}10)`;
+                    e.currentTarget.style.transform = 'translateY(-4px)';
+                  }}
+                  onMouseLeave={e => {
+                    e.currentTarget.style.background = `linear-gradient(135deg, ${action.color}20, ${action.color}05)`;
+                    e.currentTarget.style.transform = 'translateY(0)';
+                  }}
+                >
+                  <div style={{
+                    width: '48px',
+                    height: '48px',
+                    borderRadius: '12px',
+                    background: `linear-gradient(135deg, ${action.color}, ${action.color}cc)`,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    marginBottom: '8px'
+                  }}>
+                    <action.icon size={24} style={{ color: '#0d0600' }} />
+                  </div>
+                  <span style={{ fontSize: '11px', fontWeight: 500, color: '#fff' }}>{action.label}</span>
+                </Link>
+              ))}
             </div>
             <button
               onClick={() => setFabOpen(false)}
-              className="mt-8 w-12 h-12 rounded-full bg-[#1a1a28] border border-[#1a1a28] flex items-center justify-center"
+              style={{
+                marginTop: '32px',
+                width: '48px',
+                height: '48px',
+                borderRadius: '50%',
+                background: '#0a0400',
+                border: '1px solid rgba(249,115,22,0.2)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer'
+              }}
             >
-              <X className="h-6 w-6 text-white" />
+              <X size={24} style={{ color: '#fff' }} />
             </button>
           </div>
         </div>
