@@ -1,4 +1,3 @@
-// src/pages/home/Home.jsx
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { Chart, registerables } from 'chart.js';
@@ -54,9 +53,6 @@ function useInView(options = {}) {
 ────────────────────────────────────────────── */
 function TradingViewWidget({ symbol = 'BTCUSDT' }) {
   const containerRef = useRef(null);
-  const scriptRef = useRef(null);
-    const [sidebarOpen, setSidebarOpen] = useState(false);
-
   useEffect(() => {
     if (!containerRef.current) return;
     containerRef.current.innerHTML = '';
@@ -86,7 +82,6 @@ function TradingViewWidget({ symbol = 'BTCUSDT' }) {
       container_id: widgetId,
     });
     wrapper.appendChild(script);
-    scriptRef.current = script;
     return () => {
       if (containerRef.current) containerRef.current.innerHTML = '';
     };
@@ -162,46 +157,23 @@ function Counter({ target, prefix = '', suffix = '', decimals = 0 }) {
 }
 
 /* ──────────────────────────────────────────────
-   MAIN DASHBOARD
+   MAIN DASHBOARD (Landing Page)
 ────────────────────────────────────────────── */
 const WixCapitalDashboard = () => {
   const initialCoins = [
-    {
-      sym: 'BTC', name: 'Bitcoin', price: 67420, chg: 2.34, vol: '$48.2B', cap: '$1.33T',
-      color: '#f7931a', bg: 'rgba(247,147,26,.1)', tv: 'BTCUSDT',
-      history: [61000, 63400, 62100, 65800, 64200, 67100, 67420],
-    },
-    {
-      sym: 'ETH', name: 'Ethereum', price: 3842, chg: -1.12, vol: '$18.6B', cap: '$461B',
-      color: '#627eea', bg: 'rgba(98,126,234,.1)', tv: 'ETHUSDT',
-      history: [3600, 3750, 3680, 3900, 3820, 3870, 3842],
-    },
-    {
-      sym: 'SOL', name: 'Solana', price: 178.4, chg: 5.67, vol: '$6.1B', cap: '$84B',
-      color: '#9945ff', bg: 'rgba(153,69,255,.1)', tv: 'SOLUSDT',
-      history: [145, 158, 152, 168, 171, 176, 178],
-    },
-    {
-      sym: 'BNB', name: 'BNB', price: 612.3, chg: 0.89, vol: '$2.3B', cap: '$92B',
-      color: '#f3ba2f', bg: 'rgba(243,186,47,.1)', tv: 'BNBUSDT',
-      history: [580, 595, 588, 602, 608, 609, 612],
-    },
-    {
-      sym: 'ADA', name: 'Cardano', price: 0.614, chg: -2.45, vol: '$892M', cap: '$21B',
-      color: '#4a9dff', bg: 'rgba(74,157,255,.1)', tv: 'ADAUSDT',
-      history: [0.68, 0.65, 0.63, 0.66, 0.64, 0.62, 0.614],
-    },
-    {
-      sym: 'AVAX', name: 'Avalanche', price: 42.18, chg: 3.21, vol: '$1.1B', cap: '$17B',
-      color: '#e84142', bg: 'rgba(232,65,66,.1)', tv: 'AVAXUSDT',
-      history: [36, 38, 37, 40, 41, 42, 42.18],
-    },
+    { sym: 'BTC', name: 'Bitcoin', price: 67420, chg: 2.34, vol: '$48.2B', cap: '$1.33T', color: '#f7931a', bg: 'rgba(247,147,26,.1)', tv: 'BTCUSDT', history: [61000, 63400, 62100, 65800, 64200, 67100, 67420] },
+    { sym: 'ETH', name: 'Ethereum', price: 3842, chg: -1.12, vol: '$18.6B', cap: '$461B', color: '#627eea', bg: 'rgba(98,126,234,.1)', tv: 'ETHUSDT', history: [3600, 3750, 3680, 3900, 3820, 3870, 3842] },
+    { sym: 'SOL', name: 'Solana', price: 178.4, chg: 5.67, vol: '$6.1B', cap: '$84B', color: '#9945ff', bg: 'rgba(153,69,255,.1)', tv: 'SOLUSDT', history: [145, 158, 152, 168, 171, 176, 178] },
+    { sym: 'BNB', name: 'BNB', price: 612.3, chg: 0.89, vol: '$2.3B', cap: '$92B', color: '#f3ba2f', bg: 'rgba(243,186,47,.1)', tv: 'BNBUSDT', history: [580, 595, 588, 602, 608, 609, 612] },
+    { sym: 'ADA', name: 'Cardano', price: 0.614, chg: -2.45, vol: '$892M', cap: '$21B', color: '#4a9dff', bg: 'rgba(74,157,255,.1)', tv: 'ADAUSDT', history: [0.68, 0.65, 0.63, 0.66, 0.64, 0.62, 0.614] },
+    { sym: 'AVAX', name: 'Avalanche', price: 42.18, chg: 3.21, vol: '$1.1B', cap: '$17B', color: '#e84142', bg: 'rgba(232,65,66,.1)', tv: 'AVAXUSDT', history: [36, 38, 37, 40, 41, 42, 42.18] },
   ];
 
   const [coins, setCoins] = useState(initialCoins);
   const [activeCoin, setActiveCoin] = useState(0);
-  const [menuOpen, setMenuOpen] = useState(false);
   const [scrollY, setScrollY] = useState(0);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null);
 
   // Scroll tracking
   useEffect(() => {
@@ -209,6 +181,19 @@ const WixCapitalDashboard = () => {
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
+
+  // Close dropdown on outside click
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setDropdownOpen(false);
+      }
+    };
+    if (dropdownOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [dropdownOpen]);
 
   // Live price updates
   useEffect(() => {
@@ -228,8 +213,6 @@ const WixCapitalDashboard = () => {
   }, []);
 
   // Scroll animation refs
-  const [heroRef, heroIn] = useInView({ threshold: 0.1 });
-  const [statsRef, statsIn] = useInView();
   const [chartRef2, chartIn] = useInView();
   const [marketRef, marketIn] = useInView();
   const [plansRef, plansIn] = useInView();
@@ -240,7 +223,15 @@ const WixCapitalDashboard = () => {
 
   const coin = coins[activeCoin];
   const isUp = coin.chg >= 0;
-    const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  const navLinks = [
+    { label: 'Markets', to: '/markets' },
+    { label: 'Trade', to: '/trade' },
+    { label: 'Invest', to: '/invest' },
+    { label: 'Earn', to: '/invest' },
+    { label: 'Analytics', to: '/analytics' },
+    { label: 'About', to: '/about' },
+  ];
 
   const newsItems = [
     { tag: 'Market', title: 'Bitcoin surges past $67K as institutional demand accelerates', time: '2h ago', icon: <Bitcoin className="w-6 h-6 text-[#f7931a]" /> },
@@ -266,148 +257,31 @@ const WixCapitalDashboard = () => {
     { sym: 'UNI', chg: -0.8, size: 'small' },
   ];
 
-  
-  const navLinks = [
-    { label: 'Markets', to: '/markets' },
-    { label: 'Trade', to: '/trade' },
-    { label: 'Invest', to: '/invest' },
-    { label: 'Earn', to: '/invest' },
-    { label: 'Analytics', to: '/analytics' },
-    { label: 'About', to: '/about' },
-  ];
-
-
-  const fearIndex = 72; // greed
+  const fearIndex = 72;
 
   return (
-    <div
-      className="bg-[#07070e] text-[#e8e8f0] overflow-x-hidden"
-      style={{ fontFamily: "'Syne', sans-serif" }}
-    >
+    <div className="bg-[#07070e] text-[#e8e8f0] overflow-x-hidden" style={{ fontFamily: "'Syne', sans-serif" }}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;500;600;700;800&display=swap');
-
         * { box-sizing: border-box; }
-
-        /* TICKER */
         @keyframes tickerRoll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
         .animate-ticker { animation: tickerRoll 50s linear infinite; }
         .animate-ticker:hover { animation-play-state: paused; }
-
-        /* GLOW PULSE */
         @keyframes glowPulse { 0%,100% { opacity:1; box-shadow: 0 0 8px #00c896; } 50% { opacity:0.5; box-shadow: 0 0 20px #00c896; } }
         .glow-dot { animation: glowPulse 2s ease-in-out infinite; }
-
-        /* FLOAT */
-        @keyframes float { 0%,100% { transform: translateY(0px); } 50% { transform: translateY(-18px); } }
-        .animate-float { animation: float 6s ease-in-out infinite; }
-
-        /* GRAIN */
-        @keyframes grain { 0%,100% { transform: translate(0,0); } 10% { transform: translate(-2%,-3%); } 30% { transform: translate(3%,-1%); } 50% { transform: translate(-1%,2%); } 70% { transform: translate(2%,3%); } 90% { transform: translate(-3%,1%); } }
-        .grain::before { content:''; position:absolute; inset:-50%; width:200%; height:200%; background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.08'/%3E%3C/svg%3E"); opacity:.04; animation: grain 1s steps(1) infinite; pointer-events:none; }
-
-        /* SCROLL REVEAL */
-        .reveal { opacity: 0; transform: translateY(32px); transition: opacity 0.7s ease, transform 0.7s ease; }
-        .reveal.visible { opacity: 1; transform: translateY(0); }
-        .reveal-left { opacity: 0; transform: translateX(-32px); transition: opacity 0.7s ease, transform 0.7s ease; }
-        .reveal-left.visible { opacity: 1; transform: translateX(0); }
-        .reveal-right { opacity: 0; transform: translateX(32px); transition: opacity 0.7s ease, transform 0.7s ease; }
-        .reveal-right.visible { opacity: 1; transform: translateX(0); }
-        .reveal-scale { opacity: 0; transform: scale(0.92); transition: opacity 0.7s ease, transform 0.7s ease; }
-        .reveal-scale.visible { opacity: 1; transform: scale(1); }
-
-        /* STAGGER */
-        .stagger-1 { transition-delay: 0.1s !important; }
-        .stagger-2 { transition-delay: 0.2s !important; }
-        .stagger-3 { transition-delay: 0.3s !important; }
-        .stagger-4 { transition-delay: 0.4s !important; }
-        .stagger-5 { transition-delay: 0.5s !important; }
-        .stagger-6 { transition-delay: 0.6s !important; }
-
-        /* HERO TEXT */
-        @keyframes slideUp { from { opacity:0; transform: translateY(40px); } to { opacity:1; transform: translateY(0); } }
-        .hero-line-1 { animation: slideUp 0.8s 0.1s both ease; }
-        .hero-line-2 { animation: slideUp 0.8s 0.3s both ease; }
-        .hero-line-3 { animation: slideUp 0.8s 0.5s both ease; }
-        .hero-sub   { animation: slideUp 0.8s 0.7s both ease; }
-        .hero-btns  { animation: slideUp 0.8s 0.9s both ease; }
-        .hero-stats { animation: slideUp 0.8s 1.1s both ease; }
-
-        /* GRADIENT TEXT */
         .grad-text { background: linear-gradient(135deg, #00c896 0%, #00a8ff 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-        .grad-text-gold { background: linear-gradient(135deg, #f7931a 0%, #f3ba2f 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-
-        /* CARD HOVER */
-        .card-hover { transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease; }
-        .card-hover:hover { transform: translateY(-4px); box-shadow: 0 20px 60px rgba(0,200,150,0.08); border-color: rgba(0,200,150,0.3) !important; }
-
-        /* GRID LINES BG */
-        .grid-bg { background-image: linear-gradient(rgba(255,255,255,0.025) 1px,transparent 1px), linear-gradient(90deg,rgba(255,255,255,0.025) 1px,transparent 1px); background-size: 52px 52px; }
-
-        /* SCROLLBAR */
-        ::-webkit-scrollbar { width: 4px; } ::-webkit-scrollbar-track { background: #0c0c16; } ::-webkit-scrollbar-thumb { background: #1e1e30; border-radius: 4px; }
-
-        /* MARQUEE */
-        @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
-        .marquee-track { animation: marquee 30s linear infinite; }
-
-        /* HEAT MAP */
-        .heat-large { grid-column: span 3; grid-row: span 2; }
-        .heat-medium { grid-column: span 2; grid-row: span 2; }
-        .heat-small { grid-column: span 2; grid-row: span 1; }
-
-        /* FEAR GAUGE */
-        @keyframes gaugeAnim { from { stroke-dashoffset: 226; } }
-        .gauge-arc { stroke-dasharray: 226; animation: gaugeAnim 2s ease forwards; }
-
-        /* NAV BLUR */
         .nav-blur { background: rgba(7,7,14,0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
-
-        /* PLAN CARD FEATURED */
-        .plan-featured { background: linear-gradient(135deg, rgba(0,200,150,0.08) 0%, rgba(0,168,255,0.05) 100%); }
-
-        /* ORBIT */
-        @keyframes orbit { from { transform: rotate(0deg) translateX(120px) rotate(0deg); } to { transform: rotate(360deg) translateX(120px) rotate(-360deg); } }
-        @keyframes orbit2 { from { transform: rotate(60deg) translateX(80px) rotate(-60deg); } to { transform: rotate(420deg) translateX(80px) rotate(-420deg); } }
-        .orbit-1 { animation: orbit 8s linear infinite; }
-        .orbit-2 { animation: orbit2 5s linear infinite; }
-
-        /* MORPHING BG */
-        @keyframes morph { 0%,100% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; } 50% { border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%; } }
-        .morphing { animation: morph 8s ease-in-out infinite; }
-
-        /* SHIMMER */
-        @keyframes shimmer { from { background-position: -200% 0; } to { background-position: 200% 0; } }
-        .shimmer-line { background: linear-gradient(90deg, transparent 0%, rgba(0,200,150,0.2) 50%, transparent 100%); background-size: 200% 100%; animation: shimmer 3s ease-in-out infinite; }
-
-        /* PRICE FLASH */
-        @keyframes flashGreen { 0%,100% { color: #e8e8f0; } 50% { color: #00c896; } }
-        @keyframes flashRed { 0%,100% { color: #e8e8f0; } 50% { color: #ff5b6e; } }
       `}</style>
 
       {/* ══════════════════ TICKER ══════════════════ */}
       <div className="bg-[#060610] border-b border-[#1a1a28] overflow-hidden h-9 flex items-center relative z-50">
         <div className="flex animate-ticker whitespace-nowrap">
           {[...coins, ...coins, ...coins].map((c, i) => (
-            <div
-              key={i}
-              className="inline-flex items-center gap-2.5 px-6 border-r border-[#1a1a28]"
-            >
+            <div key={i} className="inline-flex items-center gap-2.5 px-6 border-r border-[#1a1a28]">
               <span className="text-[10px] font-bold font-mono text-[#9898b0]">{c.sym}</span>
-              <span className="text-[10px] font-mono text-[#e8e8f0]">
-                ${c.price.toLocaleString()}
-              </span>
-              <span
-                className={`text-[10px] font-mono font-bold ${
-                  c.chg >= 0 ? 'text-[#00c896]' : 'text-[#ff5b6e]'
-                }`}
-              >
-                {c.chg >= 0 ? (
-                  <ArrowUp className="w-3 h-3 inline" />
-                ) : (
-                  <ArrowDown className="w-3 h-3 inline" />
-                )}{' '}
-                {Math.abs(c.chg)}%
+              <span className="text-[10px] font-mono text-[#e8e8f0]">${c.price.toLocaleString()}</span>
+              <span className={`text-[10px] font-mono font-bold ${c.chg >= 0 ? 'text-[#00c896]' : 'text-[#ff5b6e]'}`}>
+                {c.chg >= 0 ? <ArrowUp className="w-3 h-3 inline" /> : <ArrowDown className="w-3 h-3 inline" />} {Math.abs(c.chg)}%
               </span>
             </div>
           ))}
@@ -415,7 +289,7 @@ const WixCapitalDashboard = () => {
       </div>
 
       {/* ══════════════════ NAV ══════════════════ */}
-        <nav className={`flex items-center justify-between px-8 md:px-14 h-[68px] sticky top-0 z-40 nav-blur transition-all duration-300 ${scrollY > 40 ? 'border-b border-[#1a1a28]' : ''}`}>
+      <nav className={`flex items-center justify-between px-8 md:px-14 h-[68px] sticky top-0 z-40 nav-blur transition-all duration-300 ${scrollY > 40 ? 'border-b border-[#1a1a28]' : ''}`}>
         <Link to="/" className="flex items-center gap-2.5 text-[17px] font-extrabold tracking-tight">
           <div className="w-2 h-2 rounded-full bg-[#00c896] glow-dot" />
           <span>Wix</span>
@@ -436,126 +310,68 @@ const WixCapitalDashboard = () => {
           <Link to="/register" className="px-5 py-2 rounded-lg text-[11px] font-bold bg-[#00c896] text-black hover:bg-[#00dea8] hover:shadow-[0_0_24px_rgba(0,200,150,0.4)] transition-all">
             Get Started
           </Link>
-          {/* ═══ MOBILE HAMBURGER ═══ */}
           <button
-            onClick={() => setSidebarOpen(true)}
+            onClick={() => setDropdownOpen(!dropdownOpen)}
             className="md:hidden p-2 text-[#9898b0] hover:text-white"
           >
-            <Menu className="w-5 h-5" />
+            {dropdownOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
         </div>
       </nav>
 
-      {/* ═══ MOBILE SIDEBAR (NEW) ═══ */}
-      {sidebarOpen && (
-        <div className="fixed inset-0 z-[100] md:hidden">
-          <div className="absolute inset-0 bg-black/60" onClick={() => setSidebarOpen(false)} />
-          <div className="absolute left-0 top-0 h-full w-64 bg-[#0c0c16] border-r border-[#1a1a28] p-6 flex flex-col">
-            <button onClick={() => setSidebarOpen(false)} className="self-end p-2 text-[#9898b0]">
-              <X className="w-5 h-5" />
-            </button>
-            <div className="mt-8 flex flex-col gap-4">
-              {navLinks.map(link => (
-                <Link
-                  key={link.to}
-                  to={link.to}
-                  onClick={() => setSidebarOpen(false)}
-                  className="text-sm font-semibold text-[#6b6b85] hover:text-white transition-colors"
-                >
-                  {link.label}
-                </Link>
-              ))}
-              <hr className="border-[#1a1a28] my-2" />
-              <Link to="/login" onClick={() => setSidebarOpen(false)} className="text-sm font-semibold text-[#9898b0] hover:text-white">
-                Log in
+      {/* ═══ DROPDOWN MENU (Mobile) ═══ */}
+      {dropdownOpen && (
+        <div ref={dropdownRef} className="md:hidden bg-[#0c0c16] border-b border-[#1a1a28] shadow-lg">
+          <div className="px-6 py-4 flex flex-col gap-3">
+            {navLinks.map(link => (
+              <Link
+                key={link.to}
+                to={link.to}
+                onClick={() => setDropdownOpen(false)}
+                className="text-sm font-semibold text-[#9898b0] hover:text-white transition-colors"
+              >
+                {link.label}
               </Link>
-              <Link to="/register" onClick={() => setSidebarOpen(false)} className="text-sm font-semibold text-[#00c896]">
-                Get Started
-              </Link>
-            </div>
+            ))}
+            <hr className="border-[#1a1a28]" />
+            <Link to="/login" onClick={() => setDropdownOpen(false)} className="text-sm font-semibold text-[#9898b0] hover:text-white">Log in</Link>
+            <Link to="/register" onClick={() => setDropdownOpen(false)} className="text-sm font-semibold text-[#00c896]">Get Started</Link>
           </div>
         </div>
       )}
 
-
       {/* ══════════════════ HERO ══════════════════ */}
       <section className="relative min-h-[92vh] flex flex-col items-center justify-center py-24 px-6 md:px-14 overflow-hidden">
-        {/* BG grid + radial */}
+        {/* background effects (unchanged) */}
         <div className="absolute inset-0 grid-bg opacity-100 [mask-image:radial-gradient(ellipse_70%_60%_at_50%_40%,#000_30%,transparent_100%)]" />
-        {/* Morphing blobs */}
-        <div
-          className="absolute top-[-80px] left-1/2 -translate-x-1/2 w-[700px] h-[700px] morphing"
-          style={{
-            background: 'radial-gradient(ellipse at center, rgba(0,200,150,0.07) 0%, transparent 65%)',
-            pointerEvents: 'none',
-          }}
-        />
-        <div
-          className="absolute bottom-0 right-[-100px] w-[500px] h-[500px] morphing"
-          style={{
-            background: 'radial-gradient(ellipse at center, rgba(0,120,255,0.05) 0%, transparent 65%)',
-            pointerEvents: 'none',
-            animationDelay: '-4s',
-          }}
-        />
-
-        {/* Orbiting accent */}
-        <div
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-0 h-0 pointer-events-none"
-          style={{ zIndex: 0 }}
-        >
-          <div className="orbit-1 absolute w-8 h-8 rounded-full border border-[rgba(0,200,150,0.2)] flex items-center justify-center">
-            <div className="w-1.5 h-1.5 rounded-full bg-[#00c896] opacity-60" />
-          </div>
-          <div className="orbit-2 absolute w-6 h-6 rounded-full border border-[rgba(0,120,255,0.2)] flex items-center justify-center">
-            <div className="w-1 h-1 rounded-full bg-[#4a9dff] opacity-60" />
-          </div>
+        <div className="absolute top-[-80px] left-1/2 -translate-x-1/2 w-[700px] h-[700px] morphing" style={{ background: 'radial-gradient(ellipse at center, rgba(0,200,150,0.07) 0%, transparent 65%)', pointerEvents: 'none' }} />
+        <div className="absolute bottom-0 right-[-100px] w-[500px] h-[500px] morphing" style={{ background: 'radial-gradient(ellipse at center, rgba(0,120,255,0.05) 0%, transparent 65%)', animationDelay: '-4s', pointerEvents: 'none' }} />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-0 h-0 pointer-events-none" style={{ zIndex: 0 }}>
+          <div className="orbit-1 absolute w-8 h-8 rounded-full border border-[rgba(0,200,150,0.2)] flex items-center justify-center"><div className="w-1.5 h-1.5 rounded-full bg-[#00c896] opacity-60" /></div>
+          <div className="orbit-2 absolute w-6 h-6 rounded-full border border-[rgba(0,120,255,0.2)] flex items-center justify-center"><div className="w-1 h-1 rounded-full bg-[#4a9dff] opacity-60" /></div>
         </div>
 
         <div className="relative z-10 text-center max-w-[820px]">
-          {/* Badge */}
           <div className="hero-line-1 inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-[rgba(0,200,150,0.2)] bg-[rgba(0,200,150,0.05)] text-[10px] font-bold text-[#00c896] tracking-[0.18em] uppercase mb-10">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#00c896] glow-dot" />
-            Live Markets · 10,000+ Investors
+            <span className="w-1.5 h-1.5 rounded-full bg-[#00c896] glow-dot" /> Live Markets · 10,000+ Investors
           </div>
-
-          <h1
-            className="font-extrabold tracking-tighter leading-[1.0]"
-            style={{ fontSize: 'clamp(44px,6.5vw,90px)' }}
-          >
+          <h1 className="font-extrabold tracking-tighter leading-[1.0]" style={{ fontSize: 'clamp(44px,6.5vw,90px)' }}>
             <div className="hero-line-1 text-[#e8e8f0]">Trade Smarter.</div>
-            <div className="hero-line-2 mt-1">
-              <span className="grad-text">Earn Daily.</span>
-            </div>
-            <div className="hero-line-3 text-[#3a3a58] mt-1 italic font-extrabold">
-              Build Wealth.
-            </div>
+            <div className="hero-line-2 mt-1"><span className="grad-text">Earn Daily.</span></div>
+            <div className="hero-line-3 text-[#3a3a58] mt-1 italic font-extrabold">Build Wealth.</div>
           </h1>
-
           <p className="hero-sub mt-7 text-[15px] text-[#6b6b85] max-w-[460px] mx-auto leading-relaxed">
-            Institutional-grade crypto trading with daily passive returns, real-time
-            analytics, and bank-level security—in one unified platform.
+            Institutional-grade crypto trading with daily passive returns, real-time analytics, and bank-level security—in one unified platform.
           </p>
-
           <div className="hero-btns flex gap-3 justify-center mt-10 flex-wrap">
-            <Link
-              to="/register"
-              className="px-8 py-3.5 rounded-xl text-[14px] font-bold bg-[#00c896] text-black hover:bg-[#00dea8] hover:shadow-[0_0_40px_rgba(0,200,150,0.4)] transition-all duration-300 inline-flex items-center"
-            >
+            <Link to="/register" className="px-8 py-3.5 rounded-xl text-[14px] font-bold bg-[#00c896] text-black hover:bg-[#00dea8] hover:shadow-[0_0_40px_rgba(0,200,150,0.4)] transition-all duration-300 inline-flex items-center">
               Start Investing <ArrowRight className="w-4 h-4 ml-1" />
             </Link>
-            <Link
-              to="/about"
-              className="px-8 py-3.5 rounded-xl text-[14px] font-bold border border-[#2a2a3e] text-[#9898b0] hover:text-[#e8e8f0] hover:border-[#3a3a56] transition-all duration-300"
-            >
+            <Link to="/about" className="px-8 py-3.5 rounded-xl text-[14px] font-bold border border-[#2a2a3e] text-[#9898b0] hover:text-[#e8e8f0] hover:border-[#3a3a56] transition-all duration-300">
               Explore Demo
             </Link>
           </div>
-
-          {/* Shimmer divider */}
           <div className="hero-stats mt-14 h-px shimmer-line rounded-full mx-auto max-w-[600px] mb-8" />
-
-          {/* Stats bar */}
           <div className="hero-stats flex flex-wrap justify-center gap-0">
             {[
               { val: '2.4', suffix: 'B+', label: '24h Volume', pre: '$' },
@@ -563,23 +379,11 @@ const WixCapitalDashboard = () => {
               { val: '2.5', suffix: '%', label: 'Max Daily Return', pre: '' },
               { val: '99.9', suffix: '%', label: 'Uptime SLA', pre: '' },
             ].map((s, i) => (
-              <div
-                key={i}
-                className={`flex-1 min-w-[120px] py-5 px-6 text-center ${
-                  i < 3 ? 'border-r border-[#1a1a28]' : ''
-                }`}
-              >
+              <div key={i} className={`flex-1 min-w-[120px] py-5 px-6 text-center ${i < 3 ? 'border-r border-[#1a1a28]' : ''}`}>
                 <div className="text-[24px] font-extrabold tracking-tighter font-mono text-[#e8e8f0]">
-                  {s.pre}
-                  <Counter
-                    target={parseFloat(s.val)}
-                    suffix={s.suffix}
-                    decimals={s.val.includes('.') ? 1 : 0}
-                  />
+                  {s.pre}<Counter target={parseFloat(s.val)} suffix={s.suffix} decimals={s.val.includes('.') ? 1 : 0} />
                 </div>
-                <div className="text-[10px] text-[#4a4a64] mt-1.5 font-semibold tracking-[0.1em] uppercase">
-                  {s.label}
-                </div>
+                <div className="text-[10px] text-[#4a4a64] mt-1.5 font-semibold tracking-[0.1em] uppercase">{s.label}</div>
               </div>
             ))}
           </div>

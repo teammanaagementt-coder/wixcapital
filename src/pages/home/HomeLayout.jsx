@@ -1,9 +1,7 @@
 // src/pages/home/HomeLayout.jsx
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
 import {
-  ArrowUp,
-  ArrowDown,
   Link2,
   MessageCircle,
   Menu,
@@ -11,10 +9,30 @@ import {
 } from 'lucide-react';
 
 const HomeLayout = () => {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null);
   const [scrollY, setScrollY] = useState(0);
   const location = useLocation();
 
+  // Close dropdown when clicking outside or on a link (navigation)
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setDropdownOpen(false);
+      }
+    };
+    if (dropdownOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [dropdownOpen]);
+
+  // Close dropdown on route change
+  useEffect(() => {
+    setDropdownOpen(false);
+  }, [location.pathname]);
+
+  // Scroll tracking for navbar shadow
   useEffect(() => {
     const onScroll = () => setScrollY(window.scrollY);
     window.addEventListener('scroll', onScroll, { passive: true });
@@ -58,7 +76,6 @@ const HomeLayout = () => {
 
   return (
     <div className="bg-[#07070e] text-[#e8e8f0] min-h-screen flex flex-col">
-      {/* ═══ GLOBAL STYLES (same as Home.jsx) ═══ */}
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;500;600;700;800&display=swap');
 
@@ -67,7 +84,7 @@ const HomeLayout = () => {
         .grad-text { background: linear-gradient(135deg, #00c896 0%, #00a8ff 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
       `}</style>
 
-      {/* ═══ NAVBAR ═══ */}
+      {/* Navbar */}
       <nav
         className={`flex items-center justify-between px-6 md:px-14 h-[68px] sticky top-0 z-50 bg-[rgba(7,7,14,0.85)] backdrop-blur-xl border-b border-[#1a1a28] ${
           scrollY > 40 ? 'border-b' : ''
@@ -79,7 +96,7 @@ const HomeLayout = () => {
           <span className="grad-text">Capital</span>
         </Link>
 
-        {/* Desktop nav */}
+        {/* Desktop navigation */}
         <div className="hidden lg:flex gap-6 text-[12px] font-semibold text-[#6b6b85]">
           {navLinks.map(link => (
             <Link
@@ -109,59 +126,47 @@ const HomeLayout = () => {
             Get Started
           </Link>
           <button
-            onClick={() => setSidebarOpen(true)}
+            onClick={() => setDropdownOpen(!dropdownOpen)}
             className="lg:hidden p-2 text-[#9898b0] hover:text-white"
           >
-            <Menu className="w-5 h-5" />
+            {dropdownOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
         </div>
       </nav>
 
-      {/* ═══ MOBILE SIDEBAR ═══ */}
-      {sidebarOpen && (
-        <div className="fixed inset-0 z-[100] lg:hidden">
-          <div
-            className="absolute inset-0 bg-black/60"
-            onClick={() => setSidebarOpen(false)}
-          />
-          <div className="absolute left-0 top-0 h-full w-64 bg-[#0c0c16] border-r border-[#1a1a28] p-6 flex flex-col">
-            <button
-              onClick={() => setSidebarOpen(false)}
-              className="self-end p-2 text-[#9898b0]"
+      {/* Dropdown Menu (mobile) */}
+      {dropdownOpen && (
+        <div
+          ref={dropdownRef}
+          className="lg:hidden bg-[#0c0c16] border-b border-[#1a1a28] shadow-lg animate-fade-down"
+        >
+          <div className="px-6 py-4 flex flex-col gap-3">
+            {navLinks.map(link => (
+              <Link
+                key={link.to}
+                to={link.to}
+                className={`text-sm font-semibold ${
+                  location.pathname === link.to
+                    ? 'text-[#00c896]'
+                    : 'text-[#9898b0]'
+                } hover:text-white transition-colors`}
+              >
+                {link.label}
+              </Link>
+            ))}
+            <hr className="border-[#1a1a28]" />
+            <Link
+              to="/login"
+              className="text-sm font-semibold text-[#9898b0] hover:text-white"
             >
-              <X className="w-5 h-5" />
-            </button>
-            <div className="mt-8 flex flex-col gap-4">
-              {navLinks.map(link => (
-                <Link
-                  key={link.to}
-                  to={link.to}
-                  onClick={() => setSidebarOpen(false)}
-                  className={`text-sm font-semibold ${
-                    location.pathname === link.to
-                      ? 'text-[#00c896]'
-                      : 'text-[#6b6b85]'
-                  } hover:text-white transition-colors`}
-                >
-                  {link.label}
-                </Link>
-              ))}
-              <hr className="border-[#1a1a28] my-2" />
-              <Link
-                to="/login"
-                onClick={() => setSidebarOpen(false)}
-                className="text-sm font-semibold text-[#9898b0] hover:text-white"
-              >
-                Log in
-              </Link>
-              <Link
-                to="/register"
-                onClick={() => setSidebarOpen(false)}
-                className="text-sm font-semibold text-[#00c896]"
-              >
-                Get Started
-              </Link>
-            </div>
+              Log in
+            </Link>
+            <Link
+              to="/register"
+              className="text-sm font-semibold text-[#00c896]"
+            >
+              Get Started
+            </Link>
           </div>
         </div>
       )}
@@ -171,7 +176,7 @@ const HomeLayout = () => {
         <Outlet />
       </main>
 
-      {/* ═══ FOOTER ═══ */}
+      {/* Footer (unchanged) */}
       <footer className="border-t border-[#1a1a28] bg-[#05050d] px-6 md:px-14 pt-16 pb-10">
         <div className="max-w-[1280px] mx-auto">
           <div className="grid grid-cols-2 md:grid-cols-5 gap-10 mb-14">
@@ -185,24 +190,15 @@ const HomeLayout = () => {
                 Institutional-grade crypto trading platform built for modern investors.
               </p>
               <div className="flex gap-3 mt-5">
-                <Link
-                  to="#"
-                  className="w-8 h-8 rounded-lg border border-[#1a1a28] flex items-center justify-center text-[#4a4a64] hover:border-[#00c896] hover:text-[#00c896] transition-all"
-                >
-                  <Link2 className="w-4 h-4" />
-                </Link>
-                <Link
-                  to="#"
-                  className="w-8 h-8 rounded-lg border border-[#1a1a28] flex items-center justify-center text-[#4a4a64] hover:border-[#00c896] hover:text-[#00c896] transition-all"
-                >
-                  <Link2 className="w-4 h-4" />
-                </Link>
-                <Link
-                  to="#"
-                  className="w-8 h-8 rounded-lg border border-[#1a1a28] flex items-center justify-center text-[#4a4a64] hover:border-[#00c896] hover:text-[#00c896] transition-all"
-                >
-                  <Link2 className="w-4 h-4" />
-                </Link>
+                {[...Array(3)].map((_, i) => (
+                  <Link
+                    key={i}
+                    to="#"
+                    className="w-8 h-8 rounded-lg border border-[#1a1a28] flex items-center justify-center text-[#4a4a64] hover:border-[#00c896] hover:text-[#00c896] transition-all"
+                  >
+                    <Link2 className="w-4 h-4" />
+                  </Link>
+                ))}
                 <Link
                   to="#"
                   className="w-8 h-8 rounded-lg border border-[#1a1a28] flex items-center justify-center text-[#4a4a64] hover:border-[#00c896] hover:text-[#00c896] transition-all"
