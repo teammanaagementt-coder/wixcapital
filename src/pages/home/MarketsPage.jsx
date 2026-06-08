@@ -1,0 +1,21 @@
+// src/pages/home/MarketsPage.jsx
+import React from 'react';
+
+const MarketsPage = () => {
+  return (
+    <section className="py-20 px-6 md:px-14">
+      <div className="max-w-[1280px] mx-auto">
+        <div className="text-[10px] font-bold text-[#00c896] tracking-[0.18em] uppercase mb-2">
+          Markets
+        </div>
+        <h1 className="text-[32px] font-extrabold tracking-tighter mb-8">
+          Live Cryptocurrency Prices
+        </h1>
+        <p className="text-[#6b6b85] mb-8">Real‑time market data coming soon.</p>
+        {/* You can copy the market table from Home.jsx if you want live data */}
+      </div>
+    </section>
+  );
+};
+
+export default MarketsPage;

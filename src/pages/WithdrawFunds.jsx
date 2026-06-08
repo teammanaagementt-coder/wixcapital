@@ -140,46 +140,47 @@ const WithdrawFunds = () => {
     }
   };
 
-  // Provide a fallback if selectedMethod is missing (prevents crash)
   const method = selectedMethod || { name: 'USDT (ERC20)', icon: '/images/usdt.png' };
   const { label, placeholder, example } = getDetailsConfig(method.name);
 
   return (
-    <div className="p-4 md:p-6 pb-20 md:pb-8 overflow-x-hidden flex-grow space-y-6">
+    <div className="p-4 md:p-6 pb-20 md:pb-8 overflow-x-hidden flex-grow space-y-6" style={{ fontFamily: "'Syne', sans-serif" }}>
+      <style>{`@import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;500;600;700;800&display=swap');`}</style>
+
       {/* Header */}
-      <div className="bg-dark-50/90 border border-gray-800 rounded-xl p-6 md:p-8 relative overflow-hidden">
+      <div className="bg-[#0c0c18] border border-[#1a1a28] rounded-xl p-6 md:p-8 relative overflow-hidden">
         <div className="relative z-10">
-          <div className="flex items-center gap-4 mb-2 text-gray-400 text-sm">
+          <div className="flex items-center gap-4 mb-2 text-[#6b6b85] text-sm">
             <div className="flex items-center gap-1">
               <Calendar className="w-4 h-4" />
               <span>Withdrawal Details</span>
             </div>
-            <div className="flex items-center gap-1 text-xs text-gray-500">
+            <div className="flex items-center gap-1 text-xs text-[#4a4a64]">
               <Wallet className="w-4 h-4" />
               <span>
                 Balance: {loadingBalance ? '...' : `$${balance.toFixed(2)}`}
               </span>
             </div>
           </div>
-          <h1 className="text-3xl font-bold text-white mb-2">Withdrawal Details</h1>
-          <p className="text-gray-400 mb-2">Complete your withdrawal request</p>
+          <h1 className="text-3xl font-bold text-[#e8e8f0] mb-2">Withdrawal Details</h1>
+          <p className="text-[#6b6b85] mb-2">Complete your withdrawal request</p>
         </div>
       </div>
 
       <div className="max-w-4xl mx-auto">
-        <div className="bg-dark-50/90 border border-gray-800 rounded-xl overflow-hidden">
+        <div className="bg-[#0c0c18] border border-[#1a1a28] rounded-xl overflow-hidden">
           {/* Method Header */}
-          <div className="border-b border-gray-800">
+          <div className="border-b border-[#1a1a28]">
             <div className="flex items-center px-6 py-4">
-              <div className="flex items-center px-4 py-2 bg-dark-100 rounded-full">
-                <div className="w-6 h-6 rounded-full bg-dark-200 flex items-center justify-center mr-2">
+              <div className="flex items-center px-4 py-2 bg-[#0c0c16] rounded-full border border-[#1a1a28]">
+                <div className="w-6 h-6 rounded-full bg-[#1a1a28] flex items-center justify-center mr-2">
                   {method.icon ? (
                     <img src={method.icon} alt={method.name} className="w-4 h-4 object-contain" />
                   ) : (
-                    <ArrowUpRight className="w-4 h-4 text-secondary" />
+                    <ArrowUpRight className="w-4 h-4 text-[#00c896]" />
                   )}
                 </div>
-                <span className="text-sm font-medium text-white">{method.name}</span>
+                <span className="text-sm font-medium text-[#e8e8f0]">{method.name}</span>
               </div>
             </div>
           </div>
@@ -188,10 +189,10 @@ const WithdrawFunds = () => {
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Amount */}
               <div className="space-y-2">
-                <label htmlFor="amount" className="text-sm font-medium text-gray-300">Amount to withdraw</label>
+                <label htmlFor="amount" className="text-sm font-medium text-[#9898b0]">Amount to withdraw</label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                    <span className="text-gray-500">$</span>
+                    <span className="text-[#6b6b85]">$</span>
                   </div>
                   <input
                     id="amount"
@@ -200,45 +201,45 @@ const WithdrawFunds = () => {
                     min="0"
                     value={amount}
                     onChange={(e) => setAmount(e.target.value)}
-                    className="block w-full pl-10 pr-20 py-3 text-lg rounded-xl bg-dark-100 border border-gray-800 focus:ring-2 focus:ring-primary focus:border-transparent text-white transition-all placeholder-gray-600"
+                    className="block w-full pl-10 pr-20 py-3 text-lg rounded-xl bg-[#0c0c16] border border-[#1a1a28] focus:ring-2 focus:ring-[#00c896] focus:border-transparent text-[#e8e8f0] transition-all placeholder-[#4a4a64]"
                     placeholder="0.00"
                     required
                   />
                 </div>
                 {amount && (
-                  <div className="text-xs text-gray-400 space-y-1">
+                  <div className="text-xs text-[#6b6b85] space-y-1">
                     <div className="flex justify-between">
                       <span>Fee ({feePercentage}%):</span>
                       <span>${fee.toFixed(2)}</span>
                     </div>
                     <div className="flex justify-between font-medium">
                       <span>Total cost:</span>
-                      <span className={isExceedingBalance ? 'text-danger' : ''}>${totalCost.toFixed(2)}</span>
+                      <span className={isExceedingBalance ? 'text-[#ff5b6e]' : ''}>${totalCost.toFixed(2)}</span>
                     </div>
-                    {isExceedingBalance && <p className="text-danger">Amount + fee exceeds your available balance</p>}
+                    {isExceedingBalance && <p className="text-[#ff5b6e]">Amount + fee exceeds your available balance</p>}
                   </div>
                 )}
               </div>
 
               {/* Dynamic Details */}
               <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-300">{label}</label>
+                <label className="text-sm font-medium text-[#9898b0]">{label}</label>
                 <textarea
                   rows={4}
                   value={details}
                   onChange={(e) => setDetails(e.target.value)}
-                  className="block w-full p-4 text-md rounded-xl bg-dark-100 border border-gray-800 focus:ring-2 focus:ring-primary focus:border-transparent text-white transition-all placeholder-gray-600"
+                  className="block w-full p-4 text-md rounded-xl bg-[#0c0c16] border border-[#1a1a28] focus:ring-2 focus:ring-[#00c896] focus:border-transparent text-[#e8e8f0] transition-all placeholder-[#4a4a64]"
                   placeholder={placeholder}
                   required
                 />
-                <div className="p-3 rounded-lg bg-dark-100 border border-gray-800">
+                <div className="p-3 rounded-lg bg-[#0c0c16] border border-[#1a1a28]">
                   <div className="flex gap-2">
-                    <Info className="w-5 h-5 text-secondary flex-shrink-0" />
+                    <Info className="w-5 h-5 text-[#00c896] flex-shrink-0" />
                     <div>
-                      <p className="text-xs text-gray-400">
+                      <p className="text-xs text-[#6b6b85]">
                         Please enter your necessary details required to receive your payment:
                       </p>
-                      <p className="text-xs font-medium text-gray-300 mt-1">{example}</p>
+                      <p className="text-xs font-medium text-[#9898b0] mt-1">{example}</p>
                     </div>
                   </div>
                 </div>
@@ -246,28 +247,28 @@ const WithdrawFunds = () => {
 
               {/* WC Code */}
               <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-300">WC Code</label>
+                <label className="text-sm font-medium text-[#9898b0]">WC Code</label>
                 <input
                   type="text"
                   value={wcCode}
                   onChange={(e) => setWcCode(e.target.value)}
-                  className="block w-full pl-4 pr-4 py-3 text-md rounded-xl bg-dark-100 border border-gray-800 focus:ring-2 focus:ring-primary focus:border-transparent text-white font-mono transition-all placeholder-gray-600"
+                  className="block w-full pl-4 pr-4 py-3 text-md rounded-xl bg-[#0c0c16] border border-[#1a1a28] focus:ring-2 focus:ring-[#00c896] focus:border-transparent text-[#e8e8f0] font-mono transition-all placeholder-[#4a4a64]"
                   placeholder="Enter your withdrawal confirmation code"
                   required
                 />
-                <p className="mt-2 text-xs text-gray-500">
+                <p className="mt-2 text-xs text-[#4a4a64]">
                   Please input your withdrawal confirmation code or contact support to purchase a code.
                 </p>
               </div>
 
               {/* Processing time */}
-              <div className="flex items-center p-4 rounded-xl bg-dark-100 border border-gray-800 gap-3">
-                <div className="w-10 h-10 rounded-full bg-dark-200 flex items-center justify-center flex-shrink-0">
-                  <Clock className="w-5 h-5 text-tertiary" />
+              <div className="flex items-center p-4 rounded-xl bg-[#0c0c16] border border-[#1a1a28] gap-3">
+                <div className="w-10 h-10 rounded-full bg-[#1a1a28] flex items-center justify-center flex-shrink-0">
+                  <Clock className="w-5 h-5 text-[#00c896]" />
                 </div>
                 <div>
-                  <h3 className="text-sm font-medium text-white">Estimated processing time</h3>
-                  <p className="text-xs text-gray-400">
+                  <h3 className="text-sm font-medium text-[#e8e8f0]">Estimated processing time</h3>
+                  <p className="text-xs text-[#6b6b85]">
                     Your withdrawal will be processed within 15–30 minutes.
                   </p>
                 </div>
@@ -278,12 +279,12 @@ const WithdrawFunds = () => {
                 <button
                   type="submit"
                   disabled={submitting || isExceedingBalance || !amount}
-                  className="w-full py-4 px-4 rounded-xl bg-primary hover:bg-primary-600 text-white font-medium flex items-center justify-center gap-2 transition-all duration-300 hover:-translate-y-1 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full py-4 px-4 rounded-xl bg-[#00c896] hover:bg-[#00dea8] text-black font-medium flex items-center justify-center gap-2 transition-all duration-300 hover:-translate-y-1 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <ArrowUpRight className="w-5 h-5" />
                   <span>{submitting ? 'Submitting...' : 'Complete Withdrawal Request'}</span>
                 </button>
-                <p className="mt-3 text-center text-xs text-gray-500">
+                <p className="mt-3 text-center text-xs text-[#4a4a64]">
                   By proceeding, you confirm that the provided information is correct
                 </p>
               </div>

@@ -68,31 +68,52 @@ const Trade = () => {
     setPrice('');
   };
 
-  const handleOrder = () => {
-    if (!amount || parseFloat(amount) <= 0) {
-      toast.error('Please enter a valid amount');
-      return;
-    }
-    const currentPrice = cryptoData?.market_data?.current_price?.usd || 0;
-    const cost = parseFloat(amount) * currentPrice;
-    
-    if (orderType === 'buy') {
-      if (cost > balance) {
-        toast.error('Insufficient balance for this purchase');
-        return;
-      }
-      toast.success(`Bought ${amount} ${symbol} for $${cost.toFixed(2)}`);
+const handleOrder = async () => {
+  if (!amount || parseFloat(amount) <= 0) {
+    toast.error('Please enter a valid amount');
+    return;
+  }
+
+  const token = localStorage.getItem('token');
+  const orderPrice = parseFloat(price) || currentPrice;
+  
+  try {
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/trades`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        symbol,
+        type: orderType,           // 'buy' or 'sell'
+        amount: parseFloat(amount),
+        price: orderPrice,
+      }),
+    });
+
+    const data = await res.json();
+    if (res.ok) {
+      toast.success(`${orderType === 'buy' ? 'Bought' : 'Sold'} ${amount} ${symbol}`);
+      // Update local balance from the backend response
+      if (data.user?.balance !== undefined) setBalance(data.user.balance);
+      setAmount('');
+      setPrice('');
     } else {
-      toast.success(`Sold ${amount} ${symbol} for $${cost.toFixed(2)}`);
+      toast.error(data.message || 'Trade failed');
     }
-  };
+  } catch (err) {
+    toast.error('Network error');
+  }
+};
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="flex items-center justify-center min-h-screen" style={{ fontFamily: "'Syne', sans-serif" }}>
+        <style>{`@import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;500;600;700;800&display=swap');`}</style>
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
-          <p className="mt-4 text-gray-400">Loading trading data...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#00c896] mx-auto"></div>
+          <p className="mt-4 text-[#6b6b85]">Loading trading data...</p>
         </div>
       </div>
     );
@@ -103,38 +124,40 @@ const Trade = () => {
   const isPositive = priceChange >= 0;
 
   return (
-    <div className="p-4 md:p-6 pb-20 md:pb-8 overflow-x-hidden flex-grow space-y-6">
+    <div className="p-4 md:p-6 pb-20 md:pb-8 overflow-x-hidden flex-grow space-y-6" style={{ fontFamily: "'Syne', sans-serif" }}>
+      <style>{`@import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;500;600;700;800&display=swap');`}</style>
+
       {/* Header */}
-      <div className="bg-dark-50/90 border border-gray-800 rounded-xl p-6 md:p-8 relative overflow-hidden">
+      <div className="bg-[#0c0c18] border border-[#1a1a28] rounded-xl p-6 md:p-8 relative overflow-hidden">
         <div className="relative z-10">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
-              <div className="flex items-center gap-4 mb-2 text-gray-400 text-sm">
+              <div className="flex items-center gap-4 mb-2 text-[#6b6b85] text-sm">
                 <div className="flex items-center gap-1">
                   <Calendar className="w-4 h-4" />
                   <span>{cryptoData?.name || symbol} Trading</span>
                 </div>
               </div>
               <div className="flex items-center gap-4 flex-wrap">
-                <h1 className="text-3xl font-bold text-white">{symbol}</h1>
-                <div className="text-2xl font-bold text-white">
+                <h1 className="text-3xl font-bold text-[#e8e8f0]">{symbol}</h1>
+                <div className="text-2xl font-bold text-[#e8e8f0]">
                   ${currentPrice.toLocaleString()}
                 </div>
-                <div className={`text-sm font-medium ${isPositive ? 'text-green-500' : 'text-danger'}`}>
+                <div className={`text-sm font-medium ${isPositive ? 'text-[#00c896]' : 'text-[#ff5b6e]'}`}>
                   {isPositive ? <ArrowUp className="inline w-4 h-4" /> : <ArrowDown className="inline w-4 h-4" />}
                   {Math.abs(priceChange).toFixed(2)}%
                 </div>
               </div>
-              <div className="mt-2 text-sm text-gray-400">
+              <div className="mt-2 text-sm text-[#6b6b85]">
                 <span className="mr-4">24h High: ${cryptoData?.market_data?.high_24h?.usd?.toLocaleString() || '0'}</span>
                 <span>24h Low: ${cryptoData?.market_data?.low_24h?.usd?.toLocaleString() || '0'}</span>
               </div>
             </div>
-            <div className="flex items-center gap-3 px-4 py-2 rounded-lg bg-dark-100 border border-gray-800">
-              <Wallet className="w-5 h-5 text-primary" />
+            <div className="flex items-center gap-3 px-4 py-2 rounded-lg bg-[#0c0c16] border border-[#1a1a28]">
+              <Wallet className="w-5 h-5 text-[#00c896]" />
               <div>
-                <p className="text-xs text-gray-400">Balance</p>
-                <p className="text-lg font-semibold text-white">${balance.toLocaleString()}</p>
+                <p className="text-xs text-[#6b6b85]">Balance</p>
+                <p className="text-lg font-semibold text-[#e8e8f0]">${balance.toLocaleString()}</p>
               </div>
             </div>
           </div>
@@ -142,16 +165,16 @@ const Trade = () => {
       </div>
 
       {/* Pair Selector */}
-      <div className="bg-dark-50/90 border border-gray-800 rounded-xl p-4">
+      <div className="bg-[#0c0c18] border border-[#1a1a28] rounded-xl p-4">
         <div className="flex flex-col md:flex-row md:items-center gap-4">
           <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-500" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-[#4a4a64]" />
             <input
               type="text"
               placeholder="Search pair to switch..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-3 rounded-xl bg-dark-100 border border-gray-800 focus:ring-2 focus:ring-primary focus:border-transparent text-white placeholder-gray-500"
+              className="w-full pl-10 pr-4 py-3 rounded-xl bg-[#0c0c16] border border-[#1a1a28] focus:ring-2 focus:ring-[#00c896] focus:border-transparent text-[#e8e8f0] placeholder-[#4a4a64]"
             />
           </div>
           <div className="flex gap-2 overflow-x-auto max-w-full md:max-w-md">
@@ -161,15 +184,15 @@ const Trade = () => {
                 onClick={() => handlePairChange(`${coin.symbol.toUpperCase()}-USDT`)}
                 className={`px-4 py-2 rounded-lg text-sm whitespace-nowrap transition-colors ${
                   symbol === `${coin.symbol.toUpperCase()}-USDT`
-                    ? 'bg-primary text-white'
-                    : 'bg-dark-100 text-gray-400 hover:text-white hover:bg-dark-200'
+                    ? 'bg-[#00c896] text-black'
+                    : 'bg-[#0c0c16] text-[#6b6b85] hover:text-[#e8e8f0] hover:bg-[#1a1a28]'
                 }`}
               >
                 {coin.symbol.toUpperCase()}/USDT
               </button>
             ))}
             {filteredCoins.length > 5 && (
-              <span className="text-xs text-gray-500 flex items-center px-2">
+              <span className="text-xs text-[#4a4a64] flex items-center px-2">
                 +{filteredCoins.length - 5} more
               </span>
             )}
@@ -180,9 +203,9 @@ const Trade = () => {
       {/* Trading Interface */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Chart (Left) */}
-        <div className="lg:col-span-2 bg-dark-50/90 border border-gray-800 rounded-xl overflow-hidden">
-          <div className="p-4 border-b border-gray-800">
-            <h3 className="text-white font-medium">Price Chart</h3>
+        <div className="lg:col-span-2 bg-[#0c0c18] border border-[#1a1a28] rounded-xl overflow-hidden">
+          <div className="p-4 border-b border-[#1a1a28]">
+            <h3 className="text-[#e8e8f0] font-medium">Price Chart</h3>
           </div>
           <div className="p-4 h-96">
             <div className="w-full h-full rounded-lg overflow-hidden">
@@ -196,16 +219,16 @@ const Trade = () => {
         </div>
 
         {/* Order Book / Buy Sell (Right) */}
-        <div className="bg-dark-50/90 border border-gray-800 rounded-xl overflow-hidden">
-          <div className="p-4 border-b border-gray-800 flex items-center justify-between">
-            <h3 className="text-white font-medium">Order</h3>
+        <div className="bg-[#0c0c18] border border-[#1a1a28] rounded-xl overflow-hidden">
+          <div className="p-4 border-b border-[#1a1a28] flex items-center justify-between">
+            <h3 className="text-[#e8e8f0] font-medium">Order</h3>
             <div className="flex gap-2">
               <button
                 onClick={() => setOrderType('buy')}
                 className={`px-4 py-1.5 text-sm rounded-lg transition-colors ${
                   orderType === 'buy'
-                    ? 'bg-green-500 text-white'
-                    : 'bg-dark-100 text-gray-400 hover:text-white'
+                    ? 'bg-[#00c896] text-black'
+                    : 'bg-[#0c0c16] text-[#6b6b85] hover:text-[#e8e8f0]'
                 }`}
               >
                 Buy
@@ -214,8 +237,8 @@ const Trade = () => {
                 onClick={() => setOrderType('sell')}
                 className={`px-4 py-1.5 text-sm rounded-lg transition-colors ${
                   orderType === 'sell'
-                    ? 'bg-danger text-white'
-                    : 'bg-dark-100 text-gray-400 hover:text-white'
+                    ? 'bg-[#ff5b6e] text-white'
+                    : 'bg-[#0c0c16] text-[#6b6b85] hover:text-[#e8e8f0]'
                 }`}
               >
                 Sell
@@ -226,40 +249,40 @@ const Trade = () => {
           <div className="p-6 space-y-4">
             {/* Price */}
             <div>
-              <label className="text-sm text-gray-400">Price (USDT)</label>
+              <label className="text-sm text-[#6b6b85]">Price (USDT)</label>
               <input
                 type="number"
                 value={price || currentPrice}
                 onChange={(e) => setPrice(e.target.value)}
-                className="w-full mt-1 p-3 rounded-xl bg-dark-100 border border-gray-800 text-white focus:ring-2 focus:ring-primary focus:border-transparent"
+                className="w-full mt-1 p-3 rounded-xl bg-[#0c0c16] border border-[#1a1a28] text-[#e8e8f0] focus:ring-2 focus:ring-[#00c896] focus:border-transparent"
                 placeholder="0.00"
               />
             </div>
 
             {/* Amount */}
             <div>
-              <label className="text-sm text-gray-400">Amount ({symbol.split('-')[0]})</label>
+              <label className="text-sm text-[#6b6b85]">Amount ({symbol.split('-')[0]})</label>
               <input
                 type="number"
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
-                className="w-full mt-1 p-3 rounded-xl bg-dark-100 border border-gray-800 text-white focus:ring-2 focus:ring-primary focus:border-transparent"
+                className="w-full mt-1 p-3 rounded-xl bg-[#0c0c16] border border-[#1a1a28] text-[#e8e8f0] focus:ring-2 focus:ring-[#00c896] focus:border-transparent"
                 placeholder="0.00"
               />
             </div>
 
             {/* Total */}
             <div className="flex justify-between text-sm">
-              <span className="text-gray-400">Total Cost</span>
-              <span className="text-white">
+              <span className="text-[#6b6b85]">Total Cost</span>
+              <span className="text-[#e8e8f0]">
                 ${((parseFloat(amount) || 0) * (parseFloat(price) || currentPrice)).toFixed(2)}
               </span>
             </div>
 
             {/* Fee */}
             <div className="flex justify-between text-sm">
-              <span className="text-gray-400">Fee (0.1%)</span>
-              <span className="text-white">
+              <span className="text-[#6b6b85]">Fee (0.1%)</span>
+              <span className="text-[#e8e8f0]">
                 ${(((parseFloat(amount) || 0) * (parseFloat(price) || currentPrice)) * 0.001).toFixed(2)}
               </span>
             </div>
@@ -267,16 +290,16 @@ const Trade = () => {
             {/* Order Button */}
             <button
               onClick={handleOrder}
-              className={`w-full py-4 rounded-xl font-medium text-white transition-all duration-300 ${
+              className={`w-full py-4 rounded-xl font-medium transition-all duration-300 ${
                 orderType === 'buy'
-                  ? 'bg-green-500 hover:bg-green-600'
-                  : 'bg-danger hover:bg-danger-600'
+                  ? 'bg-[#00c896] text-black hover:bg-[#00dea8]'
+                  : 'bg-[#ff5b6e] text-white hover:bg-[#ff7b8b]'
               }`}
             >
               {orderType === 'buy' ? 'Buy' : 'Sell'} {symbol.split('-')[0]}
             </button>
 
-            <p className="text-xs text-center text-gray-500">
+            <p className="text-xs text-center text-[#4a4a64]">
               By placing an order, you agree to our terms
             </p>
           </div>
@@ -284,24 +307,24 @@ const Trade = () => {
       </div>
 
       {/* Market Info */}
-      <div className="bg-dark-50/90 border border-gray-800 rounded-xl p-6">
-        <h3 className="text-white font-medium mb-4">Market Information</h3>
+      <div className="bg-[#0c0c18] border border-[#1a1a28] rounded-xl p-6">
+        <h3 className="text-[#e8e8f0] font-medium mb-4">Market Information</h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
           <div>
-            <p className="text-xs text-gray-400">Market Cap</p>
-            <p className="text-white font-medium">${cryptoData?.market_data?.market_cap?.usd?.toLocaleString() || 'N/A'}</p>
+            <p className="text-xs text-[#6b6b85]">Market Cap</p>
+            <p className="text-[#e8e8f0] font-medium">${cryptoData?.market_data?.market_cap?.usd?.toLocaleString() || 'N/A'}</p>
           </div>
           <div>
-            <p className="text-xs text-gray-400">Volume (24h)</p>
-            <p className="text-white font-medium">${cryptoData?.market_data?.total_volume?.usd?.toLocaleString() || 'N/A'}</p>
+            <p className="text-xs text-[#6b6b85]">Volume (24h)</p>
+            <p className="text-[#e8e8f0] font-medium">${cryptoData?.market_data?.total_volume?.usd?.toLocaleString() || 'N/A'}</p>
           </div>
           <div>
-            <p className="text-xs text-gray-400">Circulating Supply</p>
-            <p className="text-white font-medium">{cryptoData?.market_data?.circulating_supply?.toLocaleString() || 'N/A'}</p>
+            <p className="text-xs text-[#6b6b85]">Circulating Supply</p>
+            <p className="text-[#e8e8f0] font-medium">{cryptoData?.market_data?.circulating_supply?.toLocaleString() || 'N/A'}</p>
           </div>
           <div>
-            <p className="text-xs text-gray-400">All Time High</p>
-            <p className="text-white font-medium">${cryptoData?.market_data?.ath?.usd?.toLocaleString() || 'N/A'}</p>
+            <p className="text-xs text-[#6b6b85]">All Time High</p>
+            <p className="text-[#e8e8f0] font-medium">${cryptoData?.market_data?.ath?.usd?.toLocaleString() || 'N/A'}</p>
           </div>
         </div>
       </div>

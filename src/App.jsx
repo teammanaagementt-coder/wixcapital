@@ -30,6 +30,21 @@ import Futures from './pages/Futures';
 import Transactions from './pages/Transactions';
 import TradingHistory from './pages/TradingHistory';
 import Settings from './pages/Settings';
+import Referrals from './pages/Referrals';
+import Support from './pages/Support';
+
+
+
+import HomeLayout from './pages/home/HomeLayout';
+import MarketsPage from './pages/home/MarketsPage';
+import TradePage from './pages/home/TradePage';
+import InvestPage from './pages/home/InvestPage';
+import AnalyticsPage from './pages/home/AnalyticsPage';
+import CompanyPage from './pages/home/CompanyPage';
+import AboutPage from './pages/home/AboutPage';
+import CareersPage from './pages/home/CareersPage';
+import ContactPage from './pages/home/ContactPage';
+
 
 // Auth pages
 import Login from './pages/Login';
@@ -42,6 +57,16 @@ function App() {
         <Routes>
           {/* ─── Public Routes ──────────────────────────────────────── */}
           <Route path="/" element={<Home />} />
+          <Route element={<HomeLayout />}>
+  <Route path="/markets" element={<MarketsPage />} />
+  <Route path="/trade" element={<TradePage />} />
+  <Route path="/invest" element={<InvestPage />} />
+  <Route path="/analytics" element={<AnalyticsPage />} />
+  <Route path="/company" element={<CompanyPage />} />
+  <Route path="/about" element={<AboutPage />} />
+  <Route path="/careers" element={<CareersPage />} />
+  <Route path="/contact" element={<ContactPage />} />
+</Route>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
 
@@ -60,6 +85,8 @@ function App() {
             <Route path="transactions" element={<PrivateRoute><Transactions /></PrivateRoute>} />
             <Route path="trading-history" element={<PrivateRoute><TradingHistory /></PrivateRoute>} />
             <Route path="settings" element={<PrivateRoute><Settings /></PrivateRoute>} />
+            <Route path="referrals" element={<PrivateRoute><Referrals /></PrivateRoute>} />
+<Route path="support" element={<PrivateRoute><Support /></PrivateRoute>} />
             <Route path="*" element={<Navigate to="/dashboard/overview" replace />} />
           </Route>
 
