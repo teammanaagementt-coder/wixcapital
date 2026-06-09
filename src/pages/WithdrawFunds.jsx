@@ -3,56 +3,12 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { Wallet, ArrowUpRight, Clock, Info, Calendar } from 'lucide-react';
 import toast from 'react-hot-toast';
 
-const getDetailsConfig = (methodName) => {
-  const method = methodName?.toLowerCase() || '';
-  if (method.includes('zelle')) {
-    return {
-      label: 'Zelle Details',
-      placeholder: 'Enter your Zelle email or phone number',
-      example: 'Example: your@email.com or (123) 456-7890',
-    };
-  }
-  if (method.includes('bank transfer')) {
-    return {
-      label: 'Bank Transfer Details',
-      placeholder: 'Bank Name, Account Number, Account Name, Swift Code',
-      example: 'Example: Chase, 123456789, John Doe, CHASUS33',
-    };
-  }
-  if (method.includes('usdt') || method.includes('erc20') || method.includes('trc20')) {
-    return {
-      label: 'Wallet Address (USDT)',
-      placeholder: 'Enter your USDT wallet address',
-      example: 'Example: 0x742d35Cc6634C0532925a3b844Bc9e7595f0b...',
-    };
-  }
-  if (method.includes('ethereum')) {
-    return {
-      label: 'Ethereum Wallet Address',
-      placeholder: 'Enter your Ethereum address (0x...)',
-      example: 'Example: 0x742d35Cc6634C0532925a3b844Bc9e7595f0b...',
-    };
-  }
-  if (method.includes('bitcoin')) {
-    return {
-      label: 'Bitcoin Wallet Address',
-      placeholder: 'Enter your Bitcoin address',
-      example: 'Example: 1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa',
-    };
-  }
-  return {
-    label: 'Withdrawal Details',
-    placeholder: 'Enter your payment details',
-    example: 'Provide the necessary information to receive your funds',
-  };
-};
-
 const WithdrawFunds = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { method: selectedMethod } = location.state || {};
   const [amount, setAmount] = useState('');
-  const [details, setDetails] = useState('');
+  const [withdrawalFieldValues, setWithdrawalFieldValues] = useState({});
   const [wcCode, setWcCode] = useState('');
   const [fee, setFee] = useState(0);
   const [totalCost, setTotalCost] = useState(0);
@@ -90,6 +46,10 @@ const WithdrawFunds = () => {
 
   const isExceedingBalance = totalCost > balance;
 
+  const handleFieldChange = (fieldName, value) => {
+    setWithdrawalFieldValues(prev => ({ ...prev, [fieldName]: value }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!amount || parseFloat(amount) <= 0) {
@@ -100,10 +60,14 @@ const WithdrawFunds = () => {
       toast.error('Insufficient balance to cover amount + fee');
       return;
     }
-    if (!details.trim()) {
-      toast.error('Please provide your withdrawal details');
+    
+    // Validate all required fields from method.withdrawalFields
+    const missing = selectedMethod.withdrawalFields.filter(f => f.required && !withdrawalFieldValues[f.name]);
+    if (missing.length > 0) {
+      toast.error(`Please fill in: ${missing.map(f => f.label).join(', ')}`);
       return;
     }
+    
     if (!wcCode.trim()) {
       toast.error('WC code is required');
       return;
@@ -121,7 +85,7 @@ const WithdrawFunds = () => {
         body: JSON.stringify({
           amount: parseFloat(amount),
           method: selectedMethod.name,
-          details: details,
+          details: JSON.stringify(withdrawalFieldValues),
           wcCode: wcCode,
         }),
       });
@@ -140,8 +104,7 @@ const WithdrawFunds = () => {
     }
   };
 
-  const method = selectedMethod || { name: 'USDT (ERC20)', icon: '/images/usdt.png' };
-  const { label, placeholder, example } = getDetailsConfig(method.name);
+  const method = selectedMethod || { name: 'USDT (ERC20)', icon: '/images/usdt.png', withdrawalFields: [] };
 
   return (
     <div style={{
@@ -271,46 +234,62 @@ const WithdrawFunds = () => {
                 )}
               </div>
 
-              {/* Dynamic Details */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                <label style={{ fontSize: '13px', fontWeight: 500, color: '#8a7060' }}>{label}</label>
-                <textarea
-                  rows={4}
-                  value={details}
-                  onChange={(e) => setDetails(e.target.value)}
-                  style={{
-                    width: '100%',
-                    padding: '16px',
-                    fontSize: '14px',
-                    borderRadius: '16px',
-                    background: 'rgba(255,255,255,0.03)',
-                    border: '1px solid rgba(249,115,22,0.2)',
-                    color: '#fff',
-                    transition: 'all 0.2s',
-                    outline: 'none',
-                    resize: 'vertical'
-                  }}
-                  placeholder={placeholder}
-                  required
-                  onFocus={e => e.currentTarget.style.borderColor = '#f97316'}
-                  onBlur={e => e.currentTarget.style.borderColor = 'rgba(249,115,22,0.2)'}
-                />
-                <div style={{ padding: '12px', borderRadius: '12px', background: 'rgba(30,12,0,0.6)', border: '1px solid rgba(249,115,22,0.1)' }}>
-                  <div style={{ display: 'flex', gap: '8px' }}>
-                    <Info size={20} style={{ color: '#f97316', flexShrink: 0 }} />
-                    <div>
-                      <p style={{ fontSize: '11px', color: '#8a7060' }}>
-                        Please enter your necessary details required to receive your payment:
-                      </p>
-                      <p style={{ fontSize: '11px', fontWeight: 500, color: '#fff', marginTop: '4px' }}>{example}</p>
-                    </div>
-                  </div>
+              {/* Dynamic Withdrawal Fields */}
+              {method.withdrawalFields && method.withdrawalFields.map((field, idx) => (
+                <div key={idx} style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  <label style={{ fontSize: '13px', fontWeight: 500, color: '#8a7060' }}>
+                    {field.label} {field.required && <span style={{ color: '#f97316' }}>*</span>}
+                  </label>
+                  {field.type === 'textarea' ? (
+                    <textarea
+                      rows={4}
+                      value={withdrawalFieldValues[field.name] || ''}
+                      onChange={(e) => handleFieldChange(field.name, e.target.value)}
+                      style={{
+                        width: '100%',
+                        padding: '12px',
+                        fontSize: '14px',
+                        borderRadius: '16px',
+                        background: 'rgba(255,255,255,0.03)',
+                        border: '1px solid rgba(249,115,22,0.2)',
+                        color: '#fff',
+                        transition: 'all 0.2s',
+                        outline: 'none',
+                        resize: 'vertical'
+                      }}
+                      placeholder={field.placeholder || ''}
+                      required={field.required}
+                      onFocus={e => e.currentTarget.style.borderColor = '#f97316'}
+                      onBlur={e => e.currentTarget.style.borderColor = 'rgba(249,115,22,0.2)'}
+                    />
+                  ) : (
+                    <input
+                      type={field.type || 'text'}
+                      value={withdrawalFieldValues[field.name] || ''}
+                      onChange={(e) => handleFieldChange(field.name, e.target.value)}
+                      style={{
+                        width: '100%',
+                        padding: '12px 16px',
+                        fontSize: '14px',
+                        borderRadius: '16px',
+                        background: 'rgba(255,255,255,0.03)',
+                        border: '1px solid rgba(249,115,22,0.2)',
+                        color: '#fff',
+                        transition: 'all 0.2s',
+                        outline: 'none'
+                      }}
+                      placeholder={field.placeholder || ''}
+                      required={field.required}
+                      onFocus={e => e.currentTarget.style.borderColor = '#f97316'}
+                      onBlur={e => e.currentTarget.style.borderColor = 'rgba(249,115,22,0.2)'}
+                    />
+                  )}
                 </div>
-              </div>
+              ))}
 
               {/* WC Code */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                <label style={{ fontSize: '13px', fontWeight: 500, color: '#8a7060' }}>WC Code</label>
+                <label style={{ fontSize: '13px', fontWeight: 500, color: '#8a7060' }}>WC Code *</label>
                 <input
                   type="text"
                   value={wcCode}

@@ -1,7 +1,7 @@
 import { Outlet, Link, useNavigate } from 'react-router-dom';
 import { 
   LayoutDashboard, Users, Banknote, ArrowUpRight, 
-  Layers, Settings, LogOut, Shield 
+  Layers, Settings, LogOut, Shield, TrendingUp, Activity   // ← added TrendingUp
 } from 'lucide-react';
 
 const AdminLayout = () => {
@@ -19,6 +19,9 @@ const AdminLayout = () => {
     { to: '/admin/deposits', icon: Banknote, label: 'Deposits' },
     { to: '/admin/withdrawals', icon: ArrowUpRight, label: 'Withdrawals' },
     { to: '/admin/investment-plans', icon: Layers, label: 'Investment Plans' },
+    { to: '/admin/investments', icon: TrendingUp, label: 'Investments' },   // ← NEW
+    { to: '/admin/trades', icon: TrendingUp, label: 'Trades' },
+    { to: '/admin/futures', icon: Activity, label: 'Futures' },
     { to: '/admin/settings', icon: Settings, label: 'Settings' },
   ];
 

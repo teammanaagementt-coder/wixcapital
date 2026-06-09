@@ -8,23 +8,18 @@ import {
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
-const paymentMethods = [
-  { id: '22', name: 'USDT (ERC20)', icon: '/images/usdt.png' },
-  { id: '17', name: 'USDT (TRC20)', icon: '/images/usdt.png' },
-  { id: '2', name: 'Ethereum (ERC20)', icon: '/images/eth.png' },
-  { id: '1', name: 'Bitcoin', icon: '/images/btc.png' },
-];
-
 const Deposit = () => {
   const { register, handleSubmit, formState: { errors } } = useForm();
-  const [selectedMethod, setSelectedMethod] = useState(null);
-  const [methodName, setMethodName] = useState('');
-  const [methodIcon, setMethodIcon] = useState(null);
+  const [selectedMethodId, setSelectedMethodId] = useState(null);
+  const [selectedMethodObj, setSelectedMethodObj] = useState(null);
   const [userBalance, setUserBalance] = useState(0);
   const [loadingBalance, setLoadingBalance] = useState(true);
+  const [paymentMethods, setPaymentMethods] = useState([]);
+  const [loadingMethods, setLoadingMethods] = useState(true);
 
   const navigate = useNavigate();
 
+  // Fetch balance (unchanged)
   useEffect(() => {
     const fetchBalance = async () => {
       try {
@@ -46,36 +41,51 @@ const Deposit = () => {
     fetchBalance();
   }, []);
 
-  const selectMethod = (id) => {
-    const method = paymentMethods.find(m => m.id === id);
-    if (method) {
-      setSelectedMethod(id);
-      setMethodName(method.name);
-      setMethodIcon(method.icon);
-      toast.success(`You have chosen to pay with ${method.name}`);
-    }
+  // Fetch payment methods from API (replaces hardcoded array)
+  useEffect(() => {
+    const fetchMethods = async () => {
+      try {
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/payment-methods?type=deposit`, {
+          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+        });
+        const data = await res.json();
+        setPaymentMethods(data);
+      } catch (err) {
+        toast.error('Could not load payment methods');
+      } finally {
+        setLoadingMethods(false);
+      }
+    };
+    fetchMethods();
+  }, []);
+
+  const selectMethod = (method) => {
+    setSelectedMethodId(method._id);
+    setSelectedMethodObj(method);
+    toast.success(`You have chosen to pay with ${method.name}`);
   };
 
   const resetMethod = () => {
-    setSelectedMethod(null);
-    setMethodName('');
-    setMethodIcon(null);
+    setSelectedMethodId(null);
+    setSelectedMethodObj(null);
   };
 
   const onSubmit = async (data) => {
-    if (!selectedMethod) {
+    if (!selectedMethodObj) {
       toast.error('Please choose a payment method');
       return;
     }
     navigate('/dashboard/deposit-payment', {
       state: {
-        methodId: selectedMethod,
-        methodName: methodName,
+        method: selectedMethodObj,   // full object, not just ID
         amount: data.amount,
-        methodIcon: methodIcon,
       }
     });
   };
+
+  if (loadingMethods) {
+    return <div style={{ color: '#fff', padding: '24px' }}>Loading payment methods...</div>;
+  }
 
   return (
     <div style={{
@@ -91,7 +101,7 @@ const Deposit = () => {
     }}>
       <style>{`@import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;500;600;700;800&display=swap');`}</style>
 
-      {/* Header */}
+      {/* Header – unchanged */}
       <div style={{
         background: '#0a0400',
         border: '1px solid rgba(249,115,22,0.09)',
@@ -140,7 +150,7 @@ const Deposit = () => {
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
-          {/* Amount */}
+          {/* Amount – unchanged */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
             <label htmlFor="amount" style={{ fontSize: '13px', fontWeight: 500, color: '#8a7060' }}>Amount to deposit</label>
             <div style={{ position: 'relative' }}>
@@ -172,7 +182,7 @@ const Deposit = () => {
             {errors.amount && <p style={{ color: '#ff5b6e', fontSize: '12px', marginTop: '4px' }}>{errors.amount.message}</p>}
           </div>
 
-          {/* Payment Methods Table */}
+          {/* Payment Methods Table – now using dynamic methods */}
           <div style={{
             background: '#0a0400',
             border: '1px solid rgba(249,115,22,0.09)',
@@ -192,7 +202,7 @@ const Deposit = () => {
                 </thead>
                 <tbody>
                   {paymentMethods.map(method => (
-                    <tr key={method.id} style={{ borderTop: '1px solid rgba(249,115,22,0.05)' }}>
+                    <tr key={method._id} style={{ borderTop: '1px solid rgba(249,115,22,0.05)' }}>
                       <td style={{ padding: '16px 24px' }}>
                         <div style={{ display: 'flex', alignItems: 'center' }}>
                           <div style={{
@@ -210,11 +220,11 @@ const Deposit = () => {
                           </div>
                           <p style={{ fontWeight: 500, color: '#fff' }}>{method.name}</p>
                         </div>
-                       </td>
+                      </td>
                       <td style={{ padding: '16px 24px', textAlign: 'right' }}>
                         <button
                           type="button"
-                          onClick={() => selectMethod(method.id)}
+                          onClick={() => selectMethod(method)}
                           style={{
                             padding: '6px 12px',
                             fontSize: '11px',
@@ -231,15 +241,16 @@ const Deposit = () => {
                         >
                           Select
                         </button>
-                       </td>
-                      </tr>
+                      </td>
+                    </tr>
                   ))}
                 </tbody>
               </table>
             </div>
           </div>
 
-          {selectedMethod && (
+          {/* Selected method preview – unchanged */}
+          {selectedMethodObj && (
             <div style={{
               padding: '16px',
               borderRadius: '16px',
@@ -261,11 +272,11 @@ const Deposit = () => {
                   alignItems: 'center',
                   justifyContent: 'center'
                 }}>
-                  {methodIcon && <img src={methodIcon} alt="" style={{ height: '100%', width: '100%', objectFit: 'contain' }} />}
+                  {selectedMethodObj.icon && <img src={selectedMethodObj.icon} alt="" style={{ height: '100%', width: '100%', objectFit: 'contain' }} />}
                 </div>
                 <div>
                   <p style={{ fontSize: '12px', color: '#8a7060' }}>Selected Method</p>
-                  <p style={{ fontSize: '14px', fontWeight: 500, color: '#fff' }}>{methodName}</p>
+                  <p style={{ fontSize: '14px', fontWeight: 500, color: '#fff' }}>{selectedMethodObj.name}</p>
                 </div>
               </div>
               <button
@@ -278,10 +289,11 @@ const Deposit = () => {
             </div>
           )}
 
+          {/* Submit button */}
           <div style={{ paddingTop: '8px' }}>
             <button
               type="submit"
-              disabled={!selectedMethod}
+              disabled={!selectedMethodObj}
               style={{
                 width: '100%',
                 padding: '16px',
@@ -296,11 +308,11 @@ const Deposit = () => {
                 border: 'none',
                 cursor: 'pointer',
                 transition: 'all 0.3s',
-                opacity: !selectedMethod ? 0.5 : 1,
-                pointerEvents: !selectedMethod ? 'none' : 'auto'
+                opacity: !selectedMethodObj ? 0.5 : 1,
+                pointerEvents: !selectedMethodObj ? 'none' : 'auto'
               }}
-              onMouseEnter={e => { if (!selectedMethod) return; e.currentTarget.style.background = '#fb923c'; e.currentTarget.style.transform = 'translateY(-2px)' }}
-              onMouseLeave={e => { if (!selectedMethod) return; e.currentTarget.style.background = '#f97316'; e.currentTarget.style.transform = 'translateY(0)' }}
+              onMouseEnter={e => { if (!selectedMethodObj) return; e.currentTarget.style.background = '#fb923c'; e.currentTarget.style.transform = 'translateY(-2px)' }}
+              onMouseLeave={e => { if (!selectedMethodObj) return; e.currentTarget.style.background = '#f97316'; e.currentTarget.style.transform = 'translateY(0)' }}
             >
               <span>Proceed to Payment</span>
               <ArrowUpRight size={16} />
@@ -312,7 +324,7 @@ const Deposit = () => {
         </form>
       </div>
 
-      {/* Info Cards */}
+      {/* ========== INFO CARDS – FULLY PRESERVED ========== */}
       <div style={{
         display: 'grid',
         gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',

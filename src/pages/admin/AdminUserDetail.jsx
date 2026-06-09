@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Wallet, Shield, User as UserIcon, Mail, Key, Edit2, Save, X, Trash2, Ban, DollarSign, RefreshCw } from 'lucide-react';
+import { ArrowLeft, Wallet, CheckCircle, Shield, User as UserIcon, Mail, Key, Edit2, Save, X, Trash2, Ban, DollarSign, RefreshCw, Eye, Send } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 const AdminUserDetail = () => {
@@ -169,6 +169,28 @@ const AdminUserDetail = () => {
     }
   };
 
+  // NEW: Reset password (send reset link)
+  const handleResetPassword = async () => {
+    setProcessing(true);
+    try {
+      const token = localStorage.getItem('token');
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/admin/users/${userId}/reset-password`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (res.ok) {
+        toast.success('Password reset email sent');
+      } else {
+        toast.error(data.message || 'Failed to send reset email');
+      }
+    } catch (err) {
+      toast.error('Error sending reset email');
+    } finally {
+      setProcessing(false);
+    }
+  };
+
   if (loading) {
     return <div className="flex items-center justify-center min-h-screen">
       <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
@@ -199,16 +221,16 @@ const AdminUserDetail = () => {
           <div className="flex justify-between items-start mb-4">
             <h2 className="text-lg font-semibold text-white">Profile Information</h2>
             {!editing ? (
-              <button onClick={() => setEditing(true)} className="p-1.5 rounded-md bg-dark-100 text-gray-400 hover:text-white">
-                <Edit2 className="w-4 h-4" />
+              <button onClick={() => setEditing(true)} className="px-3 py-1.5 rounded-md bg-dark-100 text-gray-300 hover:text-white text-sm flex items-center gap-1">
+                <Edit2 className="w-4 h-4" /> Edit
               </button>
             ) : (
               <div className="flex gap-2">
-                <button onClick={() => { setEditing(false); setEditForm({ name: user.name, email: user.email, role: user.role }); }} className="p-1.5 rounded-md bg-dark-100 text-gray-400 hover:text-white">
-                  <X className="w-4 h-4" />
+                <button onClick={() => { setEditing(false); setEditForm({ name: user.name, email: user.email, role: user.role }); }} className="px-3 py-1.5 rounded-md bg-dark-100 text-gray-300 hover:text-white text-sm flex items-center gap-1">
+                  <X className="w-4 h-4" /> Cancel
                 </button>
-                <button form="editForm" type="submit" className="p-1.5 rounded-md bg-primary text-white">
-                  <Save className="w-4 h-4" />
+                <button form="editForm" type="submit" className="px-3 py-1.5 rounded-md bg-primary text-white text-sm flex items-center gap-1">
+                  <Save className="w-4 h-4" /> Save
                 </button>
               </div>
             )}
@@ -290,7 +312,9 @@ const AdminUserDetail = () => {
                 <Wallet className="w-5 h-5 text-green-500" />
                 <h3 className="text-white font-semibold">Balance</h3>
               </div>
-              <button onClick={() => setShowBalanceModal(true)} className="text-xs text-primary hover:underline">Adjust</button>
+              <button onClick={() => setShowBalanceModal(true)} className="px-2 py-1 text-xs bg-primary/20 text-primary rounded flex items-center gap-1">
+                <DollarSign className="w-3 h-3" /> Adjust
+              </button>
             </div>
             <p className="text-3xl font-bold text-white">${user.balance?.toFixed(2) || '0.00'}</p>
           </div>
@@ -311,7 +335,9 @@ const AdminUserDetail = () => {
                       setUser({ ...user, kycStatus: 'verified', isVerified: true });
                     } else toast.error('Verification failed');
                   } catch { toast.error('Error'); }
-                }} className="text-xs text-primary hover:underline">Verify Now</button>
+                }} className="px-2 py-1 text-xs bg-primary/20 text-primary rounded flex items-center gap-1">
+                  <CheckCircle className="w-3 h-3" /> Verify Now
+                </button>
               )}
             </div>
             <span className={`px-2 py-1 text-xs rounded-full ${
@@ -329,8 +355,8 @@ const AdminUserDetail = () => {
                 <Ban className="w-5 h-5 text-yellow-500" />
                 <h3 className="text-white font-semibold">Account Status</h3>
               </div>
-              <button onClick={handleToggleBan} className="text-xs text-primary hover:underline">
-                {user.isActive !== false ? 'Suspend' : 'Activate'}
+              <button onClick={handleToggleBan} className="px-2 py-1 text-xs bg-yellow-500/20 text-yellow-400 rounded flex items-center gap-1">
+                <Ban className="w-3 h-3" /> {user.isActive !== false ? 'Suspend' : 'Activate'}
               </button>
             </div>
             <span className={`px-2 py-1 text-xs rounded-full ${
@@ -340,12 +366,30 @@ const AdminUserDetail = () => {
             </span>
           </div>
 
-          <div className="bg-dark-50/90 border border-gray-800 rounded-xl p-6">
-            <button onClick={handleResendVerification} className="w-full mb-3 px-4 py-2 rounded-lg bg-dark-100 text-gray-300 hover:text-white text-sm">
-              Resend Verification Email
+          <div className="bg-dark-50/90 border border-gray-800 rounded-xl p-6 space-y-3">
+            <button 
+              onClick={handleResendVerification} 
+              className="w-full py-2 rounded-lg bg-dark-100 text-gray-300 hover:text-white text-sm flex items-center justify-center gap-2"
+            >
+              <Send className="w-4 h-4" /> Resend Verification Email
             </button>
-            <button onClick={() => setShowDeleteModal(true)} className="w-full px-4 py-2 rounded-lg bg-red-900/30 text-red-400 hover:bg-red-800/40 text-sm">
-              Delete User Permanently
+            <button 
+              onClick={handleResetPassword} 
+              className="w-full py-2 rounded-lg bg-dark-100 text-yellow-400 hover:text-white text-sm flex items-center justify-center gap-2"
+            >
+              <Key className="w-4 h-4" /> Reset Password
+            </button>
+            {/* <button 
+              onClick={() => navigate(`/admin/users/${userId}/transactions`)} 
+              className="w-full py-2 rounded-lg bg-dark-100 text-blue-400 hover:text-white text-sm flex items-center justify-center gap-2"
+            >
+              <Eye className="w-4 h-4" /> View All Transactions
+            </button> */}
+            <button 
+              onClick={() => setShowDeleteModal(true)} 
+              className="w-full py-2 rounded-lg bg-red-900/30 text-red-400 hover:bg-red-800/40 text-sm flex items-center justify-center gap-2"
+            >
+              <Trash2 className="w-4 h-4" /> Delete User Permanently
             </button>
           </div>
         </div>

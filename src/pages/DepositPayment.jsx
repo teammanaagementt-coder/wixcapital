@@ -1,31 +1,26 @@
 import { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Wallet, Copy, CheckCircle, Upload, AlertCircle, ArrowLeft, Calendar } from 'lucide-react';
+import { Wallet, Copy, CheckCircle, Upload, AlertCircle, ArrowLeft, Calendar, Shield, Clock, History, CircleCheckBig } from 'lucide-react';
 import toast from 'react-hot-toast';
-
-const methodWalletMap = {
-  '22': { address: '0xcd68e1adf3725725d4e8b6018a0cd325c49188a2', network: 'ERC20' },
-  '17': { address: 'TXhhjkhjkdhjkdhjkhjkdhjkdhjkdhjkd', network: 'TRC20' },
-  '2': { address: '0x742d35Cc6634C0532925a3b844Bc9e7595f0b', network: 'ERC20' },
-  '1': { address: '1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa', network: 'Bitcoin' },
-};
 
 const DepositPayment = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { methodId, methodName, amount, methodIcon } = location.state || {};
+  const { method, amount } = location.state || {};
   const [proofFile, setProofFile] = useState(null);
   const [submitting, setSubmitting] = useState(false);
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
-    if (!methodId || !amount) {
+    if (!method || !amount) {
       toast.error('Invalid payment request');
       navigate('/dashboard/deposit');
     }
-  }, [methodId, amount, navigate]);
+  }, [method, amount, navigate]);
 
-  const walletInfo = methodWalletMap[methodId] || { address: 'Please contact support', network: 'N/A' };
+  const walletInfo = method?.depositDetails || { address: 'Contact support', network: 'N/A' };
+  const methodName = method?.name || 'Unknown';
+  const methodIcon = method?.icon || '/images/usdt.png';
 
   const copyToClipboard = async (text) => {
     try {
@@ -65,7 +60,7 @@ const DepositPayment = () => {
     try {
       const formData = new FormData();
       formData.append('amount', amount);
-      formData.append('payment_method', methodId);
+      formData.append('payment_method', method._id);
       formData.append('proof', proofFile);
 
       const res = await fetch(`${import.meta.env.VITE_API_URL}/deposits/upload`, {
@@ -148,6 +143,7 @@ const DepositPayment = () => {
         </p>
       </div>
 
+      {/* Payment Details Card */}
       <div style={{ maxWidth: '800px', margin: '0 auto', width: '100%' }}>
         <div style={{
           background: '#0a0400',
@@ -185,7 +181,7 @@ const DepositPayment = () => {
               </div>
               <div style={{ margin: '24px 0', display: 'flex', justifyContent: 'center' }}>
                 <div style={{ padding: '16px', borderRadius: '16px', background: 'rgba(30,12,0,0.6)', border: '1px solid rgba(249,115,22,0.2)', display: 'inline-block' }}>
-                  <img src={methodIcon || '/images/usdt.png'} alt={methodName} style={{ height: '64px', objectFit: 'contain' }} />
+                  <img src={methodIcon} alt={methodName} style={{ height: '64px', objectFit: 'contain' }} />
                 </div>
               </div>
             </div>
@@ -236,29 +232,70 @@ const DepositPayment = () => {
                 <p style={{ fontSize: '12px', color: '#8a7060' }}>
                   <span style={{ fontWeight: 700 }}>Network:</span> {walletInfo.network}
                 </p>
+                {walletInfo.additionalInfo && (
+                  <p style={{ fontSize: '11px', color: '#f97316', marginTop: '4px' }}>
+                    {walletInfo.additionalInfo}
+                  </p>
+                )}
               </div>
             </div>
 
-            {/* File Upload Section */}
+            {/* File Upload Section - IMPROVED VISIBILITY */}
             <div style={{ marginTop: '32px', paddingTop: '24px', borderTop: '1px solid rgba(249,115,22,0.08)' }}>
               <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                   <label style={{ fontSize: '13px', fontWeight: 500, color: '#8a7060' }}>Upload payment proof after sending</label>
-                  <input
-                    type="file"
-                    name="proof"
-                    onChange={handleFileChange}
-                    accept="image/jpeg,image/png,application/pdf"
-                    style={{
-                      display: 'block',
-                      width: '100%',
-                      fontSize: '13px',
-                      color: '#8a7060',
-                      cursor: 'pointer'
-                    }}
-                    required
-                  />
-                  <p style={{ fontSize: '10px', color: '#6a4a30' }}>Accepted formats: JPG, PNG, PDF (Max 5MB)</p>
+                  
+                  {/* Custom styled file input container */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
+                    <label
+                      htmlFor="proof-upload"
+                      style={{
+                        background: 'rgba(249,115,22,0.1)',
+                        border: '1px solid rgba(249,115,22,0.4)',
+                        borderRadius: '999px',
+                        padding: '10px 20px',
+                        fontSize: '13px',
+                        fontWeight: 500,
+                        color: '#f97316',
+                        cursor: 'pointer',
+                        transition: 'all 0.2s',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '8px'
+                      }}
+                      onMouseEnter={e => {
+                        e.currentTarget.style.background = 'rgba(249,115,22,0.2)';
+                        e.currentTarget.style.borderColor = '#f97316';
+                      }}
+                      onMouseLeave={e => {
+                        e.currentTarget.style.background = 'rgba(249,115,22,0.1)';
+                        e.currentTarget.style.borderColor = 'rgba(249,115,22,0.4)';
+                      }}
+                    >
+                      <Upload size={14} />
+                      Choose File
+                    </label>
+                    <input
+                      id="proof-upload"
+                      type="file"
+                      name="proof"
+                      onChange={handleFileChange}
+                      accept="image/jpeg,image/png,application/pdf"
+                      style={{ display: 'none' }}
+                      required
+                    />
+                    {proofFile ? (
+                      <span style={{ fontSize: '12px', color: '#a89070', background: 'rgba(255,255,255,0.05)', padding: '6px 12px', borderRadius: '999px' }}>
+                        {proofFile.name}
+                      </span>
+                    ) : (
+                      <span style={{ fontSize: '12px', color: '#6a4a30' }}>No file chosen</span>
+                    )}
+                  </div>
+                  <p style={{ fontSize: '10px', color: '#6a4a30', marginTop: '4px' }}>
+                    Accepted formats: JPG, PNG, PDF (Max 5MB)
+                  </p>
                 </div>
 
                 <div>
@@ -302,6 +339,155 @@ const DepositPayment = () => {
           </div>
         </div>
       </div>
+
+      {/* Info Cards (same as before) */}
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
+        gap: '24px'
+      }}>
+        {/* Deposit Process */}
+        <div style={{
+          background: '#0a0400',
+          border: '1px solid rgba(249,115,22,0.09)',
+          borderRadius: '16px',
+          overflow: 'hidden'
+        }}>
+          <div style={{ padding: '16px', borderBottom: '1px solid rgba(249,115,22,0.08)', display: 'flex', alignItems: 'center' }}>
+            <CheckCircle size={20} style={{ color: '#f97316', marginRight: '8px' }} />
+            <h3 style={{ fontSize: '14px', fontWeight: 600, color: '#fff' }}>Deposit Process</h3>
+          </div>
+          <div style={{ padding: '20px' }}>
+            <ol style={{ position: 'relative', borderLeft: '1px solid rgba(249,115,22,0.2)', marginLeft: '12px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
+              {['Select Method', 'Enter Amount', 'Complete Payment', 'Confirmation'].map((step, idx) => (
+                <li key={step} style={{ marginLeft: '24px', position: 'relative' }}>
+                  <span style={{
+                    position: 'absolute',
+                    left: '-30px',
+                    top: '0',
+                    width: '24px',
+                    height: '24px',
+                    background: '#0a0400',
+                    border: '1px solid rgba(249,115,22,0.2)',
+                    borderRadius: '50%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '10px',
+                    fontWeight: 'bold',
+                    color: '#f97316'
+                  }}>
+                    {idx + 1}
+                  </span>
+                  <h3 style={{ fontWeight: 600, color: '#fff', marginBottom: '4px' }}>{step}</h3>
+                  <p style={{ fontSize: '11px', color: '#8a7060' }}>
+                    {idx === 0 && 'Choose your preferred deposit method.'}
+                    {idx === 1 && 'Specify the amount you wish to deposit.'}
+                    {idx === 2 && 'Follow instructions to complete your deposit.'}
+                    {idx === 3 && 'Your deposit will be confirmed and credited.'}
+                  </p>
+                </li>
+              ))}
+            </ol>
+          </div>
+        </div>
+
+        {/* Security Tips */}
+        <div style={{
+          background: '#0a0400',
+          border: '1px solid rgba(249,115,22,0.09)',
+          borderRadius: '16px',
+          overflow: 'hidden'
+        }}>
+          <div style={{ padding: '16px', borderBottom: '1px solid rgba(249,115,22,0.08)', display: 'flex', alignItems: 'center' }}>
+            <Shield size={20} style={{ color: '#f97316', marginRight: '8px' }} />
+            <h3 style={{ fontSize: '14px', fontWeight: 600, color: '#fff' }}>Security Tips</h3>
+          </div>
+          <div style={{ padding: '20px' }}>
+            <ul style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              {[
+                'Always verify payment details before confirming.',
+                'Use secure and private internet connections.',
+                'Double-check network type for crypto deposits.',
+                'Never share your payment credentials.',
+              ].map((tip, i) => (
+                <li key={i} style={{ display: 'flex' }}>
+                  <div style={{ flexShrink: 0, width: '20px', height: '20px', background: 'rgba(249,115,22,0.15)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', marginRight: '12px', marginTop: '2px' }}>
+                    <CheckCircle size={12} style={{ color: '#f97316' }} />
+                  </div>
+                  <p style={{ fontSize: '11px', color: '#8a7060' }}>{tip}</p>
+                </li>
+              ))}
+            </ul>
+            <div style={{ marginTop: '20px', paddingTop: '16px', borderTop: '1px solid rgba(249,115,22,0.08)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', padding: '12px', borderRadius: '12px', background: 'rgba(30,12,0,0.6)', border: '1px solid rgba(249,115,22,0.1)' }}>
+                <Clock size={20} style={{ color: '#f97316', marginRight: '12px', flexShrink: 0 }} />
+                <p style={{ fontSize: '11px', color: '#f97316' }}>Need help? Contact support via the help center.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Deposit Stats */}
+        <div style={{
+          background: '#0a0400',
+          border: '1px solid rgba(249,115,22,0.09)',
+          borderRadius: '16px',
+          overflow: 'hidden'
+        }}>
+          <div style={{ padding: '24px' }}>
+            <h3 style={{ fontSize: '16px', fontWeight: 600, color: '#fff', marginBottom: '16px' }}>Deposit Summary</h3>
+            <div style={{ background: 'rgba(249,115,22,0.03)', borderRadius: '12px', padding: '16px', marginBottom: '16px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <div>
+                  <p style={{ fontSize: '12px', color: '#8a7060' }}>Total Deposited</p>
+                  <p style={{ fontSize: '24px', fontWeight: 800, color: '#fff' }}>$0.00</p>
+                </div>
+                <div style={{ width: '56px', height: '56px', borderRadius: '50%', background: 'rgba(249,115,22,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <CircleCheckBig size={24} style={{ color: '#f97316' }} />
+                </div>
+              </div>
+            </div>
+            <div style={{ background: 'rgba(249,115,22,0.03)', borderRadius: '12px', padding: '16px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <div>
+                  <p style={{ fontSize: '12px', color: '#8a7060' }}>Pending Deposits</p>
+                  <p style={{ fontSize: '24px', fontWeight: 800, color: '#fff' }}>$0.00</p>
+                </div>
+                <div style={{ width: '56px', height: '56px', borderRadius: '50%', background: 'rgba(249,115,22,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <History size={24} style={{ color: '#f97316' }} />
+                </div>
+              </div>
+            </div>
+            <div style={{ marginTop: '24px' }}>
+              <button
+                onClick={() => navigate('/dashboard/transactions')}
+                style={{
+                  width: '100%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  padding: '8px 16px',
+                  background: 'rgba(249,115,22,0.05)',
+                  borderRadius: '12px',
+                  textDecoration: 'none',
+                  color: '#8a7060',
+                  fontSize: '13px',
+                  transition: 'background 0.2s',
+                  border: 'none',
+                  cursor: 'pointer'
+                }}
+                onMouseEnter={e => e.currentTarget.style.background = 'rgba(249,115,22,0.1)'}
+                onMouseLeave={e => e.currentTarget.style.background = 'rgba(249,115,22,0.05)'}
+              >
+                <History size={14} style={{ marginRight: '8px' }} />
+                <span>View Deposit History</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <style>{`
         @keyframes spin { to { transform: rotate(360deg); } }
       `}</style>

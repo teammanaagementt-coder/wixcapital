@@ -1,24 +1,40 @@
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   Wallet, CircleCheckBig, ClockArrowDown, History, 
   Calendar, ArrowUp, Shield, CheckCircle, Clock, Info
 } from 'lucide-react';
-
-const withdrawalsMethods = [
-  { id: 'zelle', name: 'Zelle', icon: '/images/zelle.png' },
-  { id: 'usdt_erc20', name: 'USDT (ERC20)', icon: '/images/usdt.png' },
-  { id: 'usdt_trc20', name: 'USDT (TRC20)', icon: '/images/usdt.png' },
-  { id: 'bank_transfer', name: 'Bank Transfer', icon: '/images/bank.png' },
-  { id: 'ethereum', name: 'Ethereum (ERC20)', icon: '/images/eth.png' },
-  { id: 'bitcoin', name: 'Bitcoin', icon: '/images/btc.png' },
-];
+import toast from 'react-hot-toast';
 
 const Withdraw = () => {
   const navigate = useNavigate();
+  const [withdrawalMethods, setWithdrawalMethods] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchMethods = async () => {
+      try {
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/payment-methods?type=withdrawal`, {
+          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+        });
+        const data = await res.json();
+        setWithdrawalMethods(data);
+      } catch (err) {
+        toast.error('Could not load withdrawal methods');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchMethods();
+  }, []);
 
   const handleWithdraw = (method) => {
     navigate('/dashboard/withdraw-funds', { state: { method } });
   };
+
+  if (loading) {
+    return <div style={{ color: '#fff', padding: '24px' }}>Loading withdrawal methods...</div>;
+  }
 
   return (
     <div style={{
@@ -80,8 +96,8 @@ const Withdraw = () => {
               </tr>
             </thead>
             <tbody>
-              {withdrawalsMethods.map((method) => (
-                <tr key={method.id} style={{ borderTop: '1px solid rgba(249,115,22,0.05)' }}>
+              {withdrawalMethods.map((method) => (
+                <tr key={method._id} style={{ borderTop: '1px solid rgba(249,115,22,0.05)' }}>
                   <td style={{ padding: '16px 24px' }}>
                     <div style={{ display: 'flex', alignItems: 'center' }}>
                       <div style={{
@@ -99,7 +115,7 @@ const Withdraw = () => {
                       </div>
                       <p style={{ fontWeight: 500, color: '#fff' }}>{method.name}</p>
                     </div>
-                   </td>
+                  </td>
                   <td style={{ padding: '16px 24px', textAlign: 'right' }}>
                     <button
                       onClick={() => handleWithdraw(method)}
@@ -119,15 +135,15 @@ const Withdraw = () => {
                     >
                       Withdraw
                     </button>
-                    </td>
-                  </tr>
+                  </td>
+                </tr>
               ))}
             </tbody>
           </table>
         </div>
       </div>
 
-      {/* Info Cards */}
+      {/* Info Cards (unchanged) */}
       <div style={{
         display: 'grid',
         gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',

@@ -207,49 +207,49 @@ const AdminUsers = () => {
                     </span>
                   </td>
                   <td className="px-6 py-4">
-                    <div className="flex gap-2">
-                      <Link
-                        to={`/admin/users/${user._id}`}
-                        className="p-1.5 rounded-md bg-dark-100 text-gray-300 hover:text-white hover:bg-dark-200 transition-colors"
-                        title="View / Edit"
-                      >
-                        <Eye className="w-4 h-4" />
-                      </Link>
-                      <button
-                        onClick={() => setShowBalanceModal({ userId: user._id, currentBalance: user.balance })}
-                        className="p-1.5 rounded-md bg-dark-100 text-green-400 hover:bg-dark-200 transition-colors"
-                        title="Adjust Balance"
-                      >
-                        <DollarSign className="w-4 h-4" />
-                      </button>
-                      <button
-                        onClick={() => handleVerify(user._id)}
-                        disabled={user.kycStatus === 'verified'}
-                        className={`p-1.5 rounded-md transition-colors ${
-                          user.kycStatus === 'verified'
-                            ? 'bg-gray-800 text-gray-500 cursor-not-allowed'
-                            : 'bg-dark-100 text-blue-400 hover:bg-dark-200'
-                        }`}
-                        title="Verify KYC"
-                      >
-                        <CheckCircle className="w-4 h-4" />
-                      </button>
-                      <button
-                        onClick={() => setShowBanModal({ userId: user._id, isActive: user.isActive })}
-                        className="p-1.5 rounded-md bg-dark-100 text-yellow-400 hover:bg-dark-200 transition-colors"
-                        title={user.isActive !== false ? 'Suspend' : 'Activate'}
-                      >
-                        <Ban className="w-4 h-4" />
-                      </button>
-                      <button
-                        onClick={() => setShowDeleteModal(user._id)}
-                        className="p-1.5 rounded-md bg-dark-100 text-red-400 hover:bg-dark-200 transition-colors"
-                        title="Delete Permanently"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </td>
+  <div className="flex gap-2 flex-wrap">
+    <Link
+      to={`/admin/users/${user._id}`}
+      className="px-2 py-1 rounded-md bg-dark-100 text-gray-300 hover:text-white hover:bg-dark-200 text-xs flex items-center gap-1"
+      title="View / Edit"
+    >
+      <Eye className="w-3 h-3" /> Edit
+    </Link>
+    <button
+      onClick={() => setShowBalanceModal({ userId: user._id, currentBalance: user.balance })}
+      className="px-2 py-1 rounded-md bg-dark-100 text-green-400 hover:bg-dark-200 text-xs flex items-center gap-1"
+      title="Adjust Balance"
+    >
+      <DollarSign className="w-3 h-3" /> Balance
+    </button>
+    <button
+      onClick={() => handleVerify(user._id)}
+      disabled={user.kycStatus === 'verified'}
+      className={`px-2 py-1 rounded-md text-xs flex items-center gap-1 ${
+        user.kycStatus === 'verified'
+          ? 'bg-gray-800 text-gray-500 cursor-not-allowed'
+          : 'bg-dark-100 text-blue-400 hover:bg-dark-200'
+      }`}
+      title="Verify KYC"
+    >
+      <CheckCircle className="w-3 h-3" /> Verify
+    </button>
+    <button
+      onClick={() => setShowBanModal({ userId: user._id, isActive: user.isActive })}
+      className="px-2 py-1 rounded-md bg-dark-100 text-yellow-400 hover:bg-dark-200 text-xs flex items-center gap-1"
+      title={user.isActive !== false ? 'Suspend' : 'Activate'}
+    >
+      <Ban className="w-3 h-3" /> {user.isActive !== false ? 'Suspend' : 'Activate'}
+    </button>
+    <button
+      onClick={() => setShowDeleteModal(user._id)}
+      className="px-2 py-1 rounded-md bg-dark-100 text-red-400 hover:bg-dark-200 text-xs flex items-center gap-1"
+      title="Delete Permanently"
+    >
+      <Trash2 className="w-3 h-3" /> Delete
+    </button>
+  </div>
+</td>
                 </tr>
               ))}
             </tbody>
