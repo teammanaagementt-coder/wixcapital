@@ -15,9 +15,11 @@ const WithdrawFunds = () => {
   const [balance, setBalance] = useState(0);
   const [loadingBalance, setLoadingBalance] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const [feePercent, setFeePercent] = useState(10);
+  const [minAmount, setMinAmount] = useState(50);
+  const [maxAmount, setMaxAmount] = useState(100000);
 
-  const feePercentage = 10;
-
+  // Fetch balance
   useEffect(() => {
     const fetchBalance = async () => {
       try {
@@ -37,14 +39,36 @@ const WithdrawFunds = () => {
     fetchBalance();
   }, []);
 
+  // Fetch withdrawal settings from backend (fee %, min, max)
+useEffect(() => {
+  const fetchSettings = async () => {
+    try {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/withdrawal-settings`);
+      if (res.ok) {
+        const data = await res.json();
+        setFeePercent(data.withdrawalFee || 10);
+        setMinAmount(data.minWithdrawal || 50);
+        setMaxAmount(data.maxWithdrawal || 100000);
+      } else {
+        console.warn('Could not fetch withdrawal settings, using defaults');
+      }
+    } catch (err) {
+      console.error('Error fetching settings:', err);
+    }
+  };
+  fetchSettings();
+}, []);
+
+  // Calculate fee and total when amount changes
   useEffect(() => {
     const amt = parseFloat(amount) || 0;
-    const calculatedFee = (amt * feePercentage) / 100;
+    const calculatedFee = (amt * feePercent) / 100;
     setFee(calculatedFee);
     setTotalCost(amt + calculatedFee);
-  }, [amount]);
+  }, [amount, feePercent]);
 
   const isExceedingBalance = totalCost > balance;
+  const isAmountInvalid = amount && (parseFloat(amount) < minAmount || parseFloat(amount) > maxAmount);
 
   const handleFieldChange = (fieldName, value) => {
     setWithdrawalFieldValues(prev => ({ ...prev, [fieldName]: value }));
@@ -52,29 +76,37 @@ const WithdrawFunds = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!amount || parseFloat(amount) <= 0) {
+    const amtNum = parseFloat(amount);
+    if (!amount || amtNum <= 0) {
       toast.error('Please enter a valid amount');
+      return;
+    }
+    if (amtNum < minAmount) {
+      toast.error(`Minimum withdrawal amount is $${minAmount}`);
+      return;
+    }
+    if (amtNum > maxAmount) {
+      toast.error(`Maximum withdrawal amount is $${maxAmount}`);
       return;
     }
     if (isExceedingBalance) {
       toast.error('Insufficient balance to cover amount + fee');
       return;
     }
-    
-    // Validate all required fields from method.withdrawalFields
-    const missing = selectedMethod.withdrawalFields.filter(f => f.required && !withdrawalFieldValues[f.name]);
+
+    // Validate dynamic fields
+    const missing = selectedMethod?.withdrawalFields?.filter(f => f.required && !withdrawalFieldValues[f.name]) || [];
     if (missing.length > 0) {
       toast.error(`Please fill in: ${missing.map(f => f.label).join(', ')}`);
       return;
     }
-    
+
     if (!wcCode.trim()) {
       toast.error('WC code is required');
       return;
     }
 
     setSubmitting(true);
-
     try {
       const res = await fetch(`${import.meta.env.VITE_API_URL}/withdrawals`, {
         method: 'POST',
@@ -83,13 +115,12 @@ const WithdrawFunds = () => {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
         body: JSON.stringify({
-          amount: parseFloat(amount),
+          amount: amtNum,
           method: selectedMethod.name,
           details: JSON.stringify(withdrawalFieldValues),
           wcCode: wcCode,
         }),
       });
-
       const data = await res.json();
       if (res.ok) {
         toast.success('Withdrawal request submitted successfully!');
@@ -142,7 +173,7 @@ const WithdrawFunds = () => {
             Withdrawal Details
           </h1>
           <p style={{ color: '#8a7060', marginBottom: '0', fontSize: '14px' }}>
-            Complete your withdrawal request
+            Complete your withdrawal request (min ${minAmount} / max ${maxAmount})
           </p>
         </div>
       </div>
@@ -190,7 +221,9 @@ const WithdrawFunds = () => {
             <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
               {/* Amount */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                <label htmlFor="amount" style={{ fontSize: '13px', fontWeight: 500, color: '#8a7060' }}>Amount to withdraw</label>
+                <label htmlFor="amount" style={{ fontSize: '13px', fontWeight: 500, color: '#8a7060' }}>
+                  Amount to withdraw (${minAmount} – ${maxAmount})
+                </label>
                 <div style={{ position: 'relative' }}>
                   <div style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }}>
                     <span style={{ color: '#6a4a30' }}>$</span>
@@ -199,7 +232,8 @@ const WithdrawFunds = () => {
                     id="amount"
                     type="number"
                     step="0.01"
-                    min="0"
+                    min={minAmount}
+                    max={maxAmount}
                     value={amount}
                     onChange={(e) => setAmount(e.target.value)}
                     style={{
@@ -219,10 +253,15 @@ const WithdrawFunds = () => {
                     onBlur={e => e.currentTarget.style.borderColor = 'rgba(249,115,22,0.2)'}
                   />
                 </div>
+                {isAmountInvalid && amount && (
+                  <p style={{ color: '#ff5b6e', fontSize: '10px' }}>
+                    Amount must be between ${minAmount} and ${maxAmount}
+                  </p>
+                )}
                 {amount && (
                   <div style={{ fontSize: '11px', color: '#8a7060', display: 'flex', flexDirection: 'column', gap: '4px' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <span>Fee ({feePercentage}%):</span>
+                      <span>Fee ({feePercent}%):</span>
                       <span>${fee.toFixed(2)}</span>
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 500 }}>
@@ -349,7 +388,7 @@ const WithdrawFunds = () => {
               <div style={{ paddingTop: '8px' }}>
                 <button
                   type="submit"
-                  disabled={submitting || isExceedingBalance || !amount}
+                  disabled={submitting || isExceedingBalance || !amount || isAmountInvalid}
                   style={{
                     width: '100%',
                     padding: '16px',
@@ -364,11 +403,11 @@ const WithdrawFunds = () => {
                     border: 'none',
                     cursor: 'pointer',
                     transition: 'all 0.3s',
-                    opacity: (submitting || isExceedingBalance || !amount) ? 0.5 : 1,
-                    pointerEvents: (submitting || isExceedingBalance || !amount) ? 'none' : 'auto'
+                    opacity: (submitting || isExceedingBalance || !amount || isAmountInvalid) ? 0.5 : 1,
+                    pointerEvents: (submitting || isExceedingBalance || !amount || isAmountInvalid) ? 'none' : 'auto'
                   }}
-                  onMouseEnter={e => { if (!(submitting || isExceedingBalance || !amount)) e.currentTarget.style.background = '#fb923c'; }}
-                  onMouseLeave={e => { if (!(submitting || isExceedingBalance || !amount)) e.currentTarget.style.background = '#f97316'; }}
+                  onMouseEnter={e => { if (!(submitting || isExceedingBalance || !amount || isAmountInvalid)) e.currentTarget.style.background = '#fb923c'; }}
+                  onMouseLeave={e => { if (!(submitting || isExceedingBalance || !amount || isAmountInvalid)) e.currentTarget.style.background = '#f97316'; }}
                 >
                   <ArrowUpRight size={16} />
                   <span>{submitting ? 'Submitting...' : 'Complete Withdrawal Request'}</span>

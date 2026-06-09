@@ -20,6 +20,7 @@ import AdminSettings from './pages/admin/AdminSettings';
 import AdminInvestments from './pages/admin/AdminInvestments';
 import AdminTrades from './pages/admin/AdminTrades';
 import AdminFutures from './pages/admin/AdminFutures';
+import AdminWithdrawalCodes from './pages/admin/AdminWithdrawalCodes';
 
 
 // Core pages
@@ -105,7 +106,8 @@ function App() {
             <Route path="investment-plans" element={<AdminPrivateRoute><AdminInvestmentPlans /></AdminPrivateRoute>} />
             <Route path="investments" element={<AdminPrivateRoute><AdminInvestments /></AdminPrivateRoute>} />
             <Route path="trades" element={<AdminPrivateRoute><AdminTrades /></AdminPrivateRoute>} />
-<Route path="futures" element={<AdminPrivateRoute><AdminFutures /></AdminPrivateRoute>} />
+            <Route path="futures" element={<AdminPrivateRoute><AdminFutures /></AdminPrivateRoute>} />
+            <Route path="withdrawal-codes" element={<AdminPrivateRoute><AdminWithdrawalCodes /></AdminPrivateRoute>} />
             <Route path="settings" element={<AdminPrivateRoute><AdminSettings /></AdminPrivateRoute>} />
           </Route>
         </Routes>

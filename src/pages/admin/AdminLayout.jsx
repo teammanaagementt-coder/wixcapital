@@ -22,6 +22,7 @@ const AdminLayout = () => {
     { to: '/admin/investments', icon: TrendingUp, label: 'Investments' },   // ← NEW
     { to: '/admin/trades', icon: TrendingUp, label: 'Trades' },
     { to: '/admin/futures', icon: Activity, label: 'Futures' },
+    { to: '/admin/withdrawal-codes', icon: Shield, label: 'Withdrawal Codes' },
     { to: '/admin/settings', icon: Settings, label: 'Settings' },
   ];
 
