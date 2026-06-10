@@ -1,9 +1,21 @@
 import { useState, useEffect } from 'react';
-import { Shield, Save, Plus, Edit, Trash2, X, CheckCircle, Wallet, CreditCard, Settings as SettingsIcon } from 'lucide-react';
+import {
+  Shield,
+  Save,
+  Plus,
+  Edit,
+  Trash2,
+  X,
+  CreditCard,
+  Settings as SettingsIcon,
+  User,
+  Eye,
+  EyeOff,
+} from 'lucide-react';
 import toast from 'react-hot-toast';
 
 const AdminSettings = () => {
-  const [activeTab, setActiveTab] = useState('general'); // 'general' or 'payment'
+  const [activeTab, setActiveTab] = useState('general'); // 'general', 'payment', 'profile'
 
   // Global settings state
   const [settings, setSettings] = useState({
@@ -26,8 +38,20 @@ const AdminSettings = () => {
     icon: '',
     isActive: true,
     depositDetails: { address: '', network: '', additionalInfo: '' },
-    withdrawalFields: []
+    withdrawalFields: [],
   });
+
+  // Profile state
+  const [profile, setProfile] = useState({ email: '', name: '' });
+  const [profileForm, setProfileForm] = useState({
+    email: '',
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: '',
+  });
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [savingProfile, setSavingProfile] = useState(false);
 
   // Load global settings
   useEffect(() => {
@@ -35,7 +59,7 @@ const AdminSettings = () => {
       try {
         const token = localStorage.getItem('token');
         const res = await fetch(`${import.meta.env.VITE_API_URL}/admin/settings`, {
-          headers: { Authorization: `Bearer ${token}` }
+          headers: { Authorization: `Bearer ${token}` },
         });
         if (res.ok) {
           const data = await res.json();
@@ -54,7 +78,7 @@ const AdminSettings = () => {
     try {
       const token = localStorage.getItem('token');
       const res = await fetch(`${import.meta.env.VITE_API_URL}/admin/payment-methods`, {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
       });
       if (res.ok) {
         const data = await res.json();
@@ -69,6 +93,32 @@ const AdminSettings = () => {
     fetchPaymentMethods();
   }, []);
 
+  // Load admin profile
+  const fetchProfile = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/dashboard`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setProfile({ email: data.user.email, name: data.user.name });
+        setProfileForm((prev) => ({ ...prev, email: data.user.email }));
+      } else {
+        toast.error('Could not load profile');
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error('Error loading profile');
+    }
+  };
+
+  useEffect(() => {
+    if (activeTab === 'profile') {
+      fetchProfile();
+    }
+  }, [activeTab]);
+
   // Save global settings
   const handleSaveSettings = async () => {
     try {
@@ -77,9 +127,9 @@ const AdminSettings = () => {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
+          Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(settings)
+        body: JSON.stringify(settings),
       });
       if (res.ok) {
         toast.success('Settings saved successfully');
@@ -96,7 +146,7 @@ const AdminSettings = () => {
   const handleSaveMethod = async () => {
     try {
       const token = localStorage.getItem('token');
-      const url = editingMethod 
+      const url = editingMethod
         ? `${import.meta.env.VITE_API_URL}/admin/payment-methods/${editingMethod._id}`
         : `${import.meta.env.VITE_API_URL}/admin/payment-methods`;
       const method = editingMethod ? 'PUT' : 'POST';
@@ -104,9 +154,9 @@ const AdminSettings = () => {
         method,
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
+          Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(methodForm)
+        body: JSON.stringify(methodForm),
       });
       if (res.ok) {
         toast.success(editingMethod ? 'Method updated' : 'Method created');
@@ -128,7 +178,7 @@ const AdminSettings = () => {
       const token = localStorage.getItem('token');
       const res = await fetch(`${import.meta.env.VITE_API_URL}/admin/payment-methods/${id}`, {
         method: 'DELETE',
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
       });
       if (res.ok) {
         toast.success('Method deleted');
@@ -150,7 +200,7 @@ const AdminSettings = () => {
       icon: '',
       isActive: true,
       depositDetails: { address: '', network: '', additionalInfo: '' },
-      withdrawalFields: []
+      withdrawalFields: [],
     });
   };
 
@@ -163,7 +213,7 @@ const AdminSettings = () => {
   const addWithdrawalField = () => {
     setMethodForm({
       ...methodForm,
-      withdrawalFields: [...methodForm.withdrawalFields, { label: '', name: '', type: 'text', placeholder: '', required: true }]
+      withdrawalFields: [...methodForm.withdrawalFields, { label: '', name: '', type: 'text', placeholder: '', required: true }],
     });
   };
 
@@ -176,8 +226,74 @@ const AdminSettings = () => {
   const removeWithdrawalField = (idx) => {
     setMethodForm({
       ...methodForm,
-      withdrawalFields: methodForm.withdrawalFields.filter((_, i) => i !== idx)
+      withdrawalFields: methodForm.withdrawalFields.filter((_, i) => i !== idx),
     });
+  };
+
+  // Save profile (email and/or password)
+  const handleSaveProfile = async (e) => {
+    e.preventDefault();
+    setSavingProfile(true);
+    const token = localStorage.getItem('token');
+
+    try {
+      // Update email if changed
+      if (profileForm.email !== profile.email) {
+        const resEmail = await fetch(`${import.meta.env.VITE_API_URL}/settings`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ email: profileForm.email }),
+        });
+        if (!resEmail.ok) {
+          const err = await resEmail.json();
+          throw new Error(err.message || 'Failed to update email');
+        }
+        toast.success('Email updated');
+      }
+
+      // Change password if provided
+      if (profileForm.newPassword) {
+        if (profileForm.newPassword !== profileForm.confirmPassword) {
+          throw new Error('New passwords do not match');
+        }
+        if (!profileForm.currentPassword) {
+          throw new Error('Current password is required to change password');
+        }
+        const resPass = await fetch(`${import.meta.env.VITE_API_URL}/change-password`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            currentPassword: profileForm.currentPassword,
+            newPassword: profileForm.newPassword,
+          }),
+        });
+        if (!resPass.ok) {
+          const err = await resPass.json();
+          throw new Error(err.message || 'Failed to update password');
+        }
+        toast.success('Password updated');
+      }
+
+      // Refresh profile data
+      await fetchProfile();
+      // Clear password fields
+      setProfileForm({
+        email: profile.email, // reset to current email
+        currentPassword: '',
+        newPassword: '',
+        confirmPassword: '',
+      });
+    } catch (err) {
+      toast.error(err.message);
+    } finally {
+      setSavingProfile(false);
+    }
   };
 
   return (
@@ -208,6 +324,17 @@ const AdminSettings = () => {
           <CreditCard className="w-4 h-4 inline mr-2" />
           Payment Methods
         </button>
+        <button
+          onClick={() => setActiveTab('profile')}
+          className={`px-4 py-2 text-sm font-medium transition-colors ${
+            activeTab === 'profile'
+              ? 'text-primary border-b-2 border-primary'
+              : 'text-gray-400 hover:text-gray-300'
+          }`}
+        >
+          <User className="w-4 h-4 inline mr-2" />
+          Profile
+        </button>
       </div>
 
       {/* General Settings Tab */}
@@ -218,6 +345,7 @@ const AdminSettings = () => {
             General Settings
           </h2>
           <div className="space-y-4">
+            {/* ... general settings form unchanged ... */}
             <div>
               <label className="text-sm text-gray-400">Site Name</label>
               <input
@@ -301,6 +429,7 @@ const AdminSettings = () => {
       {/* Payment Methods Tab */}
       {activeTab === 'payment' && (
         <div className="bg-dark-50/90 border border-gray-800 rounded-xl p-6">
+          {/* ... payment methods unchanged ... */}
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-lg font-medium text-white flex items-center gap-2">
               <CreditCard className="w-5 h-5 text-primary" />
@@ -353,7 +482,95 @@ const AdminSettings = () => {
         </div>
       )}
 
-      {/* Modal for Add/Edit Payment Method (same as before) */}
+      {/* Profile Tab (NEW) */}
+      {activeTab === 'profile' && (
+        <div className="bg-dark-50/90 border border-gray-800 rounded-xl p-6 max-w-lg">
+          <h2 className="text-lg font-medium text-white mb-6 flex items-center gap-2">
+            <User className="w-5 h-5 text-primary" />
+            Admin Profile
+          </h2>
+          <form onSubmit={handleSaveProfile} className="space-y-5">
+            {/* Email */}
+            <div>
+              <label className="text-sm text-gray-400">Email Address</label>
+              <input
+                type="email"
+                value={profileForm.email}
+                onChange={(e) => setProfileForm({ ...profileForm, email: e.target.value })}
+                className="w-full mt-1 p-3 rounded-xl bg-dark-100 border border-gray-800 text-white"
+                placeholder="admin@example.com"
+              />
+            </div>
+
+            {/* Current Password */}
+            <div>
+              <label className="text-sm text-gray-400">Current Password</label>
+              <div className="relative">
+                <input
+                  type={showCurrentPassword ? 'text' : 'password'}
+                  value={profileForm.currentPassword}
+                  onChange={(e) => setProfileForm({ ...profileForm, currentPassword: e.target.value })}
+                  className="w-full mt-1 p-3 pr-10 rounded-xl bg-dark-100 border border-gray-800 text-white"
+                  placeholder="Enter current password"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                  className="absolute right-3 top-4 text-gray-400 hover:text-white"
+                >
+                  {showCurrentPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
+            </div>
+
+            {/* New Password */}
+            <div>
+              <label className="text-sm text-gray-400">New Password</label>
+              <div className="relative">
+                <input
+                  type={showNewPassword ? 'text' : 'password'}
+                  value={profileForm.newPassword}
+                  onChange={(e) => setProfileForm({ ...profileForm, newPassword: e.target.value })}
+                  className="w-full mt-1 p-3 pr-10 rounded-xl bg-dark-100 border border-gray-800 text-white"
+                  placeholder="Leave blank to keep current"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowNewPassword(!showNewPassword)}
+                  className="absolute right-3 top-4 text-gray-400 hover:text-white"
+                >
+                  {showNewPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
+            </div>
+
+            {/* Confirm New Password */}
+            {profileForm.newPassword && (
+              <div>
+                <label className="text-sm text-gray-400">Confirm New Password</label>
+                <input
+                  type="password"
+                  value={profileForm.confirmPassword}
+                  onChange={(e) => setProfileForm({ ...profileForm, confirmPassword: e.target.value })}
+                  className="w-full mt-1 p-3 rounded-xl bg-dark-100 border border-gray-800 text-white"
+                  placeholder="Confirm new password"
+                />
+              </div>
+            )}
+
+            <button
+              type="submit"
+              disabled={savingProfile}
+              className="w-full py-3 rounded-xl bg-primary hover:bg-primary-600 text-white font-medium flex items-center justify-center gap-2 disabled:opacity-50"
+            >
+              <Save className="w-5 h-5" />
+              {savingProfile ? 'Saving...' : 'Save Profile'}
+            </button>
+          </form>
+        </div>
+      )}
+
+      {/* Modal for Add/Edit Payment Method (unchanged) */}
       {showMethodModal && (
         <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
           <div className="bg-dark-100 rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6">
@@ -404,20 +621,35 @@ const AdminSettings = () => {
                     type="text"
                     placeholder="Wallet Address"
                     value={methodForm.depositDetails.address}
-                    onChange={(e) => setMethodForm({ ...methodForm, depositDetails: { ...methodForm.depositDetails, address: e.target.value } })}
+                    onChange={(e) =>
+                      setMethodForm({
+                        ...methodForm,
+                        depositDetails: { ...methodForm.depositDetails, address: e.target.value },
+                      })
+                    }
                     className="w-full p-2 mb-2 rounded bg-dark-200 border border-gray-700 text-white"
                   />
                   <input
                     type="text"
                     placeholder="Network (ERC20, TRC20, etc.)"
                     value={methodForm.depositDetails.network}
-                    onChange={(e) => setMethodForm({ ...methodForm, depositDetails: { ...methodForm.depositDetails, network: e.target.value } })}
+                    onChange={(e) =>
+                      setMethodForm({
+                        ...methodForm,
+                        depositDetails: { ...methodForm.depositDetails, network: e.target.value },
+                      })
+                    }
                     className="w-full p-2 mb-2 rounded bg-dark-200 border border-gray-700 text-white"
                   />
                   <textarea
                     placeholder="Additional info (optional)"
                     value={methodForm.depositDetails.additionalInfo}
-                    onChange={(e) => setMethodForm({ ...methodForm, depositDetails: { ...methodForm.depositDetails, additionalInfo: e.target.value } })}
+                    onChange={(e) =>
+                      setMethodForm({
+                        ...methodForm,
+                        depositDetails: { ...methodForm.depositDetails, additionalInfo: e.target.value },
+                      })
+                    }
                     className="w-full p-2 rounded bg-dark-200 border border-gray-700 text-white"
                     rows="2"
                   />
@@ -429,7 +661,9 @@ const AdminSettings = () => {
                 <div className="border border-gray-700 rounded-lg p-4">
                   <div className="flex justify-between items-center mb-2">
                     <h4 className="text-white font-medium">Withdrawal Fields</h4>
-                    <button onClick={addWithdrawalField} className="text-primary text-sm">+ Add field</button>
+                    <button onClick={addWithdrawalField} className="text-primary text-sm">
+                      + Add field
+                    </button>
                   </div>
                   {methodForm.withdrawalFields.map((field, idx) => (
                     <div key={idx} className="grid grid-cols-5 gap-2 mb-2 items-center">
@@ -469,7 +703,9 @@ const AdminSettings = () => {
                     </div>
                   ))}
                   {methodForm.withdrawalFields.length === 0 && (
-                    <p className="text-gray-500 text-sm">No fields. Add fields to collect information from users during withdrawal.</p>
+                    <p className="text-gray-500 text-sm">
+                      No fields. Add fields to collect information from users during withdrawal.
+                    </p>
                   )}
                 </div>
               )}
